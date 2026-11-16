@@ -1,0 +1,35 @@
+i  emulators: Starting emulators: auth, database, storage
+i  emulators: Detected demo project ID "demo-bimbi", emulated services will use a demo configuration and attempts to access non-emulated services for this project will fail.
+i  database: Database Emulator logging to database-debug.log
+i  Running script: npm test
+
+> test
+> node --test rules.test.cjs
+
+✔ verified owner can write/read/delete the strict probe schema (279.603542ms)
+[2026-11-16T06:49:18.215Z]  @firebase/database: FIREBASE WARNING: set at /users/alice/phase1/probe failed: permission_denied
+[2026-11-16T06:49:18.229Z]  @firebase/database: FIREBASE WARNING: set at /users/alice/phase1/probe failed: permission_denied
+[2026-11-16T06:49:18.241Z]  @firebase/database: FIREBASE WARNING: set at /users/alice/phase1/probe failed: permission_denied
+✔ anonymous, unverified and other-user reads/writes are denied (50.543ms)
+[2026-11-16T06:49:18.265Z]  @firebase/database: FIREBASE WARNING: set at /users/alice/phase1/probe failed: permission_denied
+[2026-11-16T06:49:18.267Z]  @firebase/database: FIREBASE WARNING: set at /users/alice/phase1/probe failed: permission_denied
+[2026-11-16T06:49:18.269Z]  @firebase/database: FIREBASE WARNING: set at /users/alice/entitlements failed: permission_denied
+✔ unknown fields, future timestamps, entitlements and payment records are denied (28.978459ms)
+✔ owner can roundtrip a small PNG and remove it (112.641ms)
+✔ other-user, anonymous and unverified image access denied (75.968583ms)
+✔ oversized, wrong-type and out-of-scope image uploads denied (33.450875ms)
+ℹ tests 6
+ℹ suites 0
+ℹ pass 6
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 795.220417
+✔  Script exited successfully (code 0)
+i  emulators: Shutting down emulators.
+i  database: Stopping Database Emulator
+i  auth: Stopping Authentication Emulator
+i  storage: Stopping Storage Emulator
+i  hub: Stopping emulator hub
+i  logging: Stopping Logging Emulator

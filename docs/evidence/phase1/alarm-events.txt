@@ -1,0 +1,4 @@
+--------- beginning of main
+11-16 00:37:55.172 29206 29206 I BimbiAlarm: scheduled:1794811105053
+11-16 00:38:25.141 29206 29206 I BimbiAlarm: fired:scheduled=1794811105053:actual=1794811105127
+11-16 00:39:13.301 29206 29206 I BimbiAlarm: dismissed

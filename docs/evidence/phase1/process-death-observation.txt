@@ -1,0 +1,4 @@
+Transcribed from the observed BimbiAlarm log output (not a new execution):
+11-16 00:49:04.722 29206 29206 I BimbiAlarm: scheduled:1794811774652
+11-16 00:49:36.191 31486 31486 I BimbiAlarm: fired:scheduled=1794811774652:actual=1794811776186
+Only Bimbi process was killed by app UID without force-stop. New PID confirms cold process restart.

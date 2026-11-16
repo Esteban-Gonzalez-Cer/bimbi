@@ -1,0 +1,13 @@
+Recorded 2026-11-16, America/Mexico_City
+Physical device: Samsung Galaxy Tab A9 SM-X115
+Android release: 16
+API: 36
+Physical display: 800 x 1340
+Density: 213 dpi (~601 logical pixels in portrait)
+Battery saver at initial inspection: off (low_power=0)
+Reported hardware: GPS, accelerometer, compass, step counter, step detector
+No gyroscope feature reported by pm list features
+Phone emulators: Bimbi_Phone_360 (1080x2160 at 480dpi); Bimbi_Phone_412 (1236x2472 at 480dpi)
+Phone image: Android API 36 google_apis_playstore arm64-v8a
+Exact/full-screen/notification access: granted for basic tablet alarm tests
+OEM power exemption and TalkBack: not yet verified

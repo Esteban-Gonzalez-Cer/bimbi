@@ -1,0 +1,6 @@
+{
+  "database": {"rules": "firebase/database.rules.json"},
+  "storage": {"rules": "firebase/storage.rules"},
+  "functions": [{"source": "payment_demo/server", "codebase": "bimbi-phase1", "runtime": "nodejs22", "predeploy": ["npm --prefix \"$RESOURCE_DIR\" run build"]}],
+  "emulators": {"auth": {"port": 9099}, "database": {"port": 9000}, "storage": {"port": 9199}, "functions": {"port": 5001}, "ui": {"enabled": false}, "singleProjectMode": true}
+}

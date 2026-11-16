@@ -5,8 +5,8 @@ plugins {
 }
 
 android {
-    namespace = "com.example.bimbi"
-    compileSdk = flutter.compileSdkVersion
+    namespace = "com.bimbi.app"
+    compileSdk = 36
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
@@ -16,11 +16,12 @@ android {
 
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId = "com.example.bimbi"
+        applicationId = "com.bimbi.app"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
-        minSdk = flutter.minSdkVersion
-        targetSdk = flutter.targetSdkVersion
+        minSdk = 26
+        targetSdk = 36
+        manifestPlaceholders["MAPS_API_KEY"] = providers.gradleProperty("MAPS_API_KEY").orElse(providers.environmentVariable("MAPS_API_KEY")).getOrElse("")
         // Uses the version code from pubspec.yaml. When using split APKs, 1000 * ABI_VERSION
         // is added automatically by Flutter. (https://developer.android.com/studio/build/configure-apk-splits#configure-APK-versions)
         // You can force using the value of versionCode by specifying the `-P force-version-code-ignoring-abi=true`
@@ -47,3 +48,5 @@ kotlin {
 flutter {
     source = "../.."
 }
+
+dependencies { implementation("com.google.android.material:material:1.13.0") }

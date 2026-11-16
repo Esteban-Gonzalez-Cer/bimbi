@@ -1,0 +1,2 @@
+48cb2c22e75cb848ac4b0f8006b422c15e5cdd04bad81210c1a56bbeb2d74782  app-debug.apk
+Latest successfully compiled debug APK. Rebuild after completing local service settings.

@@ -1,0 +1,22 @@
+{
+  "name": "bimbi-phase1-payments",
+  "private": true,
+  "version": "0.1.0",
+  "main": "lib/index.js",
+  "engines": {
+    "node": "22"
+  },
+  "scripts": {
+    "build": "tsc",
+    "test": "npm run build && node --test test/*.test.cjs"
+  },
+  "dependencies": {
+    "firebase-admin": "14.5.1",
+    "firebase-functions": "7.4.0",
+    "stripe": "23.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "26.6.6",
+    "typescript": "7.0.2"
+  }
+}
