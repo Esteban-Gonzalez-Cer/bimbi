@@ -1,11 +1,34 @@
 # Resume Phase 1 from the actual checkpoint
 
-The owner confirmed Google sign-in with verified email and created the default Realtime Database. The owner also reported Storage ready, but Firebase deployment still reports its setup incomplete. Database rules are now deployed. Do not request those steps again. Latest status is in evidence/phase1/REPORT.md.
+See evidence/phase1/REPORT.md for actual outcomes. The approval-review interruption recovered on retry; no credits/reset or permissions change was needed.
 
-## 1. Validation checkpoint
+## Completed service setup
+
+- Project bimbi-26ae2, Android com.bimbi.app, debug SHA-1/SHA-256 registered.
+- Google sign-in with verified email confirmed on the physical tablet.
+- Default database bimbi-26ae2-default-rtdb in us-central1, bucket bimbi-26ae2.firebasestorage.app; owner-only rules deployed to both.
+- Physical-tablet private record/image probe passed and deleted its test data.
+- Maps key is stored only in ignored android/secrets.properties. Native tiles and Chapultepec marker rendered on the tablet. Never put that key back in tracked android/gradle.properties.
+- Maps/Firebase-connected debug APK built and installed successfully. SHA-256 is in evidence/phase1/apk-sha256.txt.
+
+## Validation already completed
+
+22 Flutter tests, 11 backend tests on Node 22.23.5, 6 Firebase security-rule emulator scenarios; analyzer clean; physical tablet five-tab navigation passed. Basic alarm and cold-process alarm delivery passed with native dismissal. Review the report's exact limits before generalizing.
+
+Phone widget coverage and emulator screenshots exist. The first emulator interaction runner failed to start Dart Development Service; later attempts found the emulator disconnected. Retry each profile independently rather than making one failure suppress the second. No phone interaction PASS is claimed yet.
+
+## Remaining external and physical checks
+
+- Finish foreground accelerometer/GPS sampling and stop/background cancellation checks. Ask the owner for a short outdoor walk. Keep private coordinates out of evidence and delete the in-memory trace afterward.
+- Complete FCM topic sends in foreground/background/ordinary terminated states; tap navigation. Force-stop is a separate negative scenario.
+- Email/password verification/reset/resend, sign-out/session restoration and actual second-user data denial still require live checks.
+- GitHub OAuth App and Stripe sandbox are not configured. Follow SETUP.md; keep OAuth and Stripe secrets in provider consoles/server secret storage. Payment endpoint and test cases are implemented, but no live Stripe checkout or production billing is established.
+- Reboot/unlock, recurrence, exact-access revocation, full-screen denial, offline/battery-saver alarms, native Back dismissal, TalkBack and tablet landscape remain individual acceptance scenarios.
+
+## Reproduce checks when changes justify a rerun
 
 ```sh
-dart format lib test integration_test
+dart format --output=none --set-exit-if-changed lib test integration_test
 flutter analyze --fatal-infos
 flutter test --coverage
 npm test --prefix payment_demo/server
@@ -13,39 +36,6 @@ npm test --prefix payment_demo/server
 flutter build apk --debug --dart-define-from-file=config/dev.json
 ```
 
-Use Node 22 for backend tests. Approval-review access recovered on retry; no credit purchase/reset was needed. The local /private/tmp/bimbi-node22 runtime is temporary and not a reproducibility requirement. FVM 3.47.5 pin, lockfiles and implementation are saved in local commit 8ee3d96 on feat/phase1-feasibility. There is no remote repository yet.
+Use Node 22 for backend/deployment parity. The temporary local Node runtime under /private/tmp is not a project requirement. FVM pins Flutter 3.47.5. Install with adb install -r to preserve account data; integration-test reinstalls can reset permissions.
 
-The latest source rebuilt successfully, and 22 Flutter tests plus 11 Node 22 backend tests passed. Rebuild the configured APK again after the actual database/Maps/Storage settings are saved. Install with adb -s <tablet-serial> install -r; do not uninstall or clear data unnecessarily. Native alarm service audio auto-stops after two minutes.
-
-## 2. Complete Firebase setup
-
-Inspect the newly created default instance and actual bucket using Firebase Console/CLI. Confirm region and locked rules. Refresh the downloaded config without printing keys:
-
-```sh
-./scripts/firebase.sh apps:sdkconfig ANDROID 1:147648809079:android:abb07034f0a29a3c67de72 --project bimbi-26ae2 --json > /private/tmp/bimbi-firebase-sdk.json
-python3 scripts/refresh_firebase_config.py /private/tmp/bimbi-firebase-sdk.json
-./scripts/firebase.sh database:instances:list --project bimbi-26ae2
-```
-
-Fill the actual database URL and bucket in ignored config/dev.json. If the Firebase CLI requires an explicit database instance mapping, bind the confirmed default instance before deploying; do not create a second database.
-
-After rule emulator tests pass and the target resources are confirmed:
-
-```sh
-./scripts/firebase.sh deploy --only database,storage --project bimbi-26ae2
-flutter build apk --debug --dart-define-from-file=config/dev.json
-```
-
-On the tablet, refresh verification and run the private-data/image probe. Then perform email/password, sign-out/session restore, reset/resend and the separate GitHub setup/test. Configure and test the FCM topic through Firebase Console in each supported state. No custom sending backend is needed.
-
-## 3. Device and remaining services
-
-- Phone 360 test failed before running due to Dart Development Service startup. Retry using flutter test --disable-dds integration_test/shell_test.dart -d <emulator>; run 412 independently so one runner failure cannot suppress the other. Preserve the original failure evidence.
-- Complete tablet landscape/Back/TalkBack, offline, recurrence, reboot, permission-revocation and battery-saver alarm cases individually; do not generalize from the two observed deliveries.
-- Ask the owner to move the tablet gently for real accelerometer evidence and take a short outdoor foreground GPS trace. Delete the trace afterward; no private coordinates in Git.
-- Configure Maps Android-restricted key and confirm tiles/real marker. Use free allowances and supported quotas.
-- Set up Stripe sandbox privately, test backend deployment, then success/decline/cancel and interrupted retry. Do not paste secret keys into chat or source.
-
-## 4. Package the checkpoint
-
-Update REPORT.md and gate verdict with actual results. Run git diff --check and review ignored configuration/secret exclusions. Commit small attributable changes on feat/phase1-feasibility (initial main commit 85b7acf). No remote or production release exists. Do not declare Phase 1 complete until all required external/device results are recorded, or explicitly accept remaining conditions with the owner.
+Keep the evidence report and gates current. Implementation is on local branch feat/phase1-feasibility; no remote repository/Actions execution or final release exists. Do not declare the full Phase 1 gate passed while mandatory service/device checks remain unverified.

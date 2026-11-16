@@ -1,2 +1,2 @@
-e8a2a058db1f0f8118e49f3004195089a5965c70e1ff1277d69b5cab0b243c72  app-debug.apk
-Latest validated native source with Firebase auth and confirmed database URL; built and installed successfully.
+1b4b7fb59e58b6650afd53a789ffd18ce74c194654962cf8a9e4489e15e55f26  app-debug.apk
+Maps/Firebase-connected debug build; installed on physical tablet; map rendering and cloud probe verified.

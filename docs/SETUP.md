@@ -28,7 +28,7 @@ Send independently with Bimbi foreground, background, and terminated normally. T
 
 ## Maps and cost controls
 
-Enable Maps SDK for Android only, with a billing account and an Android-restricted key for `com.bimbi.app` + the registered signing SHA-1. Restrict the key to Maps SDK for Android. Put `MAPS_API_KEY=...` in local `~/.gradle/gradle.properties`, or pass it as an environment variable during build. Never commit it to a tracked file. The app checks whether the native manifest has a key; a key's presence does not establish authorization or billing success.
+Enable Maps SDK for Android only, with a billing account and an Android-restricted key for `com.bimbi.app` + the registered signing SHA-1. Restrict the key to Maps SDK for Android. Put `MAPS_API_KEY=...` in ignored `android/secrets.properties`, local `~/.gradle/gradle.properties`, or pass it as an environment variable during build. Never put it in tracked `android/gradle.properties`. Never commit it to a tracked file. The app checks whether the native manifest has a key; a key's presence does not establish authorization or billing success.
 
 Use the included public Chapultepec marker without Places/Directions requests. Source: https://mexicocity.cdmx.gob.mx/locations/chapultepec-park/?lang=es . Its coordinate is a representative point within the park, not a verified route or a user's position.
 

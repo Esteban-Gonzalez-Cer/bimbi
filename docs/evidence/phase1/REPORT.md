@@ -11,8 +11,8 @@ Verdict: **CONDITIONAL / IN PROGRESS**. The app and experiments are implemented;
 | Physical tablet navigation | 1 integration test passed | All five destinations; cloud configuration absent in that specific test build |
 | TypeScript build | Passed after latest backend test additions | Runtime cloud deployment not executed |
 | Payment backend | 11 scenarios passed on Node 22.23.5 | Cloud deployment and real Stripe receipts pending |
-| Firebase rules emulators | 6 scenarios passed; rerun after gRPC patch passed | Actual deployed rules and live readback still pending |
-| Android debug APK | Latest native source rebuilt and installed successfully with Google auth and confirmed database URL | Maps/Storage configuration remains pending |
+| Firebase rules emulators | 6 scenarios passed; rerun after gRPC patch passed | Database and Storage rules deployed; live owner readback passed; real two-account denial remains pending |
+| Android debug APK | Latest native source rebuilt and installed successfully with Google auth and confirmed database URL | Maps tiles/marker and live private record/image readback passed |
 | 360dp phone emulator | Screenshot captured; interaction test blocked by Dart Development Service startup failure | No application assertion executed in that failed test |
 | 412dp phone emulator | Screenshot captured | Independent retry could not locate the emulator after it disconnected |
 
@@ -36,22 +36,30 @@ A second alarm was scheduled for epoch 1794811774652 by PID 29206. Only Bimbi's 
 
 Owner completed Google account consent on the installed Firebase-connected build and confirmed that Profile shows their account and **Email verified**. Personal account details were not exported into evidence. Email/password verification/reset, GitHub, session restoration and sign-out still require separate tests.
 
+### Live private database and image probe — PASS
+
+On the signed-in physical tablet, the verified session was refreshed and the real Firebase probe executed. The app reported: “Private record and image matched after readback; probe data deleted.” This establishes the owner roundtrip for the scoped record and PNG, including cleanup. Emulator cross-user denials are separately tested; actual second-account denial has not yet been exercised.
+
+### Native Google map — PASS for rendering
+
+The Maps-configured build was installed successfully. The native map displayed real tiles and the Bosque de Chapultepec marker on the physical tablet; visually inspected screenshot: tablet-map.png. This does not establish outdoor GPS tracking.
+
 ## Cloud configuration state
 
 - Development project bimbi-26ae2 and Android com.bimbi.app registration confirmed through Firebase CLI.
 - Owner refreshed the local Firebase sign-in and enabled Email/Password + Google.
 - Debug SHA-1/SHA-256 registered; web OAuth client downloaded to ignored local config. Google login confirmed above.
-- Owner reports Realtime Database and Storage were created in locked mode. This readiness report does not establish deployment or live readback.
-- The default us-central1 database was confirmed active, and the tested database rules were successfully deployed. Firebase Storage still reports setup incomplete; its rule deployment remains pending. Use the continuation instructions in docs/CONTINUE_PHASE1.md to inspect the new resources before deployment.
-- Owner reports a billing-linked Maps Android key is ready; private local key configuration and actual map display remain pending. GitHub OAuth, Stripe sandbox/deployment and FCM topic sends remain pending.
+- Realtime Database and Storage are provisioned. The tested owner-only rules were successfully deployed to both.
+- The default us-central1 database was confirmed active, and the tested database rules were successfully deployed. Storage bucket bimbi-26ae2.firebasestorage.app is now provisioned and its rules deployed successfully. Use the continuation instructions in docs/CONTINUE_PHASE1.md to inspect the new resources before deployment.
+- Owner supplied a billing-linked Maps Android key privately. It was moved from the tracked Gradle settings into ignored android/secrets.properties before any commit; the rebuilt APK displayed native map tiles and the Bosque de Chapultepec marker on the physical tablet (tablet-map.png). GitHub OAuth, Stripe sandbox/deployment and FCM topic sends remain pending.
 
 ## Remaining physical checks
 
-Reboot/unlock restoration; recurrence across multiple deliveries; exact-access revocation; notification/channel/full-screen denial; battery saver/Doze; offline alarm; native Back dismissal after the latest patch; TalkBack and tablet landscape; real outdoor GPS and permission denial; accelerometer signal; optional Usage Access grant/revoke; live cloud probe; three-state FCM; Maps tiles; Stripe test success/decline/cancel.
+Reboot/unlock restoration; recurrence across multiple deliveries; exact-access revocation; notification/channel/full-screen denial; battery saver/Doze; offline alarm; native Back dismissal after the latest patch; TalkBack and tablet landscape; real outdoor GPS and permission denial; accelerometer signal; optional Usage Access grant/revoke; three-state FCM; Stripe test success/decline/cancel.
 
 ## Build and dependency notes
 
-The current APK is debug-signed and installable, not a final signed release. Its checksum is in apk-sha256.txt. It includes Google identity and persistent payment attempt IDs. The latest native source (predictive Back dismissal and blocked-channel detection) rebuilt successfully and all 22 Flutter tests passed. The latest locally configured APK was rebuilt and installed with the confirmed database URL; Maps/Storage require their remaining configuration.
+The current APK is debug-signed and installable, not a final signed release. Its checksum is in apk-sha256.txt. It includes Google identity and persistent payment attempt IDs. The latest native source (predictive Back dismissal and blocked-channel detection) rebuilt successfully and all 22 Flutter tests passed. The latest locally configured APK was rebuilt and installed with the confirmed database URL; Maps and Storage are configured and their basic live checks passed.
 
 Pinned Flutter build warns about FlutterFire plugins applying legacy Kotlin Gradle Plugin behavior. Current compilation succeeds; retest before upgrading Flutter. Firebase emulator development dependencies retain 14 moderate advisories after patching high-severity gRPC issues; those npm packages are not shipped in the APK or backend. Backend installation audit reported zero vulnerabilities. CI workflow is prepared; no remote/hosted Actions run exists.
 
