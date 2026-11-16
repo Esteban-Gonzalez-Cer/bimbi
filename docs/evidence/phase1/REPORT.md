@@ -36,6 +36,12 @@ A second alarm was scheduled for epoch 1794811774652 by PID 29206. Only Bimbi's 
 
 Owner completed Google account consent on the installed Firebase-connected build and confirmed that Profile shows their account and **Email verified**. Personal account details were not exported into evidence. Email/password verification/reset, GitHub, session restoration and sign-out still require separate tests.
 
+### GitHub identity and session restoration — PASS after fresh-session retry; email verification pending
+
+The owner configured the GitHub OAuth App and enabled Firebase's GitHub provider using the callback shown by Firebase: https://bimbi-26ae2.firebaseapp.com/__/auth/handler. The first physical-tablet attempt reached Chrome's hosted-handler page but showed missing initial state after consent. Bimbi's installed FlutterFire plugin delegates to native Firebase startActivityForSignInWithProvider, and its merged manifest includes GenericIdpActivity with the genericidp return scheme. No callback or SDK configuration change was made.
+
+The failed Chrome custom tab was closed, returning web-context-canceled to Bimbi, and a new GitHub attempt was started from the app. The owner confirmed return to Bimbi; independent UI inspection showed “GitHub sign-in completed,” Provider: github.com, and Email not verified. This demonstrates a successful fresh-session retry, not a permanent fix for browser-state loss. The first failure remains recorded as a reliability risk. A separate process restart completed with LaunchState COLD and new PID 10099 (old PID 5836). Without signing in again, Profile restored Provider: github.com and Email not verified. This establishes session persistence for the observed restart. A verification email was then requested; completion is pending.
+
 ### Live private database and image probe — PASS
 
 On the signed-in physical tablet, the verified session was refreshed and the real Firebase probe executed. The app reported: “Private record and image matched after readback; probe data deleted.” This establishes the owner roundtrip for the scoped record and PNG, including cleanup. Emulator cross-user denials are separately tested; actual second-account denial has not yet been exercised.
@@ -69,7 +75,7 @@ FCM-01 is now PASS for the three tested lifecycle cases and notification-open ha
 - Debug SHA-1/SHA-256 registered; web OAuth client downloaded to ignored local config. Google login confirmed above.
 - Realtime Database and Storage are provisioned. The tested owner-only rules were successfully deployed to both.
 - The default us-central1 database was confirmed active, and the tested database rules were successfully deployed. Storage bucket bimbi-26ae2.firebasestorage.app is now provisioned and its rules deployed successfully. Use the continuation instructions in docs/CONTINUE_PHASE1.md to inspect the new resources before deployment.
-- Owner supplied a billing-linked Maps Android key privately. It was moved from the tracked Gradle settings into ignored android/secrets.properties before any commit; the rebuilt APK displayed native map tiles and the Bosque de Chapultepec marker on the physical tablet (tablet-map.png). GitHub OAuth and Stripe sandbox/deployment remain pending. FCM topic subscription, foreground/background/ordinary terminated delivery and notification-open handling passed on the physical tablet.
+- Owner supplied a billing-linked Maps Android key privately. It was moved from the tracked Gradle settings into ignored android/secrets.properties before any commit; the rebuilt APK displayed native map tiles and the Bosque de Chapultepec marker on the physical tablet (tablet-map.png). GitHub sign-in succeeded after a browser-session retry; its email-verification and session-restoration checks are in progress. Stripe sandbox/deployment remains pending. FCM topic subscription, foreground/background/ordinary terminated delivery and notification-open handling passed on the physical tablet.
 
 ## Remaining physical checks
 

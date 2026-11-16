@@ -20,6 +20,12 @@ These Phase 1 rules intentionally deny all product paths other than the verified
 
 8. Rebuild with `--dart-define-from-file=config/dev.json`. On Profile create an account, check email, refresh verification, then run the private-data/image probe. Use two separate accounts for cross-user testing. Screenshots of actual account data must stay private.
 
+### GitHub browser-state troubleshooting
+
+A physical-tablet test encountered the hosted handler's “missing initial state” page after consent with the correct Firebase callback. Closing the failed Chrome custom tab and starting a new GitHub attempt from Bimbi succeeded; native-session restoration also passed. Treat this as an observed recovery, not a proven permanent fix.
+
+Keep the callback Firebase supplies. Start sign-in from the app and complete it within the same browser context. If this error occurs, close the failed custom tab and retry from the app; do not open the callback URL directly, disable OAuth state validation, clear all browser data, or change database rules as a workaround. Repeated occurrences require recording browser/SDK versions and sanitized redirect diagnostics before choosing a change. Never export OAuth codes, state values, or credentials in evidence.
+
 ## FCM console experiment
 
 Open Profile → Enable test topic and grant notification consent. Firebase Console → Messaging → notification campaign → topic `bimbi_phase1`; optionally add custom data `destination=profile` (or alarm/sleep/focus/running). Use generic test text without private information.

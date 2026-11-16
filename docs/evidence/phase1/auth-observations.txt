@@ -1,0 +1,10 @@
+Physical Samsung Galaxy Tab A9 SM-X115 / Android 16.
+Google sign-out: app showed Signed out.
+GitHub first attempt: owner reported missing initial state on Firebase hosted handler after consent. Chrome custom tab; no GitHub native app found on device.
+Installed FlutterFire uses native startActivityForSignInWithProvider; merged manifest includes GenericIdpActivity return handler.
+Failed tab closed: app showed Firebase: web-context-canceled.
+New attempt initiated from Bimbi: owner reported return to app; UI confirmed GitHub sign-in completed., Provider: github.com, Email not verified.
+Callback and SDK configuration were not changed. No OAuth state validation bypassed; no browser data cleared.
+Session restoration: old process 5836 terminated. Confirmed no process before relaunch. am start reported LaunchState COLD; new PID 10099. Profile restored Provider: github.com and Email not verified without another login.
+Verification email requested; completion not yet observed.
+Generic observations only; no account email, password, token, OAuth code or state value exported.
