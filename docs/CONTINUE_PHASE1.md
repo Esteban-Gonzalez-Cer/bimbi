@@ -5,7 +5,7 @@ See evidence/phase1/REPORT.md for actual outcomes. The approval-review interrupt
 ## Completed service setup
 
 - Project bimbi-26ae2, Android com.bimbi.app, debug SHA-1/SHA-256 registered.
-- Google sign-in with verified email confirmed on the physical tablet. GitHub OAuth is configured; GitHub sign-in and cold-start session restoration passed after retrying an initial browser-state failure. GitHub email verification is in progress.
+- Google sign-in with verified email confirmed on the physical tablet. GitHub OAuth is configured; GitHub sign-in and cold-start session restoration passed after retrying an initial browser-state failure. GitHub email verification also passed after the link was opened and the session refreshed.
 - Default database bimbi-26ae2-default-rtdb in us-central1, bucket bimbi-26ae2.firebasestorage.app; owner-only rules deployed to both.
 - Physical-tablet private record/image probe passed and deleted its test data.
 - Maps key is stored only in ignored android/secrets.properties. Native tiles and Chapultepec marker rendered on the tablet. Never put that key back in tracked android/gradle.properties.
@@ -23,7 +23,7 @@ Phone widget coverage and screenshots exist, and managed five-destination intera
 - Finish foreground accelerometer/GPS sampling and stop/background cancellation checks. Ask the owner for a short outdoor walk. Keep private coordinates out of evidence and delete the in-memory trace afterward.
 - FCM three-state acceptance is complete on the tablet. Force-stop is a separate negative scenario; do not repeat the completed topic campaigns unless changes justify a regression check.
 - Email/password verification/reset/resend, sign-out/session restoration and actual second-user data denial still require live checks.
-- Stripe sandbox is not configured. GitHub OAuth setup and actual sign-in are complete; do not recreate that OAuth App. Finish its email-verification check, then proceed with Stripe using SETUP.md. Keep secrets in provider consoles/server secret storage. Payment endpoint and tests are implemented, but no live Stripe checkout or production billing is established.
+- Stripe sandbox is not configured. GitHub OAuth setup and actual sign-in are complete; do not recreate that OAuth App. Its email-verification check is also complete; proceed with Stripe using SETUP.md. Keep secrets in provider consoles/server secret storage. Payment endpoint and tests are implemented, but no live Stripe checkout or production billing is established.
 - Reboot/unlock, recurrence, exact-access revocation, full-screen denial, offline/battery-saver alarms, native Back dismissal, TalkBack and tablet landscape remain individual acceptance scenarios.
 
 ## Reproduce checks when changes justify a rerun
