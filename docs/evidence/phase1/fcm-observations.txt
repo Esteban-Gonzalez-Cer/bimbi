@@ -1,0 +1,7 @@
+Physical Samsung Galaxy Tab A9 SM-X115 / Android 16.
+Topic subscription observed: Subscribed to the Phase 1 topic.
+Owner published a console-origin notification to bimbi_phase1 while Bimbi stayed foreground.
+Initial inspections: subscription status only.
+Later inspection: Foreground topic message received.
+The content above records generic UI observations, without message bodies, tokens or account data.
+Background/terminated cases remain pending.

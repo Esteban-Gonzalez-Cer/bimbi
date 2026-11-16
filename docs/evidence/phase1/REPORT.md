@@ -48,9 +48,9 @@ The foreground motion experiment was started on the physical tablet. The owner g
 
 The Maps-configured build was installed successfully. The native map displayed real tiles and the Bosque de Chapultepec marker on the physical tablet; visually inspected screenshot: tablet-map.png. This does not establish outdoor GPS tracking.
 
-### FCM subscription — PASS; delivery pending
+### FCM subscription and foreground delivery — PASS
 
-Bimbi Profile was inspected on the physical tablet after enabling the test topic. It displayed “Subscribed to the Phase 1 topic.” The topic is bimbi_phase1. Campaign delivery has not yet been sent/verified; the new project initially displayed the Create your first campaign onboarding page.
+Bimbi Profile was inspected on the physical tablet after enabling the test topic. It displayed “Subscribed to the Phase 1 topic.” The topic is bimbi_phase1. The owner published a Firebase Console notification campaign to this topic while Bimbi was foreground. Initial inspections still showed the subscription status; a later device inspection confirmed “Foreground topic message received.” Delivery was therefore observed after a delay; no precise send-to-receive latency was measured. Background and terminated delivery remain pending. The new project initially displayed the Create your first campaign onboarding page.
 
 ## Cloud configuration state
 
