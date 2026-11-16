@@ -1,2 +1,2 @@
-1b4b7fb59e58b6650afd53a789ffd18ce74c194654962cf8a9e4489e15e55f26  app-debug.apk
-Maps/Firebase-connected debug build; installed on physical tablet; map rendering and cloud probe verified.
+db82b7ca2bdab6fb61edb9bf459222c9cdb2feb22d2426bc64d72f278c1e0703  app-debug.apk
+Normal Firebase/Maps-connected entrypoint restored after successful phone integration tests.

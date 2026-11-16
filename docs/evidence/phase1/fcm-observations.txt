@@ -5,6 +5,10 @@ Subsequent device inspection: Foreground topic message received.
 The initial absence is not counted as FCM latency or delivery failure.
 Background: Bimbi was backgrounded using Home. Owner reported another console notification arrived after approximately 1–2 minutes.
 Timing is an owner estimate, not a measured send-to-receive latency.
-Initial inspection after background arrival: no Bimbi screen visible; notification-tap verification pending.
-Ordinary terminated-state test pending. No force-stop used.
+Background tap: owner confirmed Bimbi opened. Device UI independently showed Bimbi · Profile and Notification opened the requested tab. PID 5395.
+Ordinary terminated: Home was pressed and Bimbi PID 5395 was killed using the app UID; subsequent pidof returned no process. Android Force stop was not used.
+Owner published a closed-app test campaign to bimbi_phase1, confirmed arrival, and tapped it.
+Device inspection then showed Bimbi · Profile and Notification opened the requested tab. New PID: 5836.
+Verdict FCM-01: PASS for foreground/background/ordinary terminated delivery and notification-open handling on this tablet.
+Force-stop behavior is outside this passing result. No guaranteed delivery latency claimed.
 Generic observations only; no message bodies, tokens or account data exported.

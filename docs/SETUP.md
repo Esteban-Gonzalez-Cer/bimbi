@@ -55,3 +55,16 @@ Run `ANDROID_HOME=<sdk> ./scripts/create_phone_emulators.sh`. Launch each separa
 - Bimbi_Phone_412: `wm size 1236x2472`, `wm density 480` → 412×824 logical pixels.
 
 The script chooses ARM64 on Apple Silicon and x86_64 on Linux CI. Android images require a download on a clean machine. Keep both profiles separate from your personal emulator.
+
+### Managed interaction tests
+
+Keep emulator startup and testing within the same managed run to avoid a disconnected device between commands. The runner starts a dedicated Bimbi profile using the installed software renderer, waits for boot, sets its logical width, runs the five-tab integration test, and stops only the emulator it started. It leaves the physical tablet untouched.
+
+```sh
+ANDROID_HOME=<sdk-directory> ./scripts/test_phone_profile.sh 360
+ANDROID_HOME=<sdk-directory> ./scripts/test_phone_profile.sh 412
+# Integration tests build a test entrypoint; restore the distributable app afterward.
+flutter build apk --debug --dart-define-from-file=config/dev.json
+```
+
+Run these independently so a failure on one profile does not suppress the other. A failure in the device/graphics runner is not an application PASS; preserve its output and investigate before changing feature code.

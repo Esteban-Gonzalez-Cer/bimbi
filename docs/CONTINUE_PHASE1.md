@@ -9,18 +9,19 @@ See evidence/phase1/REPORT.md for actual outcomes. The approval-review interrupt
 - Default database bimbi-26ae2-default-rtdb in us-central1, bucket bimbi-26ae2.firebasestorage.app; owner-only rules deployed to both.
 - Physical-tablet private record/image probe passed and deleted its test data.
 - Maps key is stored only in ignored android/secrets.properties. Native tiles and Chapultepec marker rendered on the tablet. Never put that key back in tracked android/gradle.properties.
+- Accelerometer signal changed with physical movement (owner confirmation). FCM console topic delivery passed in foreground, background and ordinary terminated states, including notification taps.
 - Maps/Firebase-connected debug APK built and installed successfully. SHA-256 is in evidence/phase1/apk-sha256.txt.
 
 ## Validation already completed
 
 22 Flutter tests, 11 backend tests on Node 22.23.5, 6 Firebase security-rule emulator scenarios; analyzer clean; physical tablet five-tab navigation passed. Basic alarm and cold-process alarm delivery passed with native dismissal. Review the report's exact limits before generalizing.
 
-Phone widget coverage and emulator screenshots exist. The first emulator interaction runner failed to start Dart Development Service; later attempts found the emulator disconnected. Retry each profile independently rather than making one failure suppress the second. No phone interaction PASS is claimed yet.
+Phone widget coverage and screenshots exist, and managed five-destination interaction tests now pass on both 360dp and 412dp emulator profiles. Initial DDS/disconnection failures are preserved as history. Use scripts/test_phone_profile.sh if a relevant change requires rerunning these tests; restore a normal configured APK afterward because integration tests compile a test entrypoint.
 
 ## Remaining external and physical checks
 
 - Finish foreground accelerometer/GPS sampling and stop/background cancellation checks. Ask the owner for a short outdoor walk. Keep private coordinates out of evidence and delete the in-memory trace afterward.
-- Complete FCM topic sends in foreground/background/ordinary terminated states; tap navigation. Force-stop is a separate negative scenario.
+- FCM three-state acceptance is complete on the tablet. Force-stop is a separate negative scenario; do not repeat the completed topic campaigns unless changes justify a regression check.
 - Email/password verification/reset/resend, sign-out/session restoration and actual second-user data denial still require live checks.
 - GitHub OAuth App and Stripe sandbox are not configured. Follow SETUP.md; keep OAuth and Stripe secrets in provider consoles/server secret storage. Payment endpoint and test cases are implemented, but no live Stripe checkout or production billing is established.
 - Reboot/unlock, recurrence, exact-access revocation, full-screen denial, offline/battery-saver alarms, native Back dismissal, TalkBack and tablet landscape remain individual acceptance scenarios.
