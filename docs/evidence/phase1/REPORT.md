@@ -1,6 +1,6 @@
 # Phase 1 evidence — November 16, 2026
 
-Verdict: **CONDITIONAL / IN PROGRESS**. The app and experiments are implemented; full platform acceptance remains incomplete. No Phase 1 PASS or CORE-DEMO tag has been issued.
+Verdict: **CONDITIONAL / IN PROGRESS**. The app and experiments are implemented; full platform acceptance remains incomplete. Implementation checkpoint: local commit 8ee3d96 on feat/phase1-feasibility. No Phase 1 PASS or CORE-DEMO tag has been issued.
 
 ## Confirmed automated results
 
@@ -12,7 +12,7 @@ Verdict: **CONDITIONAL / IN PROGRESS**. The app and experiments are implemented;
 | TypeScript build | Passed after latest backend test additions | Runtime cloud deployment not executed |
 | Payment backend | 11 scenarios passed on Node 22.23.5 | Cloud deployment and real Stripe receipts pending |
 | Firebase rules emulators | 6 scenarios passed; rerun after gRPC patch passed | Actual deployed rules and live readback still pending |
-| Android debug APK | Latest native source rebuilt successfully; earlier Firebase-connected APK installed | Final configured build/install pending Maps/Storage setup |
+| Android debug APK | Latest native source rebuilt and installed successfully with Google auth and confirmed database URL | Maps/Storage configuration remains pending |
 | 360dp phone emulator | Screenshot captured; interaction test blocked by Dart Development Service startup failure | No application assertion executed in that failed test |
 | 412dp phone emulator | Screenshot captured | Independent retry could not locate the emulator after it disconnected |
 
@@ -51,7 +51,7 @@ Reboot/unlock restoration; recurrence across multiple deliveries; exact-access r
 
 ## Build and dependency notes
 
-The current APK is debug-signed and installable, not a final signed release. Its checksum is in apk-sha256.txt. It includes Google identity and persistent payment attempt IDs. The latest native source (predictive Back dismissal and blocked-channel detection) rebuilt successfully and all 22 Flutter tests passed. The final locally configured APK will be rebuilt after the remaining settings are available.
+The current APK is debug-signed and installable, not a final signed release. Its checksum is in apk-sha256.txt. It includes Google identity and persistent payment attempt IDs. The latest native source (predictive Back dismissal and blocked-channel detection) rebuilt successfully and all 22 Flutter tests passed. The latest locally configured APK was rebuilt and installed with the confirmed database URL; Maps/Storage require their remaining configuration.
 
 Pinned Flutter build warns about FlutterFire plugins applying legacy Kotlin Gradle Plugin behavior. Current compilation succeeds; retest before upgrading Flutter. Firebase emulator development dependencies retain 14 moderate advisories after patching high-severity gRPC issues; those npm packages are not shipped in the APK or backend. Backend installation audit reported zero vulnerabilities. CI workflow is prepared; no remote/hosted Actions run exists.
 

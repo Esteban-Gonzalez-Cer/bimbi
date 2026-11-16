@@ -13,7 +13,7 @@ npm test --prefix payment_demo/server
 flutter build apk --debug --dart-define-from-file=config/dev.json
 ```
 
-Use Node 22 for backend tests. Approval-review access recovered on retry; no credit purchase/reset was needed. The local /private/tmp/bimbi-node22 runtime is temporary and not a reproducibility requirement. FVM 3.47.5 pin and lockfiles are committed only when the Git checkpoint below is completed; currently all implementation files remain in the working tree.
+Use Node 22 for backend tests. Approval-review access recovered on retry; no credit purchase/reset was needed. The local /private/tmp/bimbi-node22 runtime is temporary and not a reproducibility requirement. FVM 3.47.5 pin, lockfiles and implementation are saved in local commit 8ee3d96 on feat/phase1-feasibility. There is no remote repository yet.
 
 The latest source rebuilt successfully, and 22 Flutter tests plus 11 Node 22 backend tests passed. Rebuild the configured APK again after the actual database/Maps/Storage settings are saved. Install with adb -s <tablet-serial> install -r; do not uninstall or clear data unnecessarily. Native alarm service audio auto-stops after two minutes.
 
