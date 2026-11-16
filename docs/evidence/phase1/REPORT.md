@@ -50,7 +50,11 @@ The Maps-configured build was installed successfully. The native map displayed r
 
 ### FCM subscription and foreground delivery — PASS
 
-Bimbi Profile was inspected on the physical tablet after enabling the test topic. It displayed “Subscribed to the Phase 1 topic.” The topic is bimbi_phase1. The owner published a Firebase Console notification campaign to this topic while Bimbi was foreground. Initial inspections still showed the subscription status; a later device inspection confirmed “Foreground topic message received.” Delivery was therefore observed after a delay; no precise send-to-receive latency was measured. Background and terminated delivery remain pending. The new project initially displayed the Create your first campaign onboarding page.
+Bimbi Profile was inspected on the physical tablet after enabling the test topic. It displayed “Subscribed to the Phase 1 topic.” The topic is bimbi_phase1. The owner published a Firebase Console notification campaign to this topic while Bimbi was foreground. The owner clarified that an initial campaign missed the topic, then published a corrected topic-targeted campaign. A subsequent device inspection confirmed “Foreground topic message received.” The initial absence is not counted as an FCM delivery failure or measured latency. No precise send-to-receive latency was measured. The new project initially displayed the Create your first campaign onboarding page.
+
+### FCM background delivery — PASS by owner confirmation; tap pending
+
+After Bimbi was put in the background using Home, the owner published another console notification to bimbi_phase1 and reported that it arrived approximately 1–2 minutes later. That timing is an owner estimate, not instrumented latency. Bimbi was not visible at the first inspection after arrival; notification-tap handling and the ordinary terminated-state case remain unverified.
 
 ## Cloud configuration state
 
@@ -59,7 +63,7 @@ Bimbi Profile was inspected on the physical tablet after enabling the test topic
 - Debug SHA-1/SHA-256 registered; web OAuth client downloaded to ignored local config. Google login confirmed above.
 - Realtime Database and Storage are provisioned. The tested owner-only rules were successfully deployed to both.
 - The default us-central1 database was confirmed active, and the tested database rules were successfully deployed. Storage bucket bimbi-26ae2.firebasestorage.app is now provisioned and its rules deployed successfully. Use the continuation instructions in docs/CONTINUE_PHASE1.md to inspect the new resources before deployment.
-- Owner supplied a billing-linked Maps Android key privately. It was moved from the tracked Gradle settings into ignored android/secrets.properties before any commit; the rebuilt APK displayed native map tiles and the Bosque de Chapultepec marker on the physical tablet (tablet-map.png). GitHub OAuth, Stripe sandbox/deployment and FCM topic sends remain pending.
+- Owner supplied a billing-linked Maps Android key privately. It was moved from the tracked Gradle settings into ignored android/secrets.properties before any commit; the rebuilt APK displayed native map tiles and the Bosque de Chapultepec marker on the physical tablet (tablet-map.png). GitHub OAuth and Stripe sandbox/deployment remain pending. FCM topic subscription and foreground/background delivery have evidence; tap handling and terminated delivery remain pending.
 
 ## Remaining physical checks
 

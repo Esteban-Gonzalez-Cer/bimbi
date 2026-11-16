@@ -1,7 +1,10 @@
 Physical Samsung Galaxy Tab A9 SM-X115 / Android 16.
 Topic subscription observed: Subscribed to the Phase 1 topic.
-Owner published a console-origin notification to bimbi_phase1 while Bimbi stayed foreground.
-Initial inspections: subscription status only.
-Later inspection: Foreground topic message received.
-The content above records generic UI observations, without message bodies, tokens or account data.
-Background/terminated cases remain pending.
+Foreground: owner clarified that the first campaign missed the topic. They published a corrected campaign to bimbi_phase1 while Bimbi stayed foreground.
+Subsequent device inspection: Foreground topic message received.
+The initial absence is not counted as FCM latency or delivery failure.
+Background: Bimbi was backgrounded using Home. Owner reported another console notification arrived after approximately 1–2 minutes.
+Timing is an owner estimate, not a measured send-to-receive latency.
+Initial inspection after background arrival: no Bimbi screen visible; notification-tap verification pending.
+Ordinary terminated-state test pending. No force-stop used.
+Generic observations only; no message bodies, tokens or account data exported.
