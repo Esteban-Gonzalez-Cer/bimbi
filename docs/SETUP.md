@@ -24,6 +24,8 @@ These Phase 1 rules intentionally deny all product paths other than the verified
 
 Open Profile → Enable test topic and grant notification consent. Firebase Console → Messaging → notification campaign → topic `bimbi_phase1`; optionally add custom data `destination=profile` (or alarm/sleep/focus/running). Use generic test text without private information.
 
+For a new Firebase project the Messaging landing page shows **Create your first campaign**. Select **Firebase Notification messages** (not In-App Messaging), then Create. Enter a generic title/body, continue to Target, choose Topic, and enter/select `bimbi_phase1`. The topic is created by the client subscription; it is not a manually provisioned database resource. Confirm Bimbi shows **Subscribed to the Phase 1 topic** before targeting it. The separate Send test message dialog asks for a registration identifier and is not the topic-send path. Console autocomplete may not immediately reflect a new subscription; do not switch to all users as a workaround.
+
 Send independently with Bimbi foreground, background, and terminated normally. Tap background/terminated notifications and confirm the destination. Force-stop in Android settings is a separate negative case; reopen before expecting delivery. No custom sending backend is installed. Disable the topic when finished.
 
 ## Maps and cost controls

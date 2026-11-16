@@ -40,9 +40,17 @@ Owner completed Google account consent on the installed Firebase-connected build
 
 On the signed-in physical tablet, the verified session was refreshed and the real Firebase probe executed. The app reported: “Private record and image matched after readback; probe data deleted.” This establishes the owner roundtrip for the scoped record and PNG, including cleanup. Emulator cross-user denials are separately tested; actual second-account denial has not yet been exercised.
 
+### Accelerometer — PASS by owner confirmation
+
+The foreground motion experiment was started on the physical tablet. The owner gently moved the tablet and confirmed the Movement number changed. This establishes a real signal on this unit; it does not yet prove every lifecycle cancellation/denial scenario.
+
 ### Native Google map — PASS for rendering
 
 The Maps-configured build was installed successfully. The native map displayed real tiles and the Bosque de Chapultepec marker on the physical tablet; visually inspected screenshot: tablet-map.png. This does not establish outdoor GPS tracking.
+
+### FCM subscription — PASS; delivery pending
+
+Bimbi Profile was inspected on the physical tablet after enabling the test topic. It displayed “Subscribed to the Phase 1 topic.” The topic is bimbi_phase1. Campaign delivery has not yet been sent/verified; the new project initially displayed the Create your first campaign onboarding page.
 
 ## Cloud configuration state
 
@@ -55,7 +63,7 @@ The Maps-configured build was installed successfully. The native map displayed r
 
 ## Remaining physical checks
 
-Reboot/unlock restoration; recurrence across multiple deliveries; exact-access revocation; notification/channel/full-screen denial; battery saver/Doze; offline alarm; native Back dismissal after the latest patch; TalkBack and tablet landscape; real outdoor GPS and permission denial; accelerometer signal; optional Usage Access grant/revoke; three-state FCM; Stripe test success/decline/cancel.
+Reboot/unlock restoration; recurrence across multiple deliveries; exact-access revocation; notification/channel/full-screen denial; battery saver/Doze; offline alarm; native Back dismissal after the latest patch; TalkBack and tablet landscape; real outdoor GPS and permission denial; optional Usage Access grant/revoke; three-state FCM; Stripe test success/decline/cancel.
 
 ## Build and dependency notes
 
