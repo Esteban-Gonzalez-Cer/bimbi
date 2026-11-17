@@ -9,10 +9,10 @@ Verdict: **CONDITIONAL / IN PROGRESS**. The app and experiments are implemented;
 | Flutter analyzer | No issues in final run | Full cloud/device acceptance remains separate |
 | Flutter unit/widget tests | 22 passed | Four logical widths (360/412/700/900), text scales 1/1.3/2; platform and tracking adapters |
 | Physical tablet navigation | 1 integration test passed | All five destinations; cloud configuration absent in that specific test build |
-| TypeScript build | Passed after latest backend test additions | Runtime cloud deployment not executed |
-| Payment backend | 11 scenarios passed on Node 22.23.5 | Cloud deployment and real Stripe receipts pending |
+| TypeScript build | Passed locally and during Firebase predeploy; endpoint ACTIVE | Real sandbox checkout still pending |
+| Payment backend | 11 scenarios passed on Node 22.23.5; 4 live HTTP rejection checks passed | Authenticated Stripe sandbox receipts still pending |
 | Firebase rules emulators | 6 scenarios passed; rerun after gRPC patch passed | Database and Storage rules deployed; live owner readback passed; real two-account denial remains pending |
-| Android debug APK | Latest native source rebuilt and installed successfully with Google auth and confirmed database URL | Maps tiles/marker and live private record/image readback passed |
+| Android debug APK | Firebase/Maps build installed and verified; payment-connected build now compiled | Tablet disconnected before payment-build installation |
 | 360dp phone emulator | Five-destination integration test passed on managed rerun | UI interaction only; no emulator claim for physical alarm/GPS reliability |
 | 412dp phone emulator | Five-destination integration test passed on managed rerun | UI interaction only; no emulator claim for physical alarm/GPS reliability |
 
@@ -75,7 +75,7 @@ FCM-01 is now PASS for the three tested lifecycle cases and notification-open ha
 - Debug SHA-1/SHA-256 registered; web OAuth client downloaded to ignored local config. Google login confirmed above.
 - Realtime Database and Storage are provisioned. The tested owner-only rules were successfully deployed to both.
 - The default us-central1 database was confirmed active, and the tested database rules were successfully deployed. Storage bucket bimbi-26ae2.firebasestorage.app is now provisioned and its rules deployed successfully. Use the continuation instructions in docs/CONTINUE_PHASE1.md to inspect the new resources before deployment.
-- Owner supplied a billing-linked Maps Android key privately. It was moved from the tracked Gradle settings into ignored android/secrets.properties before any commit; the rebuilt APK displayed native map tiles and the Bosque de Chapultepec marker on the physical tablet (tablet-map.png). GitHub sign-in succeeded after a browser-session retry; its email-verification and cold-start session-restoration checks also passed. Stripe sandbox/deployment remains pending. FCM topic subscription, foreground/background/ordinary terminated delivery and notification-open handling passed on the physical tablet.
+- Owner supplied a billing-linked Maps Android key privately. It was moved from the tracked Gradle settings into ignored android/secrets.properties before any commit; the rebuilt APK displayed native map tiles and the Bosque de Chapultepec marker on the physical tablet (tablet-map.png). GitHub sign-in succeeded after a browser-session retry; its email-verification and cold-start session-restoration checks also passed. A sandbox publishable key is saved in ignored local app configuration and has the required pk_test_ prefix; no server secret was found in that file. The first secret setup used the key as the resource name instead of the literal STRIPE_SECRET_KEY name; correction instructions and test-key rotation guidance were provided without exporting the value. A subsequent metadata-only lookup confirmed the correctly named STRIPE_SECRET_KEY exists. The paymentApi endpoint was then deployed successfully in us-central1 on Node 22 (gcfv2), ACTIVE with maxInstances 1 and configured minInstances 0. Its new artifact repository has one-day image cleanup. Four live HTTP boundary checks passed (405 for GET; 401 for anonymous create/verify and an invalid identity token). Real sandbox checkout remains pending. FCM topic subscription, foreground/background/ordinary terminated delivery and notification-open handling passed on the physical tablet.
 
 ## Remaining physical checks
 
@@ -83,7 +83,7 @@ Reboot/unlock restoration; recurrence across multiple deliveries; exact-access r
 
 ## Build and dependency notes
 
-The current APK is debug-signed and installable, not a final signed release. Its checksum is in apk-sha256.txt. It includes Google identity and persistent payment attempt IDs. The latest native source (predictive Back dismissal and blocked-channel detection) rebuilt successfully and all 22 Flutter tests passed. The latest locally configured APK was rebuilt and installed with the confirmed database URL; Maps and Storage are configured and their basic live checks passed.
+The current APK is debug-signed and installable, not a final signed release. Its checksum is in apk-sha256.txt. It includes Google/GitHub identity and persistent payment attempt IDs. A new payment-connected APK compiled successfully after saving the deployed endpoint URL; installation was blocked because no tablet was connected. Previous installed builds passed the native/map/auth checks documented above. The latest native source (predictive Back dismissal and blocked-channel detection) rebuilt successfully and all 22 Flutter tests passed. The latest locally configured APK was rebuilt and installed with the confirmed database URL; Maps and Storage are configured and their basic live checks passed.
 
 Pinned Flutter build warns about FlutterFire plugins applying legacy Kotlin Gradle Plugin behavior. Current compilation succeeds; retest before upgrading Flutter. Firebase emulator development dependencies retain 14 moderate advisories after patching high-severity gRPC issues; those npm packages are not shipped in the APK or backend. Backend installation audit reported zero vulnerabilities. CI workflow is prepared; no remote/hosted Actions run exists.
 

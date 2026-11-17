@@ -1,0 +1,5 @@
+GET rejected: HTTP 405, expected error matched=True, PASS=True
+Anonymous creation rejected: HTTP 401, expected error matched=True, PASS=True
+Anonymous verification rejected: HTTP 401, expected error matched=True, PASS=True
+Invalid identity rejected: HTTP 401, expected error matched=True, PASS=True
+TLS verified with system curl. No authenticated identities or secret values used. No PaymentIntents created by these checks.

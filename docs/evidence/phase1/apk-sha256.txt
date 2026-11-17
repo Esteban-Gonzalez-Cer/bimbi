@@ -1,2 +1,2 @@
-db82b7ca2bdab6fb61edb9bf459222c9cdb2feb22d2426bc64d72f278c1e0703  app-debug.apk
-Normal Firebase/Maps-connected entrypoint restored after successful phone integration tests.
+06ff148cd3034a4a78b628f7672b550ef4ca384dd2a98174ed49a0f43a0cf2ad  app-debug.apk
+Payment/Firebase/Maps-connected debug APK compiled successfully; tablet reconnection required for installation.

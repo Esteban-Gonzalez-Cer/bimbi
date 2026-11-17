@@ -1,0 +1,12 @@
+Stripe sandbox endpoint deployed; physical PaymentSheet verification pending.
+App publishable key prefix checked: pk_test_. No server secret values found in app configuration.
+Correctly named Firebase STRIPE_SECRET_KEY confirmed through metadata-only lookup; secret value was not read or printed.
+First setup used a key as a resource name; literal-name correction and test-key rotation guidance provided. Rotation not independently verified.
+Endpoint deployment succeeded for codebase bimbi-phase1, paymentApi, us-central1, Node 22, configured minInstances 0, maxInstances 1.
+Deployed metadata confirmed ACTIVE, gcfv2, nodejs22, maxInstances 1.
+Endpoint: https://us-central1-bimbi-26ae2.cloudfunctions.net/paymentApi
+One-day cleanup policy configured for the new gcf-artifacts repository.
+Four live boundary checks passed: GET rejected 405; anonymous create/verify and invalid identity rejected 401. No PaymentIntents created by those checks.
+Initial system Python HTTPS check failed due to its local CA configuration. Rechecked successfully with system curl, with TLS verification enabled.
+Payment-connected debug APK compiled successfully. Installation could not run because adb reported no connected devices. Owner asked to reconnect the tablet.
+Live checkout outcomes remain unverified until observed.
