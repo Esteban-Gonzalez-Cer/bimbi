@@ -16,7 +16,7 @@ Independent UI inspection showed Account created. Check your verification email.
 Provider: password, and Email not verified. Test private data and image, Plus,
 and Premium controls were disabled. Resend verification was enabled; invoking
 it returned Verification requested. without a too-many-requests indication.
-Email-link verification, password reset and subsequent sign-in remain pending.
+At that checkpoint, email-link verification, password reset and subsequent sign-in had not yet run; follow-up outcomes are recorded below.
 
 Email verification follow-up: owner confirmed the link. App refreshed user/token;
 UI showed Provider: password, Email verified, Session refreshed. Private data

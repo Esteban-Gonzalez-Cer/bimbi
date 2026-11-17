@@ -45,6 +45,8 @@ scheduling, and alarm-channel blocking during an active service passed.
 Details and generic native logs: alarm-permission-observations.txt,
 alarm-permission-events.txt, alarm-active-channel-revocation-events.txt.
 
-Still unverified here: recurrence, full-screen denial, offline/battery-saver/
-Doze and TalkBack. Additional results, when executed, are recorded in the
-report and the per-scenario observations rather than inferred from these tests.
+Later checks passed recurrence/cancel, owner-observed full-screen-denied locked
+dismissal, unplugged offline/power-saving delivery and TalkBack. See REPORT.md
+and the per-scenario records for actual build hashes and limits. Natural
+overnight Doze remains unverified. Final packaged native alert/Dismiss checks
+also passed; the API 26 legacy branch remains runtime-unverified.

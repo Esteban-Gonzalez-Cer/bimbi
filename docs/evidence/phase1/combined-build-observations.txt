@@ -1,0 +1,5 @@
+Device: Galaxy Tab A9 SM-X115, Android 16/API36
+Build SHA-256: 170c30c02b94b26662a8abd884f82790271d830f0560fed810a8f79123bdf85b
+Motion start returned success; Home and reopen showed Tracking stopped. GPS start returned success; Home and reopen showed Tracking stopped. In-memory trace cleared, Accepted GPS samples: 0 independently observed. No coordinates or route screenshot exported.
+Verified password session restored on this installed build. Real private database/image probe passed readback and cleanup. Navigation, alarms, map and cloud SDKs coexist in this same build; previous FCM/provider/Stripe tests are individually scoped in REPORT.md and were not repeated merely for the native diagnostic change.
+Verdict: PASS for the observed combined smoke and lifecycle checks; final unplugged/TalkBack acceptance remains separate.

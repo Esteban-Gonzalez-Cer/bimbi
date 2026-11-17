@@ -18,3 +18,6 @@ Scheduled 1794884726056; denied exact UID app-op before due. No matching receive
 
 FULL-SCREEN DENIAL / LOCKED FALLBACK — UNVERIFIED
 Samsung full-screen access disabled; Bimbi capability confirmed not allowed. Scheduled 1794885142909 and screen switched off before due. Automatic native activity absent as expected, but automation did not locate the notification title/action in the locked shade. It could not restore Settings while keyguard was present. No fallback-dismissal PASS claimed. Recovery checked/stopped the test service through only the app UID if needed; owner unlock required for Settings restoration and pending/active cleanup.
+
+OWNER-OBSERVED FULL-SCREEN-DENIED LOCKED FALLBACK — PASS
+Owner confirmed dismissal worked while locked. Read-only pre-delivery context recorded showing=true and SCREEN_STATE_OFF. Native dismissal 19.54 seconds after delivery, active flag cleared and no service running afterward. Full-screen Settings grant restored: True. Evidence: alarm-manual-fallback-context.txt and alarm-manual-fallback-events.txt. This owner-observed result supersedes the earlier automation-only unverified attempt.

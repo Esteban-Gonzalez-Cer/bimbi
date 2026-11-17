@@ -1,0 +1,8 @@
+Device: Galaxy Tab A9 SM-X115, Android 16/API36
+Build SHA-256: 170c30c02b94b26662a8abd884f82790271d830f0560fed810a8f79123bdf85b
+Prerequisites: exact, notifications and full-screen allowed; tablet unlocked and USB-connected.
+Verdict: PASS for two deliveries, native next-one-shot rearming, dismiss preserving recurrence, and cancellation preventing the third delivery.
+Occurrence 1: fired:scheduled=1794886001852:actual=1794886001899:powerSave=false:deviceIdle=false:interactive=true; next=1794886061852
+Occurrence 2: fired:scheduled=1794886061852:actual=1794886061895:powerSave=false:deviceIdle=false:interactive=true; next=1794886121852
+Cancelled third occurrence 1794886121852; no matching fire/active/service after due.
+Original rotation restored. Logs include powerSave/deviceIdle/interactive flags at delivery; no broader battery or overnight claim.

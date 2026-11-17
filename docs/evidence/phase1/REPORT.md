@@ -1,6 +1,18 @@
 # Phase 1 evidence — November 16, 2026
 
-Verdict: **CONDITIONAL / IN PROGRESS**. The app and experiments are implemented; full platform acceptance remains incomplete. Implementation checkpoint: local commit 8ee3d96 on feat/phase1-feasibility. No Phase 1 PASS or CORE-DEMO tag has been issued.
+Verdict: **PASS — first Phase 1 feasibility pass on the Samsung Galaxy Tab A9**. All seven experiments have recorded results, including the requested short device scenarios. Source and evidence are on local branch feat/phase1-feasibility; the installable development APK is identified in apk-sha256.txt. Production workflows and prolonged reliability validation belong to later phases.
+
+## Experiment outcomes
+
+| Experiment | Verdict | Scope |
+|---|---|---|
+| Native alarm | PASS | Native sound/alert/dismissal; process death; reboot/unlock; recurrence/cancel; permission denial/revocation; locked notification fallback; unplugged offline/power-saving case |
+| Firebase identity | PASS | Email/password, Google and GitHub; restored sessions, sign-out, verification/resend and password reset. GitHub needed a fresh-session retry after its initial hosted-handler failure |
+| Push notifications | PASS | Foreground, background and ordinary terminated topic delivery; tap navigation. Force-stop remains a documented platform limitation |
+| Maps, location and motion | PASS | Native public-park map; seven accepted outdoor samples; real movement signal; denial/stop/background handling |
+| Stripe test payment | PASS | Cancel, decline, server-verified success and same-intent retry; no paid entitlement |
+| Optional Usage Access | PASS | Adapter grant/denial/revocation; original denied state restored; local aggregate only |
+| Combined device check | PASS | One installed build contains all adapters; navigation, tracking lifecycle, alarm and real authenticated data probe coexist. Earlier provider/FCM/Stripe results retain their own build provenance |
 
 ## Confirmed automated results
 
@@ -12,7 +24,7 @@ Verdict: **CONDITIONAL / IN PROGRESS**. The app and experiments are implemented;
 | TypeScript build | Passed locally and during Firebase predeploy; endpoint ACTIVE | Native sandbox checkout also passed; production billing excluded |
 | Payment backend | 11 unit scenarios and 4 live HTTP rejection checks passed; native sandbox cancel/decline/success and retry reuse passed | Production/recurring billing excluded |
 | Firebase rules emulators | 6 scenarios passed; rerun after gRPC patch passed | Database and Storage rules deployed; live owner readback passed; real two-account denial remains pending |
-| Android debug APK | Payment/Firebase/Maps-connected build installed; verified GitHub session preserved | Remaining GPS/alarm/accessibility scenarios tracked separately |
+| Android debug APK | Configured development build compiled and installed; final checksum in apk-sha256.txt | Native device scenarios and build provenance recorded below; API 26 runtime remains unverified |
 | 360dp phone emulator | Five-destination integration test passed on managed rerun | UI interaction only; no emulator claim for physical alarm/GPS reliability |
 | 412dp phone emulator | Five-destination integration test passed on managed rerun | UI interaction only; no emulator claim for physical alarm/GPS reliability |
 
@@ -20,7 +32,7 @@ Phone screenshot evidence: phone-360.png and phone-412.png. Rule test output: ru
 
 ## Physical tablet evidence
 
-Samsung Galaxy Tab A9 SM-X115, Android 16 / API 36. Physical display 800×1340 at 213dpi (~601 logical pixels wide). GPS and accelerometer features reported; no gyroscope feature reported. Battery saver initially off. Outdoor GPS sampling passed below; OEM power exemptions and TalkBack remain unverified. See device.txt.
+Samsung Galaxy Tab A9 SM-X115, Android 16 / API 36, Google Play services 26.20.31. Physical display 800×1340 at 213dpi (~601 logical pixels wide). GPS and accelerometer features reported; no gyroscope feature reported. Standard device-idle whitelist did not include Bimbi. Samsung-specific sleeping lists remain uninspected. Battery saver and TalkBack were initially off and were restored after their tests. See device.txt.
 
 ### Basic alarm — PASS for background/screen-off scenario
 
@@ -54,9 +66,13 @@ A separate alarm was allowed to start. With its service independently observed a
 
 Revoking exact access after scheduling a further 30-second occurrence prevented delivery: no matching fired event, active alarm or service was observed after its due time. On reopening, Bimbi explicitly reported exact access not allowed. The local saved intent was retained while permission was denied; it was not armed in Android. Regranting access triggered the restore receiver, which cleared the now-expired one-time occurrence and recorded missed_during_downtime. Original access was restored. Evidence: alarm-exact-revocation-events.txt.
 
-### Full-screen-denied locked fallback — UNVERIFIED; owner observation pending
+### Full-screen-denied locked fallback — PASS by owner observation and native dismissal
 
-Full-screen access was disabled in Samsung Settings and Bimbi confirmed the denied capability while notifications remained allowed. With the screen off before delivery, no automatic native full-screen activity appeared, as expected. Automation did not locate the notification title/action in the locked shade and could not reach the Settings switch through keyguard. This is not counted as a fallback-dismissal PASS or a proven app failure. The test service was stopped through only the app's UID. A fresh three-minute alarm (epoch 1794885571212) is now with the owner for a manual locked-notification dismissal check, followed by unlocking and restoration of full-screen access. See alarm-permission-observations.txt and alarm-fullscreen-denied-events.txt.
+Full-screen access was disabled in Samsung Settings and Bimbi confirmed the denied capability while notifications remained allowed. An initial automation-only attempt could not locate the notification title/action in the locked shade and could not reach Settings through keyguard. That attempt remains unverified rather than being counted as an app failure or a dismissal pass; its service was stopped through only the app's UID.
+
+A fresh three-minute alarm (epoch 1794885571212) was then tested with the owner. A read-only check before delivery confirmed keyguard showing=true and SCREEN_STATE_OFF. The owner explicitly confirmed “The dismissal worked while locked.” Native dismissal was recorded **19.54 seconds after delivery**, well before the two-minute safety timeout. Independent checks showed the active flag cleared and AlarmService stopped. Full-screen access was then restored through Samsung Settings and its switch independently confirmed enabled. See alarm-manual-fallback-context.txt, alarm-manual-fallback-events.txt, alarm-manual-fallback-result.txt and alarm-permission-observations.txt.
+
+Android documents a heads-up notification with action buttons when full-screen access is denied; the observed owner-dismissal result is specific to this Samsung configuration. See [AOSP full-screen intent limits](https://source.android.com/docs/core/permissions/fsi-limits).
 
 ### Google identity — PASS by owner confirmation
 
@@ -74,11 +90,37 @@ The owner created an account with a controlled unused inbox/alias, entering its 
 
 Only the Bimbi process was terminated without force-stop, then a relaunch reported LaunchState COLD with a new process. The verified password-provider session restored without another sign-in. Sign out then showed Signed out and removed the account/provider controls. The owner requested password reset in Bimbi, followed the inbox link, chose a new password privately and confirmed reset and sign-in. Independent UI inspection then showed Signed in, Email verified and Provider: password. Generic evidence is in auth-observations.txt; no addresses or credentials were exported.
 
-### Tablet navigation and enlarged text — PASS for interaction; badge adjustment pending visual recheck
+### Tablet navigation, enlarged text and Android Back — PASS for observed cases
 
 All five destinations and their matching app-bar headers were independently exercised at portrait and landscape orientations with system font_scale 1.0 and 2.0. Actual rotation was set through wm user-rotation, rather than merely changing a preference that the tablet might ignore. The original free rotation and font_scale 1 were restored. See tablet-layout-observations.txt and tablet-*-text-*.png. No profile or route screenshots were retained.
 
-Visual review found the development-only Phase 1 badge clipped vertically at enlarged text. Its vertical padding was removed and the app passed formatting, analysis, all 22 Flutter tests and a configured debug build. The adjusted badge still needs its installed visual recheck. TalkBack remains unverified. The initial layout automation attempt had no usable UI hierarchy with the screen asleep; the successful run woke the screen and checked each destination explicitly.
+Visual review found the development-only Phase 1 badge clipped vertically at enlarged text. Its vertical padding was removed and the app passed formatting, analysis, all 22 Flutter tests and a configured debug build. Installed visual rechecks at scale 2.0 in portrait and landscape confirmed the complete badge is visible; scroll checks reached a full-height Dismiss ringing alarm control and invoked it in both orientations. Original font and rotation were restored. Android Back from Profile selected Alarm; Back from Alarm exited the app view, followed by successful reopen. The initial layout automation attempt had no usable UI hierarchy with the screen asleep; the successful run woke the screen and checked each destination explicitly. TalkBack remains separate.
+
+### Recurrence, dismissal and cancellation — PASS
+
+On the current power-diagnostic APK (170c30c0…), two occurrences fired at epochs 1794886001899 and 1794886061895, respectively 47ms and 43ms after their scheduled epochs. Each re-armed a fresh one-shot occurrence exactly 60 seconds later. Dismissal stopped the active service while retaining only the next recurrence. Cancelling after the second delivery removed the third pending occurrence; waiting beyond its due time confirmed no matching fired event, active alarm or service. Native records reported powerSave=false, deviceIdle=false and interactive=true for these deliveries. This is a recurrence/cancellation result, not an offline/battery-saver result. See alarm-recurrence-observations.txt and alarm-recurrence-events.txt.
+
+### Optional Usage Access — PASS for adapter grant/deny/revoke
+
+The app-op was temporarily denied, granted and revoked. Denial returned the explicit Usage Access is not granted result; granting made the local aggregate query available; revocation returned to explicit denial with Focus still reachable. The original denied/default mode was restored. No app names, counts or foreground-time totals were exported into evidence or uploaded. This validates the optional adapter behavior; the Focus timer remains a later-phase placeholder and consent-screen interaction was not part of this app-op check. See usage-access-observations.txt.
+
+### Tracking lifecycle and combined-build smoke — PASS for observed cases
+
+Motion start returned success; after Home and reopen, Tracking stopped was observed. The GPS start flow likewise returned success and backgrounding/reopen showed Tracking stopped. Clearing the in-memory trace independently showed Accepted GPS samples: 0. No location or route image was exported. The current APK also restored the verified password-provider session and passed another real private database/image readback and cleanup. This checks coexistence in the installed build; prior real provider/FCM/Stripe cases remain separately scoped rather than being falsely reported as repeated. See combined-build-observations.txt.
+
+### Unplugged offline and battery-saver alarm — PASS
+
+The owner unplugged USB and performed the requested Power saving / Airplane mode / Wi-Fi-off / background-and-lock flow. They confirmed sound, full-screen alert and dismissal worked. The matching native receiver delivered epoch 1794887008519 **794ms after schedule**, recording powerSave=true, deviceIdle=false and interactive=false. After reconnecting, checks showed no pending/active alarm or running service; Airplane mode was off, Wi-Fi on and low_power=0, matching the original state.
+
+The stop was recorded 126.917 seconds after the receiver event. Because the older log uses the same dismissed event for both manual and safety-timeout paths, the owner was asked to clarify and explicitly confirmed pressing Dismiss while it was still sounding, before it stopped itself. Manual attribution for this case is owner-confirmed; the native records independently establish the delivery conditions and stopped state. Network state during the unplugged interval was owner-controlled rather than independently instrumented. Receiver timestamps do not measure audio-start latency. See alarm-offline-battery-result.txt and alarm-offline-battery-events.txt.
+
+### TalkBack tab labels and native dismissal — PASS by owner confirmation
+
+The owner enabled Samsung TalkBack, visited the five destinations and performed a new locked-screen native alarm test. A read-only observer independently recorded TalkBack enabled when the owner scheduled epoch 1794888266196 and when that native alarm fired, then observed the active alarm cleared. The owner confirmed that all five spoken tab labels and native Dismiss worked. Follow-up checks confirmed TalkBack was off again, no active/pending alarm or service, font_scale=1.0, free rotation and original optional Usage Access mode restored. See talkback-observations.txt and talkback-alarm-events.txt.
+
+### Final packaged native alert and handoff state — PASS
+
+The final compatibility build was installed and a fresh 30-second alarm delivered. Its notification/native alert was opened, the native Dismiss control measured 96px on this 213dpi tablet (the new 72dp minimum), and invoking it cleared the pending/active state and service. The verified password session was preserved; the local trace was cleared to zero. Exact/notification/full-screen capabilities remained allowed, while TalkBack, Airplane mode and Power saving were off, Wi-Fi on, and display/optional-access settings restored. See final-build-smoke.txt, final-native-alarm-events.txt and final-native-alarm.png. The preceding hands-on cases retain their earlier artifact hashes.
 
 ### Live private database and image probe — PASS
 
@@ -124,16 +166,22 @@ Device location was enabled at preflight. Start GPS opened Android's location-co
 - Owner refreshed the local Firebase sign-in and enabled Email/Password + Google.
 - Debug SHA-1/SHA-256 registered; web OAuth client downloaded to ignored local config. Google login confirmed above.
 - Realtime Database and Storage are provisioned. The tested owner-only rules were successfully deployed to both.
-- The default us-central1 database was confirmed active, and the tested database rules were successfully deployed. Storage bucket bimbi-26ae2.firebasestorage.app is now provisioned and its rules deployed successfully. Use the continuation instructions in docs/CONTINUE_PHASE1.md to inspect the new resources before deployment.
+- Default database bimbi-26ae2-default-rtdb in us-central1 and Storage bucket bimbi-26ae2.firebasestorage.app were provisioned, locked rules deployed and owner roundtrips verified.
 - Owner supplied a billing-linked Maps Android key privately. It was moved from the tracked Gradle settings into ignored android/secrets.properties before any commit; the rebuilt APK displayed native map tiles and the Bosque de Chapultepec marker on the physical tablet (tablet-map.png). GitHub sign-in succeeded after a browser-session retry; its email-verification and cold-start session-restoration checks also passed. A sandbox publishable key is saved in ignored local app configuration and has the required pk_test_ prefix; no server secret was found in that file. The first secret setup used the key as the resource name instead of the literal STRIPE_SECRET_KEY name; correction instructions and test-key rotation guidance were provided without exporting the value. A subsequent metadata-only lookup confirmed the correctly named STRIPE_SECRET_KEY exists. The paymentApi endpoint was then deployed successfully in us-central1 on Node 22 (gcfv2), ACTIVE with maxInstances 1 and configured minInstances 0. Its new artifact repository has one-day image cleanup. Four live HTTP boundary checks passed (405 for GET; 401 for anonymous create/verify and an invalid identity token). Native sandbox checkout has now passed the cancellation, decline and server-verified success cases below. FCM topic subscription, foreground/background/ordinary terminated delivery and notification-open handling passed on the physical tablet.
+- Owner confirmed a monthly alerts-only budget for bimbi-26ae2 with the requested 50%, 90% and 100% email thresholds. This is owner-confirmed console setup; no billing account details or budget amount were exported. An alerts-only budget sends notifications rather than imposing a spend cap. See [Google Cloud budgets](https://docs.cloud.google.com/billing/docs/how-to/budgets).
 
-## Remaining physical checks
+## Verification limits and follow-up
 
-Recurrence across multiple deliveries; full-screen denial; battery saver/Doze; offline alarm; TalkBack; optional Usage Access grant/revoke. Exact-access denial/revocation and notification/channel denial/revocation passed individually, with grants restored. Reboot/unlock sound and notification delivery, locked-screen presentation and native Back dismissal passed as individually recorded above. Tablet portrait/landscape and enlarged-text navigation passed, with the small badge fix awaiting its visual recheck.
+- Natural overnight Doze, Samsung sleeping/deep-sleeping policies and prolonged alarm reliability remain unverified. The unplugged test recorded deviceIdle=false.
+- Native alarm runtime was physically checked on API 36. The API 26 lock-screen fallback uses the legacy window flags; its runtime path still needs an API 26 device/emulator check. Phone emulators established navigation, not real alarm/GPS reliability.
+- Firebase cross-user denial and authenticated payment ownership/price manipulation are automated emulator/unit results. Live checks establish owner data roundtrip, payment outcomes and unauthenticated boundary rejection; they do not add a real two-account denial result.
+- GitHub's initial missing-state browser failure remains a reliability risk despite successful fresh-session retry, verification and restored sessions.
+- Force-stop/powered-off/pre-unlock Direct Boot behavior is outside the supported spike. FCM force-stop requires reopening. Full synchronization, recurring billing, production entitlements and release signing remain later-phase work.
+- Hosted Actions and branch protection remain pending a remote repository. Budget alerts and Maps restrictions include owner-confirmed console setup; test-key rotation guidance from the earlier misnamed secret was provided, with rotation not independently verified.
 
 ## Build and dependency notes
 
-The current APK is debug-signed and installable, not a final signed release. Its checksum is in apk-sha256.txt. It includes Google/GitHub identity and persistent payment attempt IDs. A new payment-connected APK compiled successfully after saving the deployed endpoint URL. Initial installation was blocked by disconnection; it was installed successfully after the owner reconnected the tablet. Previous installed builds passed the native/map/auth checks documented above. The latest native source (predictive Back dismissal and blocked-channel detection) rebuilt successfully and all 22 Flutter tests passed. The latest locally configured APK was rebuilt and installed with the confirmed database URL; Maps and Storage are configured and their basic live checks passed.
+The current APK is an installable debug development build; checksum and prior scenario hashes are in apk-sha256.txt. Formatting, analyzer and 22 Flutter tests passed for the final Dart source. Subsequent Kotlin-only power-state logging, API 26 window flags and density-aware native Dismiss sizing were compiled separately, with a final native alert/button smoke test. The device records identify actual build hashes rather than implying every earlier experiment was repeated. The API 26 flags follow [Android's WindowManager reference](https://developer.android.com/reference/android/view/WindowManager.LayoutParams); modern lock-screen API calls are unchanged, and the 72dp target preserves the earlier 96px geometry on this tablet.
 
 Pinned Flutter build warns about FlutterFire plugins applying legacy Kotlin Gradle Plugin behavior. Current compilation succeeds; retest before upgrading Flutter. Firebase emulator development dependencies retain 14 moderate advisories after patching high-severity gRPC issues; those npm packages are not shipped in the APK or backend. Backend installation audit reported zero vulnerabilities. CI workflow is prepared; no remote/hosted Actions run exists.
 

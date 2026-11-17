@@ -1,0 +1,1 @@
+Full-screen-denied test scheduled at 1794885571212 completed. Owner confirmed dismissal while locked; native context/dismissal evidence recorded. Full-screen grant restored: True. See alarm-permission-observations.txt.

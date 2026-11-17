@@ -10,4 +10,7 @@ No gyroscope feature reported by pm list features
 Phone emulators: Bimbi_Phone_360 (1080x2160 at 480dpi); Bimbi_Phone_412 (1236x2472 at 480dpi)
 Phone image: Android API 36 google_apis_playstore arm64-v8a
 Exact/full-screen/notification access: granted for basic tablet alarm tests
-OEM power exemption and TalkBack: not yet verified
+TalkBack: owner-tested spoken labels for all five tabs and native alarm dismissal; restored OFF. Samsung-specific sleeping policy remains unverified.
+
+Follow-up read-only inspection: Google Play services version 26.20.31. Bimbi present in standard device-idle whitelist: False. Samsung-specific sleeping/deep-sleeping lists were not inspected.
+USB stay-on flag was observed as 7 during this session and preserved. Network/power restore: airplane_mode_on=0, wifi_on=1, low_power=0.

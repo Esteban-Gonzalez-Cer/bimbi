@@ -1,0 +1,7 @@
+Device: Galaxy Tab A9 SM-X115, Android 16/API36
+Build SHA-256: 170c30c02b94b26662a8abd884f82790271d830f0560fed810a8f79123bdf85b
+Verdict: PASS by owner confirmation plus native power-state/delivery/stop evidence for the observed unplugged/offline/power-saving scenario.
+Owner was asked to unplug USB, enable Power saving, enable Airplane mode with Wi-Fi off, background Bimbi and lock. Owner reported sound, alert and dismissal worked, then reconnected and unlocked.
+Native delivery 794ms after scheduled epoch 1794887008519. powerSave=true, deviceIdle=false, interactive=false. Native dismissal 126.917s after delivery; no pending/active/service afterward=True.
+Network state during disconnection is owner-controlled/reported, not independently instrumented. Native power/screen flags are independently captured at delivery. Restored settings: {'airplane_mode_on': '0', 'wifi_on': '1', 'low_power': '0'}. Natural overnight Doze remains unverified.
+Owner clarification: explicitly pressed Dismiss alarm while it was still sounding; it had not stopped itself. Older native logs do not distinguish manual dismissal from safety timeout, so manual attribution is owner-confirmed.

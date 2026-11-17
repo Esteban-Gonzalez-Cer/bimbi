@@ -1,10 +1,14 @@
-fb9e33e28157def3261a3c9dba9240f76c5ba6cc4fa2deb136687a88319e8ffe  app-debug.apk
-Payment/Firebase/Maps-connected debug APK with alarm notification-revocation checks
-and the enlarged-text badge spacing adjustment. Formatting, analysis, 22 Flutter
-tests and compilation passed. Badge-adjusted build installed successfully with
-the verified email/password session preserved.
-The previous installed notification-check build was
-ce323a87010e14005566b82a5e732daa79d1ec149fa2a860500c86b6fc538a2b.
-Earlier sandbox and reboot/locked-screen checks used SHA-256
-06ff148cd3034a4a78b628f7672b550ef4ca384dd2a98174ed49a0f43a0cf2ad;
-see per-scenario observations for validation scope.
+b7d185be21c1ba7803840b0ed77618195833f4efe5c9efdd6a6c5503e36b2607  app-debug.apk
+Final configured debug APK, successfully built and installed. Final installed-build
+smoke passed (final-build-smoke.txt): verified email session, empty location trace,
+restored alarm permissions, schedule/cancel and no pending/active/service.
+Final additions: API 26 legacy lock-screen flags and a 72dp minimum native
+Dismiss target. The target is 96px on this tablet, matching earlier geometry.
+The final packaged native alert/button check passed; API 26 runtime is unverified.
+
+Earlier scenario build hashes:
+170c30c02b94b26662a8abd884f82790271d830f0560fed810a8f79123bdf85b — power-state diagnostics; recurrence/cancel, enlarged-text/Back, optional usage, tracking/combined cloud, unplugged offline/power-saving and TalkBack device tests.
+fb9e33e28157def3261a3c9dba9240f76c5ba6cc4fa2deb136687a88319e8ffe — permission guards and owner-observed locked notification dismissal.
+ce323a87010e14005566b82a5e732daa79d1ec149fa2a860500c86b6fc538a2b — email-account and initial tablet-layout checks.
+06ff148cd3034a4a78b628f7672b550ef4ca384dd2a98174ed49a0f43a0cf2ad — native sandbox payment and reboot/locked-screen checks.
+See REPORT.md and per-scenario observations for precise validation scope.

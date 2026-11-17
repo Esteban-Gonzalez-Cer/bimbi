@@ -14,7 +14,7 @@ A Flutter/Riverpod development app for proving Android wellbeing capabilities be
 - Stripe test PaymentSheet and authenticated TypeScript backend with server-owned prices, ownership verification and durable retry mapping.
 - Automated Flutter, backend, security-rule tests and an Android CI workflow.
 
-**Implementation is not proof of cloud/device success.** See [Phase 1 evidence](docs/evidence/phase1/REPORT.md) for actual results and outstanding tests. The finished sleep diary, Focus timer, production alarm editing, recurring subscriptions, avatar policy, cloud synchronization and gamification are later phases.
+**The first tablet feasibility pass completed on November 16, 2026.** See [Phase 1 evidence](docs/evidence/phase1/REPORT.md) for device, owner-confirmed, unit/emulator results and verification limits; the current development APK is identified by its [checksum](docs/evidence/phase1/apk-sha256.txt). The finished sleep diary, Focus timer, production alarm editing, recurring subscriptions, avatar policy, cloud synchronization and gamification are later phases.
 
 ## Run
 
@@ -49,6 +49,6 @@ Device integration tests may reinstall/reset app permissions. Regrant through An
 
 ## Safety and privacy boundaries
 
-Alarm execution and dismissal never use Firebase or gamification. The test alarm stops audio after two minutes. Device permissions are explicit. GPS samples are not uploaded. Payment fields remain in PaymentSheet; Stripe secret keys only belong in the server secret store. Paid access is never granted by this experiment.
+Alarm execution and dismissal never use Firebase or gamification. One-shot test audio has a two-minute timeout; use Cancel pending alarm to end a recurrence experiment. Device permissions are explicit. GPS samples are not uploaded. Payment fields remain in PaymentSheet; Stripe secret keys only belong in the server secret store. Paid access is never granted by this experiment.
 
 See [architecture](docs/ARCHITECTURE.md), [setup](docs/SETUP.md), [test plan](docs/TEST_PLAN.md), [limitations](docs/LIMITATIONS.md), and [security](docs/SECURITY.md).

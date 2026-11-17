@@ -1,0 +1,5 @@
+Expected alarm epoch: 1794885571212
+Read-only pre-delivery lock-state observation; no wake/touch action sent.
+showing=true
+inputRestricted=false
+screenState=SCREEN_STATE_OFF

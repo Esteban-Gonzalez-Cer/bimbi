@@ -1,0 +1,10 @@
+Device: Galaxy Tab A9 SM-X115, Android 16/API36
+Build SHA-256: 170c30c02b94b26662a8abd884f82790271d830f0560fed810a8f79123bdf85b
+Read-only observer; no wake, tap or setting changes sent.
+TalkBack enabled independently observed.
+Owner scheduled alarm 1794888266196; TalkBack enabled=True.
+Matching native delivery observed; TalkBack enabled=True.
+Active alarm cleared after delivery; owner attribution still required.
+Owner explicitly confirmed: Five tab labels worked and native dismiss worked.
+Verdict: PASS for owner-tested tab announcements and native locked-alarm dismissal, supported by independently observed enabled state at scheduling/delivery and cleared active state afterward.
+Final checks: TalkBack OFF, no active/pending alarm, no AlarmService; font_scale 1.0, free rotation and original Usage Access mode restored.

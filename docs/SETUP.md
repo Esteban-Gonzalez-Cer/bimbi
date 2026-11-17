@@ -40,7 +40,7 @@ Enable Maps SDK for Android only, with a billing account and an Android-restrict
 
 Use the included public Chapultepec marker without Places/Directions requests. Source: https://mexicocity.cdmx.gob.mx/locations/chapultepec-park/?lang=es . Its coordinate is a representative point within the park, not a verified route or a user's position.
 
-Configure billing budgets and notifications, supported request quotas, and review usage after each session. Budgets are alerts, not spending caps. Free allowances do not guarantee zero cost. Keep large media, live traffic, paid map services and production environments out of Phase 1.
+Configure a monthly alerts-only budget scoped to the development project, email thresholds (50/90/100% are the defaults), supported request quotas, and review usage after each session. An alerts-only budget sends warnings as costs rise; it does not impose a spend cap. Free allowances do not guarantee zero cost. Keep large media, live traffic, paid map services and production environments out of Phase 1. See [Google Cloud budget setup](https://docs.cloud.google.com/billing/docs/how-to/budgets).
 
 ## Stripe
 

@@ -52,3 +52,7 @@ Running Gradle task 'assembleDebug'...                             10.5s
 ✓ Built build/app/outputs/flutter-apk/app-debug.apk
 
 Exit code: 0
+
+Follow-up native-only builds: power-state diagnostics and API 26 legacy window flags compiled successfully. Final compatibility output is in final-compatibility-build.txt. Final installed-build smoke passed; actual APK SHA-256 8faf1bc24fa71d9327f75fffc2a514639b65ac09721cb68842d1bc0a0621bbd2. Dart source is unchanged from the 22-test/analyzer/format run above.
+
+Final native compatibility/touch-target build compiled and installed. Final packaged 30s native alert opened; 96px Dismiss button invoked successfully, no pending/active/service. Final checksum: b7d185be21c1ba7803840b0ed77618195833f4efe5c9efdd6a6c5503e36b2607. See final-build-smoke.txt and final-native-alarm-events.txt.

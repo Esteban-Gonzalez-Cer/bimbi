@@ -1,0 +1,7 @@
+Device: Galaxy Tab A9 SM-X115, Android 16/API36
+Build SHA-256: 170c30c02b94b26662a8abd884f82790271d830f0560fed810a8f79123bdf85b
+Verdict: PASS for optional adapter grant/deny/revoke; app-op controlled. Consent screen interaction is separate. No app names, aggregate counts or foreground-time values exported into evidence; no upload implemented. Focus is still a later-phase timer placeholder, so this proves navigation remains available, not timer behavior.
+Optional Usage Access denial explicit: True
+Granted Usage Access returned local aggregate: True
+Revocation handled; Focus destination remains available: True
+Original Usage Access mode and rotation restored.

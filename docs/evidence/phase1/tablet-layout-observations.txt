@@ -6,3 +6,8 @@ landscape-text-1.0: five destination/header assertions PASS; public Alarm screen
 portrait-text-2.0: five destination/header assertions PASS; public Alarm screenshot saved
 landscape-text-2.0: five destination/header assertions PASS; public Alarm screenshot saved
 TalkBack and visual screenshot review recorded separately.
+
+Badge-adjusted/power-state build SHA-256: 170c30c02b94b26662a8abd884f82790271d830f0560fed810a8f79123bdf85b
+portrait: enlarged-text screenshot captured and full-height Dismiss control reached by scrolling and invoked.
+landscape: enlarged-text screenshot captured and full-height Dismiss control reached by scrolling and invoked.
+New 2.0 screenshots replace the original names; before-badge-fix images retain the earlier finding. Android Back from Profile returned to Alarm; Back from Alarm exited the app view, followed by successful reopen. Original font and free rotation restored. Visual review follows separately.

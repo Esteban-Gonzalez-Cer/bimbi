@@ -1,0 +1,4 @@
+Device: Galaxy Tab A9 SM-X115, Android 16/API36
+Build SHA-256: 170c30c02b94b26662a8abd884f82790271d830f0560fed810a8f79123bdf85b
+Expected epoch: 1794887008519
+Prerequisites independently checked: exact, notifications, full-screen allowed; no previous pending/active alarm. Original settings: Airplane mode off, Wi-Fi on, low_power=0, TalkBack off. Owner will unplug USB, enable Power saving, enable Airplane mode and ensure Wi-Fi off, background Bimbi and lock. Outcome completed: see alarm-offline-battery-result.txt and matching native events.

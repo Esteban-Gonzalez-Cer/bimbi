@@ -1,0 +1,6 @@
+Device: Galaxy Tab A9 SM-X115, Android 16/API36, recorded density 213dpi
+Final APK SHA-256: b7d185be21c1ba7803840b0ed77618195833f4efe5c9efdd6a6c5503e36b2607
+Verdict: PASS for final installed-build native/UI/state smoke.
+30s alarm scheduled 1794890310047; native service active; notification/native alert opened; Dismiss touch target 96px (at least 48dp); native button invoked; no pending/active/service afterward. Screenshot: final-native-alarm.png; events: final-native-alarm-events.txt.
+Verified password session restored; trace cleared to zero; exact/notification/full-screen allowed. Airplane mode off, Wi-Fi on, low_power=0, TalkBack off. Font scale 1.0/free rotation and optional Usage Access denied/default previously verified.
+Final additions: API 26 legacy lock-screen flags and a density-aware 72dp minimum native Dismiss target (96px on this tablet, matching earlier tablet geometry). Older API 26 runtime remains unverified. Prior scenario hashes retain their recorded scope.

@@ -5,6 +5,7 @@ import android.app.*
 import android.content.*
 import android.content.pm.PackageManager
 import android.os.Build
+import android.os.PowerManager
 import android.util.Log
 import org.json.JSONObject
 
@@ -81,7 +82,8 @@ class AlarmEngine(private val context: Context) {
             val next = at + ((System.currentTimeMillis() - at).coerceAtLeast(0) / interval + 1) * interval
             try { schedule(id!!, next, repeat) } catch (_: Exception) { event("repeat_restore_failed") }
         }
-        event("fired:scheduled=$at:actual=${System.currentTimeMillis()}")
+        val power = context.getSystemService(PowerManager::class.java)
+        event("fired:scheduled=$at:actual=${System.currentTimeMillis()}:powerSave=${power.isPowerSaveMode}:deviceIdle=${power.isDeviceIdleMode}:interactive=${power.isInteractive}")
         return true
     }
     fun restore() {
