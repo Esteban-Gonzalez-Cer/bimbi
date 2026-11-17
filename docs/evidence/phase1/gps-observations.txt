@@ -1,0 +1,7 @@
+Physical Samsung Galaxy Tab A9 SM-X115 / Android 16.
+Device location enabled at preflight; no coordinates read.
+First Start GPS opened Android's Precise/Approximate and foreground-consent dialog.
+Denial-path test selected Don't allow. Bimbi remained on Running and showed Location permission is unavailable. You can enable it in Android settings.
+Accepted GPS samples remained 0 after denial.
+Owner asked to grant foreground precise location and perform a short real outdoor walk; positive sample capture remains pending.
+No GPS coordinates or private route screenshots exported.

@@ -45,7 +45,7 @@ Configure billing budgets and notifications, supported request quotas, and revie
 ## Stripe
 
 1. Create/open a Stripe sandbox and use test keys only. The app rejects a publishable key without `pk_test_`; the backend rejects a secret without `sk_test_`.
-2. Set `STRIPE_SECRET_KEY` using `./scripts/firebase.sh functions:secrets:set STRIPE_SECRET_KEY --project bimbi-26ae2`; enter it privately at the prompt.
+2. Run `./scripts/firebase.sh functions:secrets:set STRIPE_SECRET_KEY --project bimbi-26ae2` exactly as written. `STRIPE_SECRET_KEY` is the literal resource name, not a placeholder for the key value. Paste the actual sandbox secret only when the private prompt says `Enter a value for STRIPE_SECRET_KEY:`. A successful resource path ends in `/secrets/STRIPE_SECRET_KEY/versions/<number>`. Never put the key itself in the command arguments or resource name. If that happens, rotate the test key before saving it correctly.
 3. `npm ci --prefix payment_demo/server && npm test --prefix payment_demo/server`.
 4. Deploy the `paymentApi` function after reviewing the backend and its billing settings. It uses Node 22, us-central1, minInstances 0, maxInstances 1, concurrency 10. Set Artifact Registry cleanup to avoid accumulating deployment images. These settings reduce costs but are not a hard financial cap.
 5. Set `PAYMENT_BASE_URL` to the deployed function URL without a trailing slash and `STRIPE_PUBLISHABLE_KEY` to its matching test key. Sign in with verified email first.

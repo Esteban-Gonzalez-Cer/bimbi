@@ -1,2 +1,2 @@
 06ff148cd3034a4a78b628f7672b550ef4ca384dd2a98174ed49a0f43a0cf2ad  app-debug.apk
-Payment/Firebase/Maps-connected debug APK compiled successfully; tablet reconnection required for installation.
+Payment/Firebase/Maps-connected debug APK compiled successfully; installed successfully after tablet reconnection; native sandbox cancel/decline/success passed.
