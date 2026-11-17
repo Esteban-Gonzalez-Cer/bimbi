@@ -9,3 +9,19 @@ Session restoration: old process 5836 terminated. Confirmed no process before re
 Firebase accepted verification-email request. Owner opened link and confirmed verification. App refreshed user and ID token; UI showed Session refreshed., Email verified, Provider: github.com.
 After verification, the live private record/image probe also returned Private record and image matched after readback; probe data deleted.
 Generic observations only; no account email, password, token, OAuth code or state value exported.
+
+Email/password account creation: owner entered an unused controlled inbox/alias
+and a password privately on the tablet. Owner confirmed account creation.
+Independent UI inspection showed Account created. Check your verification email.,
+Provider: password, and Email not verified. Test private data and image, Plus,
+and Premium controls were disabled. Resend verification was enabled; invoking
+it returned Verification requested. without a too-many-requests indication.
+Email-link verification, password reset and subsequent sign-in remain pending.
+
+Email verification follow-up: owner confirmed the link. App refreshed user/token;
+UI showed Provider: password, Email verified, Session refreshed. Private data
+control enabled; live private record/image readback and cleanup passed.
+Password session cold restart: old PID 14386, new PID 17253. No process before relaunch; LaunchState COLD; verified password provider restored.
+Sign out then showed Signed out. and removed provider/account controls. Password reset remains pending.
+
+Password reset: owner requested reset in Bimbi, followed the inbox link, set a new password privately and confirmed reset and signed in. Independent UI inspection showed Signed in., Email verified, Provider: password. AUTH-02 password-reset/new-password sign-in PASS for this account.

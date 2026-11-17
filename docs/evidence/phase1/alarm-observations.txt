@@ -1,0 +1,50 @@
+Date: 2026-11-16, America/Mexico_City
+Device: Samsung Galaxy Tab A9 SM-X115, Android 16/API 36
+Build for the reboot and locked-screen checks below: connected debug APK
+SHA-256: 06ff148cd3034a4a78b628f7672b550ef4ca384dd2a98174ed49a0f43a0cf2ad
+
+REBOOT / UNLOCK — PASS for restoration, sound and notification
+Prerequisites: exact alarm, notifications and full-screen access granted.
+Steps: schedule the three-minute experiment; reboot; owner unlocks before due
+without opening Bimbi; inspect native-only event log.
+Expected: future persisted occurrence restored, one native delivery.
+Actual: boot restore re-registered epoch 1794881914421. Delivered at epoch
+1794881915486 (1065ms late). Owner heard sound and saw notification, but did
+not see a full-screen alarm in this test. Screen state at firing was not
+independently captured. Safety timeout dismissed after approximately 120s.
+Evidence: alarm-before-reboot-events.txt, alarm-after-reboot-events.txt.
+No claim of reboot-test full-screen presentation is made.
+
+LOCKED SCREEN / NATIVE BACK — PASS
+Prerequisites: exact, notifications and full-screen capabilities allowed.
+Steps: schedule 30s; switch screen off immediately; independently confirm
+SCREEN_STATE_OFF; inspect native alert promptly; send Android Back.
+Expected: full-screen native alert, accessible dismissal control; Back stops
+audio/service without needing Flutter or a network.
+Actual: scheduled 1794882539996, fired 1794882540036 (40ms late). Native
+Good morning / Bimbi wake alarm and clickable DISMISS ALARM observed.
+Initial automation used a case-sensitive Dismiss match and missed the
+uppercase label; immediate reinspection confirmed it without changing app
+code. Back at 20:29:34 dismissed before the 120s timeout. active=false,
+pending absent, AlarmService not running afterward. This test did not add a
+new human sound confirmation; audible delivery is confirmed in other cases.
+Evidence: tablet-locked-alarm.png, alarm-locked-screen-events.txt.
+
+Android documents expanded notification behavior while a device is in use:
+https://developer.android.com/develop/ui/compose/notifications/create-notification?hl=en
+
+FOLLOW-UP IMPLEMENTATION AND DEVICE VALIDATION
+Code inspection found that notification access could be revoked between
+scheduling and delivery. Added notification checks at receiver/service
+boundaries and a one-second active-alert check. Denied delivery cancels the
+pending occurrence; active revocation stops audio and cancels recurrence.
+The updated debug APK compiled and installed successfully. On SHA-256
+fb9e33e28157def3261a3c9dba9240f76c5ba6cc4fa2deb136687a88319e8ffe,
+initial exact denial, notification runtime denial, runtime revocation after
+scheduling, and alarm-channel blocking during an active service passed.
+Details and generic native logs: alarm-permission-observations.txt,
+alarm-permission-events.txt, alarm-active-channel-revocation-events.txt.
+
+Still unverified here: recurrence, full-screen denial, offline/battery-saver/
+Doze and TalkBack. Additional results, when executed, are recorded in the
+report and the per-scenario observations rather than inferred from these tests.

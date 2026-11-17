@@ -8,9 +8,30 @@ import android.os.*
 class AlarmService : Service() {
     private var player: MediaPlayer? = null
     private val handler = Handler(Looper.getMainLooper())
+    private val accessWatch = object : Runnable {
+        override fun run() {
+            if (!AlarmEngine(this@AlarmService).notificationsAllowed()) {
+                stopForNotificationDenial()
+            } else handler.postDelayed(this, 1_000)
+        }
+    }
+    private fun stopForNotificationDenial() {
+        // Also cancel a pending recurrence: a permission change must not
+        // leave an audible alert running without its dismissal surface.
+        AlarmEngine(this).apply {
+            cancel()
+            event("notification_permission_revoked_alert_stopped")
+        }
+        stopSelf()
+    }
     override fun onBind(intent: Intent?) = null
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         AlarmEngine.channels(this)
+        // Recheck at the service boundary to cover revocation after receipt.
+        if (!AlarmEngine(this).notificationsAllowed()) {
+            stopForNotificationDenial()
+            return START_NOT_STICKY
+        }
         startForeground(200, notification(this))
         if (player == null) {
             try {
@@ -27,6 +48,7 @@ class AlarmService : Service() {
         // Experimental safety limit, not production wake-alarm behavior.
         handler.removeCallbacksAndMessages(null)
         handler.postDelayed({ AlarmEngine(this).dismiss() }, 120_000)
+        handler.postDelayed(accessWatch, 1_000)
         return START_NOT_STICKY
     }
     override fun onDestroy() {

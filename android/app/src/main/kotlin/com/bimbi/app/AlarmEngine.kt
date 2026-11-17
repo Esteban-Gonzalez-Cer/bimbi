@@ -67,6 +67,13 @@ class AlarmEngine(private val context: Context) {
     fun fire(id: String?, at: Long): Boolean {
         val record = pending() ?: return false
         if (record["id"] != id || record["atMillis"] != at) return false
+        // Access can change after scheduling. Never start audio without a
+        // notification through which the owner can reach Dismiss.
+        if (!notificationsAllowed()) {
+            cancel()
+            event("delivery_notification_permission_denied")
+            return false
+        }
         prefs.edit().remove("pending").putString("active", id).commit()
         val repeat = record["intervalSeconds"] as Long
         if (repeat > 0 && exactAllowed() && notificationsAllowed()) {

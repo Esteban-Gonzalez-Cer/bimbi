@@ -20,11 +20,15 @@ Phone widget coverage and screenshots exist, and managed five-destination intera
 
 ## Remaining external and physical checks
 
-- Finish foreground accelerometer/GPS sampling and stop/background cancellation checks. Ask the owner for a short outdoor walk. Keep private coordinates out of evidence and delete the in-memory trace afterward.
+- Foreground GPS walk now passed with seven accepted samples and independently confirmed stopped/stable count. Permission denial also passed. No coordinates/route images exported; the in-memory trace was cleared before the next checks. Do not request the same walk again unless a new change warrants regression. Background-cancellation and accuracy edge cases may be tested separately.
 - FCM three-state acceptance is complete on the tablet. Force-stop is a separate negative scenario; do not repeat the completed topic campaigns unless changes justify a regression check.
-- Email/password verification/reset/resend, sign-out/session restoration and actual second-user data denial still require live checks.
+- Email/password creation, unverified access gating, resend, verification refresh, live owner cloud probe, cold-session restoration, sign-out, password reset and new-password sign-in passed. Actual second-user data denial is still emulator-only.
 - Stripe sandbox keys are configured in their intended locations. STRIPE_SECRET_KEY metadata lookup succeeded without reading its value. paymentApi is ACTIVE at https://us-central1-bimbi-26ae2.cloudfunctions.net/paymentApi (us-central1, Node 22, configured minInstances 0/maxInstances 1); its artifact repository has one-day cleanup. Four unauthenticated/method rejection checks passed. The payment-connected APK compiled and was installed after reconnection. Native sandbox cancellation, provider decline, server-verified success, same-intent retry reuse, and no paid entitlement all passed; do not recreate accounts or request keys again. No live-mode payment or production billing is established.
-- Reboot/unlock, recurrence, exact-access revocation, full-screen denial, offline/battery-saver alarms, native Back dismissal, TalkBack and tablet landscape remain individual acceptance scenarios.
+- Reboot/unlock restoration passed with owner-confirmed sound and notification; the owner did not see a full-screen alarm in that particular scenario. A separate screen-off-before-delivery test passed native full-screen presentation and Back dismissal, with no active alarm/service afterward. Do not repeat these completed tests without a relevant change.
+- Tablet portrait/landscape navigation passed at font scales 1.0 and 2.0. The badge's clipped enlarged text was adjusted; the new build passed 22 tests and analysis, with installation/visual recheck pending.
+- Exact denial/revocation, notification runtime denial/revocation and active channel blocking passed with access restored. New receiver/service guards stop audio when its notification access disappears.
+- Full-screen access is temporarily OFF for an owner-observed locked fallback test, scheduled at epoch 1794885571212. Automation could not locate the locked notification action in the prior attempt; no fallback PASS is claimed. After the owner replies, restore Full screen alerts in Android Settings, dismiss any remaining native active flag, and record the observed outcome. Preserve lock-screen security; owner unlock is required when keyguard prevents settings access.
+- Recurrence, offline/battery-saver alarms and TalkBack remain individual acceptance scenarios.
 
 ## Reproduce checks when changes justify a rerun
 

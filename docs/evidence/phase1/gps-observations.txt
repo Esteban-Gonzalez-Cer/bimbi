@@ -3,5 +3,8 @@ Device location enabled at preflight; no coordinates read.
 First Start GPS opened Android's Precise/Approximate and foreground-consent dialog.
 Denial-path test selected Don't allow. Bimbi remained on Running and showed Location permission is unavailable. You can enable it in Android settings.
 Accepted GPS samples remained 0 after denial.
-Owner asked to grant foreground precise location and perform a short real outdoor walk; positive sample capture remains pending.
+Owner completed the requested foreground walk and reported 7 accepted GPS samples.
+Independent tablet inspection confirmed Accepted GPS samples: 7 and Tracking stopped. A later inspection still showed 7 and stopped.
+Delete local trace was invoked before the following alarm checks; the data is held only in memory and the subsequent device restart also discards it.
+Verdict: PASS for this foreground sample/stop scenario and the prior denial path. No accuracy calibration or long-run tracking guarantee is claimed.
 No GPS coordinates or private route screenshots exported.

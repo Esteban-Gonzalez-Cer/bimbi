@@ -1,0 +1,2 @@
+Build SHA-256: fb9e33e28157def3261a3c9dba9240f76c5ba6cc4fa2deb136687a88319e8ffe
+Manual full-screen-denied fallback scheduled at 1794885571212. Awaiting owner lock-screen dismissal observation; no PASS yet.

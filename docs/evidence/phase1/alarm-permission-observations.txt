@@ -1,0 +1,20 @@
+Device: Galaxy Tab A9 SM-X115, Android 16/API36
+Build SHA-256: fb9e33e28157def3261a3c9dba9240f76c5ba6cc4fa2deb136687a88319e8ffe
+EXACT INITIAL DENIAL — PASS. Set UID SCHEDULE_EXACT_ALARM deny; Android stopped the process; waited for completed cold startup. UI capability not allowed; scheduling returned exact_permission_denied; persisted pending absent. Restored UID allow and package default.
+Initial package-only denial attempts were ineffective due to UID allow overriding them and are not counted as denial tests.
+
+NOTIFICATION RUNTIME DENIAL/REVOCATION — PASS
+Method: actual POST_NOTIFICATIONS runtime revoke/grant, not only app-ops.
+Runtime notification denial: explicit scheduling rejection and no pending alarm: True
+Scheduled before runtime revocation: 1794884475159
+Revoked before delivery: denied event and no pending/active/service: True
+Original runtime notification grant and rotation restored.
+
+ACTIVE CHANNEL REVOCATION — PASS
+Started 30s alarm at 1794884599952; observed active alarm service. On Samsung alarm-channel settings, disabled its Allow notifications switch. Within two seconds, event notification_permission_revoked_alert_stopped, no active/pending alarm and no AlarmService. Restored the same channel switch to enabled. Test used actual channel settings; no app usage or account data exported.
+
+EXACT REVOCATION AFTER SCHEDULING — PASS for cancellation and reconciliation
+Scheduled 1794884726056; denied exact UID app-op before due. No matching receiver delivery, active alarm or service after due. Reopened app reported Exact alarms: not allowed. Local saved intent remains while denied; it is not an OS-armed alarm. Regrant triggered restore receiver, which cleared this now-expired one-time occurrence and recorded missed_during_downtime. Original grant and rotation restored.
+
+FULL-SCREEN DENIAL / LOCKED FALLBACK — UNVERIFIED
+Samsung full-screen access disabled; Bimbi capability confirmed not allowed. Scheduled 1794885142909 and screen switched off before due. Automatic native activity absent as expected, but automation did not locate the notification title/action in the locked shade. It could not restore Settings while keyguard was present. No fallback-dismissal PASS claimed. Recovery checked/stopped the test service through only the app UID if needed; owner unlock required for Settings restoration and pending/active cleanup.

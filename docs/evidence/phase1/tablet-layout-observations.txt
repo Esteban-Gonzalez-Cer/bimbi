@@ -1,0 +1,8 @@
+Device: Samsung Galaxy Tab A9 SM-X115, Android 16/API36
+Build SHA-256: ce323a87010e14005566b82a5e732daa79d1ec149fa2a860500c86b6fc538a2b
+Method: wm user-rotation lock 0/1; system font_scale 1.0/2.0; semantic navigation/header assertions. Original free rotation and font scale 1 restored. Rail scrolling allowed at enlarged text.
+portrait-text-1.0: five destination/header assertions PASS; public Alarm screenshot saved
+landscape-text-1.0: five destination/header assertions PASS; public Alarm screenshot saved
+portrait-text-2.0: five destination/header assertions PASS; public Alarm screenshot saved
+landscape-text-2.0: five destination/header assertions PASS; public Alarm screenshot saved
+TalkBack and visual screenshot review recorded separately.

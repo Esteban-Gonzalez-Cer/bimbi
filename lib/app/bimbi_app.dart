@@ -104,7 +104,7 @@ class _BimbiShellState extends ConsumerState<BimbiShell> {
               actions: [
                 if (AppConfig.harness)
                   const Padding(
-                    padding: EdgeInsets.all(12),
+                    padding: EdgeInsets.symmetric(horizontal: 12),
                     child: Chip(label: Text('Phase 1')),
                   ),
               ],
