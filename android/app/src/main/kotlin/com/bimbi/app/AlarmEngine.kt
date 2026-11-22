@@ -65,6 +65,8 @@ internal class AlarmEngine(context: Context) {
                 "id" to alarm.id, "label" to alarm.label,
                 "hour" to alarm.hour, "minute" to alarm.minute, "days" to alarm.days.sorted(),
                 "challenge" to alarm.challenge.wire, "difficulty" to alarm.difficulty.wire,
+                "tone" to alarm.sound.tone.wire, "volume" to alarm.sound.volume,
+                "intensity" to alarm.sound.intensity.wire,
                 "enabled" to alarm.enabled, "status" to status,
                 "nextAt" to alarm.next?.at?.takeIf { schedule == AlarmStatus.ARMED },
             )
@@ -73,7 +75,7 @@ internal class AlarmEngine(context: Context) {
 
     fun saveDraft(
         id: String?, label: String, hour: Int, minute: Int, days: Set<Int>,
-        challenge: WakeChallenge, difficulty: WakeDifficulty,
+        challenge: WakeChallenge, difficulty: WakeDifficulty, sound: AlarmSound,
     ): Map<String, Any?> {
         require(hour in 0..23 && minute in 0..59 && days.all { it in 0..6 })
         val book = store.load()
@@ -86,6 +88,7 @@ internal class AlarmEngine(context: Context) {
             enabled = old?.enabled ?: true,
             onceDay = old?.onceDay?.takeIf { sameTime },
             lastFiredDay = old?.lastFiredDay?.takeIf { sameTime },
+            sound = sound,
         )
         val result = replace(book, alarm, alarm.firstAfter(System.currentTimeMillis(), ZoneId.systemDefault()))
         changed()
@@ -290,14 +293,16 @@ internal class AlarmEngine(context: Context) {
 
     private fun fireRegular(book: AlarmBook, id: String, at: Long, now: Long): Boolean {
         val alarm = book.alarms.firstOrNull { it.id == id && it.enabled && it.next?.at == at } ?: return false
+        val occurrence = requireNotNull(alarm.next)
         val recurring = alarm.days.isNotEmpty()
         val allowed = blocked() == null
         val consumed = alarm.copy(
-            enabled = recurring, lastFiredDay = alarm.next!!.day,
+            enabled = recurring, lastFiredDay = occurrence.day,
             status = if (recurring) AlarmStatus.ERROR else if (allowed) AlarmStatus.FINISHED else AlarmStatus.MISSED,
         )
-        val updated = if (allowed) book.copy(episodes = book.episodes + episode(
-            id, alarm.label, alarm.challenge, alarm.difficulty, now)) else book
+        val updated = if (allowed) {
+            book.copy(episodes = book.episodes + alarm.startOccurrence(occurrence, now))
+        } else book
         val next = consumed.firstAfter(maxOf(now, at), ZoneId.systemDefault())
         replace(updated, consumed, next)
         if (!allowed) event("delivery_blocked_by_permissions")
@@ -319,7 +324,7 @@ internal class AlarmEngine(context: Context) {
             return false
         }
         store.save(book.copy(episodes = book.episodes.filterNot { it.id == id } +
-            episode.copy(snooze = null, arrivedAt = now)))
+            episode.resumeFromSnooze(now)))
         return true
     }
 
@@ -390,8 +395,10 @@ internal class AlarmEngine(context: Context) {
         val test = book.test?.takeIf { debug && it.at == at } ?: return false
         val allowed = blocked() == null
         val next = if (allowed && test.intervalSeconds > 0) test.copy(at = nextTestTime(test, now)) else null
-        val episodes = if (allowed) book.episodes + episode(
-            TEST_ALARM_ID, "Bimbi test alarm", WakeChallenge.MATH, WakeDifficulty.EASY, now) else book.episodes
+        val episodes = if (allowed) book.episodes + AlarmEpisode(
+            UUID.randomUUID().toString(), TEST_ALARM_ID, "Bimbi test alarm",
+            WakeChallenge.MATH, WakeDifficulty.EASY, arrivedAt = now, scheduledAt = at,
+        ) else book.episodes
         store.save(book.copy(test = next, episodes = episodes))
         next?.let { runCatching { arm("test", TEST_ALARM_ID, it.at) } }
         return allowed
@@ -401,9 +408,6 @@ internal class AlarmEngine(context: Context) {
         val interval = test.intervalSeconds * 1_000
         return test.at + ((now - test.at).coerceAtLeast(0) / interval + 1) * interval
     }
-
-    private fun episode(alarmId: String, label: String, challenge: WakeChallenge, level: WakeDifficulty, at: Long) =
-        AlarmEpisode(UUID.randomUUID().toString(), alarmId, label, challenge, level, arrivedAt = at)
 
     companion object {
         const val CHANNEL = "bimbi_alarm"

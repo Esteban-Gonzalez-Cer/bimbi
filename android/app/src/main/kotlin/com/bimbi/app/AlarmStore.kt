@@ -51,12 +51,14 @@ internal class AlarmStore(context: Context) {
         lastFiredDay = json.date("lastFired"),
         next = json.optJSONObject("next")?.let { AlarmTime(it.getLong("at"), LocalDate.parse(it.getString("day"))) },
         status = AlarmStatus.entries.firstOrNull { it.wire == json.optString("status") } ?: AlarmStatus.OFF,
+        sound = json.sound(),
     )
 
     private fun alarmJson(alarm: LocalAlarm) = JSONObject()
         .put("id", alarm.id).put("label", alarm.label).put("hour", alarm.hour).put("minute", alarm.minute)
         .put("days", JSONArray(alarm.days.sorted()))
         .put("challenge", alarm.challenge.wire).put("difficulty", alarm.difficulty.wire)
+        .put("tone", alarm.sound.tone.wire).put("volume", alarm.sound.volume).put("intensity", alarm.sound.intensity.wire)
         .put("enabled", alarm.enabled).put("status", alarm.status.wire)
         .put("once", alarm.onceDay?.toString()).put("lastFired", alarm.lastFiredDay?.toString())
         .put("next", alarm.next?.let { JSONObject().put("at", it.at).put("day", it.day.toString()) })
@@ -70,12 +72,16 @@ internal class AlarmStore(context: Context) {
         arrivedAt = json.getLong("arrivedAt"),
         snoozes = json.getInt("snoozes"),
         snooze = json.optJSONObject("snooze")?.let { SnoozeTime(it.getLong("at"), it.getLong("elapsed"), it.getInt("boot")) },
+        scheduledAt = json.optLong("scheduledAt", json.getLong("arrivedAt")),
+        sound = json.sound(),
     )
 
     private fun episodeJson(episode: AlarmEpisode) = JSONObject()
         .put("id", episode.id).put("alarmId", episode.alarmId).put("label", episode.label)
         .put("challenge", episode.challenge.wire).put("difficulty", episode.difficulty.wire)
         .put("arrivedAt", episode.arrivedAt).put("snoozes", episode.snoozes)
+        .put("scheduledAt", episode.scheduledAt)
+        .put("tone", episode.sound.tone.wire).put("volume", episode.sound.volume).put("intensity", episode.sound.intensity.wire)
         .put("snooze", episode.snooze?.let {
             JSONObject().put("at", it.at).put("elapsed", it.elapsed).put("boot", it.boot)
         })
@@ -84,4 +90,9 @@ internal class AlarmStore(context: Context) {
         optJSONArray(key)?.let { values -> (0 until values.length()).map { values.getJSONObject(it) } } ?: emptyList()
 
     private fun JSONObject.date(key: String): LocalDate? = optString(key).takeIf(String::isNotEmpty)?.let(LocalDate::parse)
+
+    private fun JSONObject.sound() = AlarmSound.from(
+        optString("tone"), optInt("volume", 100),
+        AlarmIntensity.parse(optString("intensity"), legacyBoost = optBoolean("boost")),
+    )
 }

@@ -1,8 +1,11 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../app/design_system/design_system.dart';
 import '../../../core/operation.dart';
+import '../../../core/platform.dart';
 import '../application/alarm_draft.dart';
 
 /// Full-screen editor route used on compact and medium windows.
@@ -52,15 +55,18 @@ class AlarmEditor extends ConsumerStatefulWidget {
 
 class _AlarmEditorState extends ConsumerState<AlarmEditor> {
   late final TextEditingController _label;
+  late final PlatformAdapter _platform;
 
   @override
   void initState() {
     super.initState();
     _label = TextEditingController(text: ref.read(alarmEditorProvider)?.label);
+    _platform = ref.read(platformProvider);
   }
 
   @override
   void dispose() {
+    unawaited(_stopPreview());
     _label.dispose();
     super.dispose();
   }
@@ -121,11 +127,70 @@ class _AlarmEditorState extends ConsumerState<AlarmEditor> {
     if (deleted && mounted) _close();
   }
 
+  Future<void> _preview(AlarmDraft draft) async {
+    try {
+      final applied = await _platform.previewAlarmSound(
+        tone: draft.tone,
+        volume: draft.volume,
+        intensity: draft.intensity,
+      );
+      if (!applied) {
+        _showPreviewMessage(
+          'That sound intensity is unavailable for this output.',
+        );
+      }
+    } on CapabilityFailure catch (failure) {
+      _showPreviewMessage(failure.message);
+    }
+  }
+
+  void _showPreviewMessage(String message) {
+    if (!mounted) return;
+    ScaffoldMessenger.of(context)
+        .showSnackBar(SnackBar(content: Text(message)));
+  }
+
+  Future<void> _stopPreview() async {
+    try {
+      await _platform.stopAlarmPreview();
+    } on CapabilityFailure {
+      // Android also releases the sample when the preview ends.
+    }
+  }
+
+  Widget _soundPicker({
+    required String label,
+    required String selected,
+    required List<AlarmAudioOption> options,
+    required ValueChanged<String> onChanged,
+  }) => DropdownButtonFormField<String>(
+    initialValue: options.any((option) => option.id == selected)
+        ? selected
+        : null,
+    isExpanded: true,
+    decoration: InputDecoration(labelText: label),
+    items: [
+      for (final option in options)
+        DropdownMenuItem(
+          value: option.id,
+          enabled: option.available,
+          child: Text(option.title),
+        ),
+    ],
+    onChanged: (value) {
+      if (value == null) return;
+      unawaited(_stopPreview());
+      onChanged(value);
+    },
+  );
+
   @override
   Widget build(BuildContext context) {
     final draft = ref.watch(alarmEditorProvider);
     if (draft == null) return const SizedBox.shrink();
     final busy = ref.watch(operationProvider).busy;
+    final tones = ref.watch(alarmTonesProvider);
+    final intensities = ref.watch(alarmIntensitiesProvider);
     final c = context.bimbi;
     return BimbiCard(
       child: Column(
@@ -216,6 +281,50 @@ class _AlarmEditorState extends ConsumerState<AlarmEditor> {
                       _update(draft.copyWith(difficulty: difficulty)),
                 ),
             ],
+          ),
+          const SizedBox(height: BimbiSpace.lg),
+          _soundPicker(
+            label: 'Alarm sound',
+            selected: draft.tone,
+            options: tones,
+            onChanged: (tone) => _update(draft.copyWith(tone: tone)),
+          ),
+          const SizedBox(height: BimbiSpace.md),
+          Text(
+            'Alarm volume · ${draft.volume}%',
+            style: context.text.titleSmall,
+          ),
+          Semantics(
+            label: 'Alarm volume',
+            child: Slider(
+              value: draft.volume.toDouble(),
+              min: 20,
+              max: 100,
+              divisions: 16,
+              label: '${draft.volume}%',
+              semanticFormatterCallback: (value) => '${value.round()}%',
+              onChanged: (value) =>
+                  _update(draft.copyWith(volume: value.round())),
+            ),
+          ),
+          Text(
+            'Volume follows your Android alarm volume.',
+            style: context.text.bodySmall,
+          ),
+          const SizedBox(height: BimbiSpace.md),
+          _soundPicker(
+            label: 'Sound intensity',
+            selected: draft.intensity,
+            options: intensities,
+            onChanged: (intensity) =>
+                _update(draft.copyWith(intensity: intensity)),
+          ),
+          Align(
+            alignment: AlignmentDirectional.centerStart,
+            child: TextButton(
+              onPressed: () => _preview(draft),
+              child: const Text('Preview sound'),
+            ),
           ),
           const SizedBox(height: BimbiSpace.xl),
           FilledButton(

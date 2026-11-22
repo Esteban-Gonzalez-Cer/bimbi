@@ -14,6 +14,36 @@ enum WakeDifficulty {
   final String label;
 }
 
+typedef AlarmAudioOption = ({String id, String title, bool available});
+
+List<AlarmAudioOption> _audioOptions(
+  Object? payload,
+  AlarmAudioOption fallback,
+) {
+  final options = <AlarmAudioOption>[
+    if (payload is List)
+      for (final option in payload)
+        if (option case {'id': final String id, 'title': final String title})
+          (id: id, title: title, available: option['available'] != false),
+  ];
+  return options.isEmpty ? [fallback] : options;
+}
+
+final alarmTonesProvider = Provider<List<AlarmAudioOption>>(
+  (ref) => _audioOptions(ref.watch(capabilitiesProvider).value?['alarmTones'], (
+    id: 'system',
+    title: 'Android default',
+    available: true,
+  )),
+);
+
+final alarmIntensitiesProvider = Provider<List<AlarmAudioOption>>(
+  (ref) => _audioOptions(
+    ref.watch(capabilitiesProvider).value?['alarmIntensities'],
+    (id: 'normal', title: 'Normal', available: true),
+  ),
+);
+
 @immutable
 class AlarmDraft {
   const AlarmDraft({
@@ -23,6 +53,9 @@ class AlarmDraft {
     this.days = const {},
     this.mission = WakeMission.none,
     this.difficulty = WakeDifficulty.normal,
+    this.tone = 'system',
+    this.volume = 100,
+    this.intensity = 'normal',
   });
 
   final String? id;
@@ -33,6 +66,9 @@ class AlarmDraft {
   final Set<int> days;
   final WakeMission mission;
   final WakeDifficulty difficulty;
+  final String tone;
+  final int volume;
+  final String intensity;
 
   AlarmDraft copyWith({
     TimeOfDay? time,
@@ -40,6 +76,9 @@ class AlarmDraft {
     Set<int>? days,
     WakeMission? mission,
     WakeDifficulty? difficulty,
+    String? tone,
+    int? volume,
+    String? intensity,
   }) => AlarmDraft(
     id: id,
     time: time ?? this.time,
@@ -47,6 +86,9 @@ class AlarmDraft {
     days: days ?? this.days,
     mission: mission ?? this.mission,
     difficulty: difficulty ?? this.difficulty,
+    tone: tone ?? this.tone,
+    volume: volume ?? this.volume,
+    intensity: intensity ?? this.intensity,
   );
 
   Map<String, Object> toNative() => {
@@ -57,6 +99,9 @@ class AlarmDraft {
     'days': days.toList()..sort(),
     'challenge': mission.name,
     'difficulty': difficulty.name,
+    'tone': tone,
+    'volume': volume,
+    'intensity': intensity,
   };
 }
 
@@ -133,6 +178,9 @@ class NativeAlarm {
                 .where((difficulty) => difficulty.name == value['difficulty'])
                 .firstOrNull ??
             WakeDifficulty.normal,
+        tone: value['tone'] as String? ?? 'system',
+        volume: (value['volume'] as int? ?? 100).clamp(20, 100),
+        intensity: value['intensity'] as String? ?? 'normal',
       ),
       enabled: value['enabled'] == true,
       status: AlarmScheduleStatus.parse(value['status']),

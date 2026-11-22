@@ -6,6 +6,7 @@ import java.time.ZoneId
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class LocalAlarmTest {
@@ -58,12 +59,56 @@ class LocalAlarmTest {
         assertEquals(550_000L, postponed.snooze?.resolve(now = 300_000, nowElapsed = 100_000, currentBoot = 3))
         assertEquals(400_000L, postponed.snooze?.resolve(now = 300_000, nowElapsed = 100_000, currentBoot = 4))
         assertNull(postponed.postpone(at = 200_000, elapsed = 150_000, boot = 3))
-        val twice = postponed.copy(snooze = null).postpone(at = 400_000, elapsed = 350_000, boot = 3)!!
+        val twice = postponed.resumeFromSnooze(400_000).postpone(at = 400_000, elapsed = 350_000, boot = 3)!!
         assertEquals(0, twice.snoozesLeft)
-        assertNull(twice.copy(snooze = null).postpone(at = 700_000, elapsed = 650_000, boot = 3))
+        assertNull(twice.resumeFromSnooze(700_000).postpone(at = 700_000, elapsed = 650_000, boot = 3))
         assertEquals(2, second.snoozesLeft)
         assertEquals(first, AlarmBook(episodes = listOf(second, first)).active)
         assertEquals(second, AlarmBook(episodes = listOf(second, postponed)).active)
         assertFalse(second.isTest)
+    }
+
+    @Test
+    fun mondayAndTuesdayAtSevenStartWithTheirOwnSnoozesAndSavedSound() {
+        val utc = ZoneId.of("UTC")
+        val sound = AlarmSound(AlarmTone.SOFT_BELLS, 45, AlarmIntensity.HEAVY)
+        val weekdays = alarm(setOf(0, 1)).copy(sound = sound)
+        val monday = weekdays.firstAfter(ms("2026-11-23T06:59:00Z"), utc)!!
+        val mondayEpisode = weekdays.startOccurrence(monday, monday.at)
+        val firstSnooze = mondayEpisode.postpone(monday.at, 0, boot = 1)!!
+        val otherAlarm = weekdays.copy(id = "other-alarm", sound = AlarmSound(AlarmTone.BRIGHT_SIGNAL, 90))
+        val otherEpisode = otherAlarm.startOccurrence(monday, monday.at + 1)
+        assertEquals(otherEpisode, AlarmBook(episodes = listOf(firstSnooze, otherEpisode)).active)
+        assertEquals(2, otherEpisode.snoozesLeft)
+
+        val firstReturn = firstSnooze.resumeFromSnooze(monday.at + SNOOZE_MS)
+        assertEquals(1, firstReturn.snoozesLeft)
+        val secondSnooze = firstReturn.postpone(firstReturn.arrivedAt, SNOOZE_MS, boot = 1)!!
+        val secondReturn = secondSnooze.resumeFromSnooze(monday.at + 2 * SNOOZE_MS)
+        assertEquals(mondayEpisode.id, secondReturn.id)
+        assertEquals(monday.at, secondReturn.scheduledAt)
+        assertEquals(sound, secondReturn.sound)
+        assertEquals(0, secondReturn.snoozesLeft)
+
+        val tuesday = weekdays.copy(lastFiredDay = monday.day).firstAfter(secondReturn.arrivedAt, utc)!!
+        assertEquals(ms("2026-11-24T07:00:00Z"), tuesday.at)
+        val tuesdayEpisode = weekdays.startOccurrence(tuesday, tuesday.at)
+        assertEquals(mondayEpisode.alarmId, tuesdayEpisode.alarmId)
+        assertFalse(mondayEpisode.id == tuesdayEpisode.id)
+        assertEquals(2, tuesdayEpisode.snoozesLeft)
+        assertEquals(sound, tuesdayEpisode.sound)
+    }
+
+    @Test
+    fun alarmSoundUsesSafeDefaultsAndScalesTheAndroidAlarmStream() {
+        assertEquals(AlarmSound(), AlarmSound.from(null, null))
+        assertEquals(AlarmSound(AlarmTone.SYSTEM, 20), AlarmSound.from("unknown", -10))
+        assertEquals(1.0f, AlarmSound.from("dawn_chime", 140).gain, 0.001f)
+        assertEquals(0.45f, AlarmSound.from("morning_pulse", 45).gain, 0.001f)
+        assertEquals(0.6f, AlarmSound(intensity = AlarmIntensity.SOFTEST).gain, 0.001f)
+        assertEquals(AlarmIntensity.NOISY, AlarmIntensity.parse(null, legacyBoost = true))
+        assertEquals(AlarmIntensity.NORMAL, AlarmIntensity.parse("normal", legacyBoost = true))
+        assertTrue(AlarmIntensity.NOISY.boostMillibels < AlarmIntensity.HEAVY.boostMillibels)
+        assertTrue(AlarmIntensity.HEAVY.boostMillibels < AlarmIntensity.JACKHAMMER.boostMillibels)
     }
 }

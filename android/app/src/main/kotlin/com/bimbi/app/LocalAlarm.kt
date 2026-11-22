@@ -4,6 +4,7 @@ import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalTime
 import java.time.ZoneId
+import java.util.UUID
 
 internal const val TEST_ALARM_ID = "phase1-alarm"
 internal const val ACTIVE_WINDOW_MS = 15_000L
@@ -23,6 +24,7 @@ internal data class LocalAlarm(
     val lastFiredDay: LocalDate? = null,
     val next: AlarmTime? = null,
     val status: AlarmStatus = AlarmStatus.OFF,
+    val sound: AlarmSound = AlarmSound(),
 ) {
     val time: LocalTime get() = LocalTime.of(hour, minute)
 
@@ -45,6 +47,17 @@ internal data class LocalAlarm(
 
     private fun on(date: LocalDate, zone: ZoneId) =
         AlarmTime(date.atTime(time).atZone(zone).toInstant().toEpochMilli(), date)
+
+    fun startOccurrence(occurrence: AlarmTime, deliveredAt: Long) = AlarmEpisode(
+        id = UUID.randomUUID().toString(),
+        alarmId = id,
+        label = label,
+        challenge = challenge,
+        difficulty = difficulty,
+        arrivedAt = deliveredAt,
+        scheduledAt = occurrence.at,
+        sound = sound,
+    )
 }
 
 internal data class AlarmTime(val at: Long, val day: LocalDate)
@@ -63,6 +76,8 @@ internal data class AlarmEpisode(
     val arrivedAt: Long,
     val snoozes: Int = 0,
     val snooze: SnoozeTime? = null,
+    val scheduledAt: Long = arrivedAt,
+    val sound: AlarmSound = AlarmSound(),
 ) {
     val isTest get() = alarmId == TEST_ALARM_ID
     val snoozesLeft get() = MAX_SNOOZES - snoozes
@@ -71,6 +86,8 @@ internal data class AlarmEpisode(
         if (isTest || snooze != null || snoozesLeft <= 0) return null
         return copy(snoozes = snoozes + 1, snooze = SnoozeTime(at + SNOOZE_MS, elapsed + SNOOZE_MS, boot))
     }
+
+    fun resumeFromSnooze(deliveredAt: Long) = copy(arrivedAt = deliveredAt, snooze = null)
 }
 
 internal data class SnoozeTime(val at: Long, val elapsed: Long, val boot: Int) {

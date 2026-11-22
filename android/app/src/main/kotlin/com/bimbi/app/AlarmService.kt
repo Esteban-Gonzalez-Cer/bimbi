@@ -8,9 +8,6 @@ import android.content.Context
 import android.content.Intent
 import android.hardware.Sensor
 import android.hardware.SensorManager
-import android.media.AudioAttributes
-import android.media.MediaPlayer
-import android.media.RingtoneManager
 import android.os.Handler
 import android.os.Looper
 import android.os.PowerManager
@@ -20,7 +17,7 @@ import android.os.SystemClock
 class AlarmService : Service() {
     private val engine by lazy { AlarmEngine(this) }
     private val handler = Handler(Looper.getMainLooper())
-    private var player: MediaPlayer? = null
+    private var playback: AlarmPlayback? = null
     private var silentLock: PowerManager.WakeLock? = null
     private var polling = false
     private var testStart = 0L
@@ -74,6 +71,8 @@ class AlarmService : Service() {
         }
 
         if (session?.episode?.id != active.id) {
+            AlarmPreview.stop()
+            releasePlayer()
             val challenge = if (active.challenge == WakeChallenge.SHAKE &&
                 getSystemService(SensorManager::class.java).getDefaultSensor(Sensor.TYPE_ACCELEROMETER) == null
             ) WakeChallenge.MATH else active.challenge
@@ -145,42 +144,36 @@ class AlarmService : Service() {
 
     private fun synchronizeAudio(state: WakeSession) {
         if (state.muted) {
-            runCatching { if (player?.isPlaying == true) player?.pause() }
+            runCatching { playback?.player?.let { if (it.isPlaying) it.pause() } }
             return
         }
         releaseSilentLock()
         if (!playbackAttempted) {
             playbackAttempted = true
-            if (player == null) startPlayer()
+            playback = runCatching {
+                AlarmAudio.prepare(this, state.episode.sound, looping = true)
+            }.onFailure { audioFailed() }.getOrNull()
+            if (state.episode.sound.intensity.needsBoost && playback?.boosted == false) {
+                engine.event("audio_boost_unavailable")
+            }
+            playback?.player?.setOnErrorListener { source, _, _ ->
+                if (playback?.player === source) audioFailed()
+                true
+            }
         }
-        val activePlayer = player ?: return
-        runCatching { if (!activePlayer.isPlaying) activePlayer.start() }.onFailure {
-            engine.event("audio_failed_challenge_available")
-            error = "Alarm audio unavailable. You can still finish the challenge."
-            activePlayer.release()
-            player = null
-        }
+        val activePlayer = playback?.player ?: return
+        runCatching { if (!activePlayer.isPlaying) activePlayer.start() }.onFailure { audioFailed() }
     }
 
-    private fun startPlayer() {
-        val audio = MediaPlayer()
-        try {
-            val ringtone = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)
-                ?: RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
-            audio.setAudioAttributes(AudioAttributes.Builder()
-                .setUsage(AudioAttributes.USAGE_ALARM)
-                .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
-                .build())
-            audio.setDataSource(this, ringtone)
-            audio.isLooping = true
-            audio.setWakeMode(this, PowerManager.PARTIAL_WAKE_LOCK)
-            audio.prepare()
-            player = audio
-        } catch (_: Exception) {
-            audio.release()
-            engine.event("audio_failed_challenge_available")
-            error = "Alarm audio unavailable. You can still finish the challenge."
-        }
+    private fun audioFailed() {
+        releasePlayer()
+        engine.event("audio_failed_challenge_available")
+        error = "Alarm audio unavailable. You can still finish the challenge."
+    }
+
+    private fun releasePlayer() {
+        playback?.release()
+        playback = null
     }
 
     // Keep the CPU awake for the bounded silent interval even if the screen turns off.
@@ -210,8 +203,7 @@ class AlarmService : Service() {
         handler.removeCallbacks(heartbeat)
         polling = false
         releaseSilentLock()
-        player?.release()
-        player = null
+        releasePlayer()
         if (foreground) {
             stopForeground(STOP_FOREGROUND_REMOVE)
             foreground = false
@@ -225,7 +217,7 @@ class AlarmService : Service() {
     override fun onDestroy() {
         handler.removeCallbacksAndMessages(null)
         releaseSilentLock()
-        player?.release()
+        releasePlayer()
         if (current === this) current = null
         super.onDestroy()
     }

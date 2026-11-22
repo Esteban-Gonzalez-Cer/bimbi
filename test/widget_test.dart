@@ -237,4 +237,102 @@ void main() {
       expect(find.textContaining('Gym day'), findsWidgets);
     },
   );
+
+  testWidgets('previews, saves and reopens per-alarm sound at 360dp and 2x', (
+    tester,
+  ) async {
+    final fake = await pumpBimbi(
+      tester,
+      width: 360,
+      textScale: 2,
+      platform: FakePlatform(
+        capabilities: {
+          'alarmTones': [
+            {'id': 'system', 'title': 'Android default'},
+            {'id': 'soft_bells', 'title': 'Soft Bells'},
+          ],
+          'alarmIntensities': [
+            {'id': 'softest', 'title': 'Softest'},
+            {'id': 'normal', 'title': 'Normal'},
+            {'id': 'noisy', 'title': 'Noisy'},
+            {'id': 'heavy', 'title': 'Heavy'},
+            {'id': 'jackhammer', 'title': 'Jackhammer'},
+          ],
+        },
+      ),
+    );
+    final create = find.widgetWithText(FilledButton, 'Set alarm');
+    await tester.ensureVisible(create);
+    await tester.pumpAndSettle();
+    await tester.tap(create);
+    await tester.pumpAndSettle();
+    await tester.enterText(find.byType(TextField), 'Monday wake');
+    FocusManager.instance.primaryFocus?.unfocus();
+    await tester.pumpAndSettle();
+    final math = find.text('Math');
+    await tester.scrollUntilVisible(
+      math,
+      200,
+      scrollable: find.byType(Scrollable).first,
+    );
+    await tester.tap(math);
+    await tester.pumpAndSettle();
+
+    final pickers = find.byType(DropdownButtonFormField<String>);
+    final tone = pickers.first;
+    await tester.scrollUntilVisible(
+      tone,
+      200,
+      scrollable: find.byType(Scrollable).first,
+    );
+    await tester.tap(tone);
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Soft Bells').last);
+    await tester.pumpAndSettle();
+
+    final slider = find.byType(Slider);
+    await tester.ensureVisible(slider);
+    await tester.tapAt(tester.getCenter(slider));
+    await tester.pumpAndSettle();
+    expect(find.text('Alarm volume · 60%'), findsOneWidget);
+    final intensity = pickers.last;
+    await tester.ensureVisible(intensity);
+    await tester.tap(intensity);
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Jackhammer').last);
+    await tester.pumpAndSettle();
+    final preview = find.text('Preview sound');
+    await tester.ensureVisible(preview);
+    await tester.tap(preview);
+    await tester.pumpAndSettle();
+    expect(fake.previews, [
+      (tone: 'soft_bells', volume: 60, intensity: 'jackhammer'),
+    ]);
+
+    final save = find.widgetWithText(FilledButton, 'Save alarm');
+    await tester.ensureVisible(save);
+    await tester.tap(save);
+    await tester.pumpAndSettle();
+    expect(fake.stopAlarmPreviewCalls, greaterThan(1));
+    expect(fake.alarms.values.single['tone'], 'soft_bells');
+    expect(fake.alarms.values.single['volume'], 60);
+    expect(fake.alarms.values.single['intensity'], 'jackhammer');
+
+    final edit = find.widgetWithText(FilledButton, 'Edit alarm');
+    await tester.ensureVisible(edit);
+    await tester.pumpAndSettle();
+    await tester.tap(edit);
+    await tester.pumpAndSettle();
+    await tester.ensureVisible(tone);
+    expect(
+      tester.widget<DropdownButtonFormField<String>>(tone).initialValue,
+      'soft_bells',
+    );
+    expect(tester.widget<Slider>(slider).value, 60);
+    expect(
+      tester.widget<DropdownButtonFormField<String>>(intensity).initialValue,
+      'jackhammer',
+    );
+    expect(tester.takeException(), isNull);
+  });
 }

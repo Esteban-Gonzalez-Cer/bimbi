@@ -9,6 +9,7 @@ import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
+import android.media.AudioManager
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
@@ -27,7 +28,9 @@ import android.widget.LinearLayout
 import android.widget.ProgressBar
 import android.widget.ScrollView
 import android.widget.TextView
+import java.text.SimpleDateFormat
 import java.util.Date
+import java.util.Locale
 import kotlin.math.abs
 import kotlin.math.roundToInt
 import kotlin.math.sqrt
@@ -38,6 +41,7 @@ class AlarmActivity : Activity(), SensorEventListener {
     private val engine by lazy { AlarmEngine(this) }
     private val sensors by lazy { getSystemService(SensorManager::class.java) }
     private lateinit var bar: ProgressBar
+    private var clock: TextView? = null
     private lateinit var header: TextView
     private lateinit var roundLabel: TextView
     private lateinit var status: TextView
@@ -71,6 +75,7 @@ class AlarmActivity : Activity(), SensorEventListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        volumeControlStream = AudioManager.STREAM_ALARM
         if (Build.VERSION.SDK_INT >= 27) {
             setShowWhenLocked(true)
             setTurnScreenOn(true)
@@ -164,10 +169,9 @@ class AlarmActivity : Activity(), SensorEventListener {
             setPadding(dp(24), dp(12), dp(12), dp(8))
         } else content
         if (sideBySide || resources.configuration.fontScale < 1.5f) {
-            details.addView(text(26f, heading = true).apply {
-                text = DateFormat.getTimeFormat(this@AlarmActivity).format(Date())
-                if (Build.VERSION.SDK_INT >= 28) isAccessibilityHeading = true
-            })
+            val occurrenceTime = text(26f, heading = true)
+            clock = occurrenceTime
+            details.addView(occurrenceTime)
         }
         header = text(21f, heading = true).apply {
             maxLines = 2
@@ -259,6 +263,11 @@ class AlarmActivity : Activity(), SensorEventListener {
         val elapsed = now - (session.shownAt ?: now)
         if (displayedSession !== session || displayedAttempt != session.attempt) {
             val expected = session.attempt
+            if (displayedSession !== session) {
+                val time = Date(session.episode.scheduledAt)
+                val day = SimpleDateFormat("EEE", Locale.getDefault()).format(time)
+                clock?.text = "$day ${DateFormat.getTimeFormat(this).format(time)}"
+            }
             displayedSession = session
             displayedAttempt = expected
             shakeDetector.reset()

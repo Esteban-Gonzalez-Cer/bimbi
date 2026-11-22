@@ -16,10 +16,13 @@ void main() {
       'days': <int>[],
       'challenge': 'pattern',
       'difficulty': 'normal',
+      'tone': 'system',
+      'volume': 100,
+      'intensity': 'normal',
     });
   });
 
-  test('editing keeps the native id and writes stable weekday and difficulty values', () {
+  test('editing keeps the native id, sound, volume and difficulty', () {
     final alarm = NativeAlarm.fromNative({
       'id': 'second-alarm',
       'enabled': true,
@@ -29,6 +32,9 @@ void main() {
       'days': [4, 0],
       'challenge': 'ballMonte',
       'difficulty': 'extreme',
+      'tone': 'soft_bells',
+      'volume': 45,
+      'intensity': 'jackhammer',
       'status': 'notifications',
     })!;
     expect(alarm.enabled, isTrue);
@@ -46,6 +52,9 @@ void main() {
         'days': [0, 4],
         'challenge': 'ballMonte',
         'difficulty': 'extreme',
+        'tone': 'soft_bells',
+        'volume': 45,
+        'intensity': 'jackhammer',
       },
     );
   });

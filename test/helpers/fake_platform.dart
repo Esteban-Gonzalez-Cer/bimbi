@@ -18,9 +18,11 @@ class FakePlatform implements PlatformAdapter {
   final Map<String, dynamic> caps;
   final scheduled = <({String id, DateTime at, Duration repeat})>[];
   final alarms = <String, Map<String, dynamic>>{};
+  final previews = <({String tone, int volume, String intensity})>[];
   var _nextId = 0;
   var openChallengeCalls = 0;
   var cancelCalls = 0;
+  var stopAlarmPreviewCalls = 0;
 
   @override
   Future<Map<String, dynamic>> capabilities() async => {
@@ -35,6 +37,18 @@ class FakePlatform implements PlatformAdapter {
 
   @override
   Future<void> openChallenge() async => openChallengeCalls++;
+  @override
+  Future<bool> previewAlarmSound({
+    required String tone,
+    required int volume,
+    required String intensity,
+  }) async {
+    previews.add((tone: tone, volume: volume, intensity: intensity));
+    return true;
+  }
+
+  @override
+  Future<void> stopAlarmPreview() async => stopAlarmPreviewCalls++;
   @override
   Stream<void> alarmChanges() => const Stream.empty();
 

@@ -21,6 +21,12 @@ abstract interface class PlatformAdapter {
   Future<Map<String, dynamic>> enableAlarm(String id, bool enabled);
   Future<void> deleteAlarm(String id);
   Future<void> openChallenge();
+  Future<bool> previewAlarmSound({
+    required String tone,
+    required int volume,
+    required String intensity,
+  });
+  Future<void> stopAlarmPreview();
   Stream<void> alarmChanges();
   Future<void> settings(String kind);
   Future<Map<String, dynamic>> usageSummary();
@@ -87,6 +93,20 @@ class AndroidPlatform implements PlatformAdapter {
       _invoke<void>('deleteAlarm', {'id': id});
   @override
   Future<void> openChallenge() => _invoke<void>('openChallenge');
+  @override
+  Future<bool> previewAlarmSound({
+    required String tone,
+    required int volume,
+    required String intensity,
+  }) async =>
+      await _invoke<bool>('previewAlarmSound', {
+        'tone': tone,
+        'volume': volume,
+        'intensity': intensity,
+      }) ??
+      false;
+  @override
+  Future<void> stopAlarmPreview() => _invoke<void>('stopAlarmPreview');
   @override
   Stream<void> alarmChanges() => _events.receiveBroadcastStream().map((_) {});
   @override

@@ -12,6 +12,7 @@ import android.provider.Settings
 import io.flutter.embedding.android.FlutterFragmentActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.EventChannel
+import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 
 class MainActivity : FlutterFragmentActivity() {
@@ -38,6 +39,11 @@ class MainActivity : FlutterFragmentActivity() {
             .onFailure { alarms.event("resume_restore_failed") }
     }
 
+    override fun onPause() {
+        AlarmPreview.stop()
+        super.onPause()
+    }
+
     override fun onDestroy() {
         unregisterReceiver(alarmChanges)
         alarmEvents = null
@@ -61,6 +67,13 @@ class MainActivity : FlutterFragmentActivity() {
                         val meta = packageManager.getApplicationInfo(packageName, PackageManager.GET_META_DATA).metaData
                         result.success(mapOf("exactAlarm" to alarms.exactAllowed(), "notifications" to alarms.notificationsAllowed(),
                             "fullScreen" to alarms.fullScreenAllowed(), "alarms" to alarms.view(), "active" to (alarms.active() != null),
+                            "alarmTones" to AlarmTone.entries.map { mapOf("id" to it.wire, "title" to it.title) },
+                            "alarmIntensities" to AlarmIntensity.entries.map { intensity ->
+                                mapOf(
+                                    "id" to intensity.wire, "title" to intensity.title,
+                                    "available" to (!intensity.needsBoost || AlarmAudio.boostAvailable),
+                                )
+                            },
                             "snoozedUntil" to alarms.nextSnooze(),
                             "lastEvent" to alarms.lastEvent(), "model" to Build.MODEL, "api" to Build.VERSION.SDK_INT,
                             "mapsConfigured" to !meta.getString("com.google.android.geo.API_KEY").isNullOrBlank(),
@@ -77,7 +90,16 @@ class MainActivity : FlutterFragmentActivity() {
                         days = call.argument<List<Int>>("days").orEmpty().toSet(),
                         challenge = requireNotNull(WakeChallenge.parse(call.argument<String>("challenge"))),
                         difficulty = requireNotNull(WakeDifficulty.parse(call.argument<String>("difficulty"))),
+                        sound = call.alarmSound(),
                     ))
+                    "previewAlarmSound" -> {
+                        if (alarms.active() != null) {
+                            result.error("alarm_active", "Finish the active alarm to preview a sound.", null)
+                        } else {
+                            result.success(AlarmPreview.play(this, call.alarmSound()))
+                        }
+                    }
+                    "stopAlarmPreview" -> { AlarmPreview.stop(); result.success(null) }
                     "enableAlarm" -> result.success(alarms.setEnabled(
                         requireNotNull(call.argument<String>("id")),
                         requireNotNull(call.argument<Boolean>("enabled")),
@@ -111,3 +133,7 @@ class MainActivity : FlutterFragmentActivity() {
     }
     private fun usageAllowed(): Boolean = getSystemService(AppOpsManager::class.java).checkOpNoThrow(AppOpsManager.OPSTR_GET_USAGE_STATS, android.os.Process.myUid(), packageName) == AppOpsManager.MODE_ALLOWED
 }
+
+private fun MethodCall.alarmSound() = AlarmSound.from(
+    argument<String>("tone"), argument<Int>("volume"), AlarmIntensity.parse(argument<String>("intensity")),
+)
