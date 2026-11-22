@@ -1,0 +1,10 @@
+Phase 2 debug APKs (configured: --dart-define-from-file=config/dev.json), Samsung Galaxy Tab A9 SM-X115, Android 16 / API 36.
+
+c7b33349de1f1592000eba451d275c178cc9d4bc6f5cb40d80754d95efa2156f  visual refinement with the landscape Focus sizing fix and bundled font licenses
+fd4be8c1aa45607722f9d7c7f522cd1dd37d601e579f7b960083ecb17c997506  final installed build (landscape Focus recheck)
+29fb357fb3eda1c7994b16b06214ca14ab5bb62a89eea2b6dbc0c8ba906f67ed  portrait dark / landscape light evidence captures
+6b47743e906a65106079de39112a3ed02b3c5ccf55c58704d507c0114cf06b6e  earlier landscape pass
+
+Builds after the native wake-screen check changed Dart only; Kotlin, manifest and Android resources are identical to the build used for the locked-screen alarm test (hash not recorded).
+
+17bfa628dee330985132cf553d1f314d50fc1f71f7479cc041c70cd254cc01d8  Phase 2 lavender closeout; five-tab tablet check, updated native assets compiled

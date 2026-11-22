@@ -1,0 +1,9 @@
+Samsung Galaxy Tab A9 SM-X115, Android 16 (API 36)
+Vertical: cinco pestañas disponibles. Focus inició, pausó, reanudó y terminó.
+Captura revision-focus-vertical.png (800 × 1340).
+Vertical: menú de Profile, detalle Appearance y retorno por Atrás correctos.
+Horizontal: lista de Profile y panel de planes visibles juntos.
+Horizontal: Start focus tiene 69px de alto en pantalla.
+Captura revision-focus-horizontal.png (1340 × 800).
+Horizontal: temporizador y selector de duración visibles a la vez.
+Rotación original restaurada.

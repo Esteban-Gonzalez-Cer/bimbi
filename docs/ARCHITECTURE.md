@@ -1,6 +1,6 @@
 # Phase 1 architecture
 
-Widgets → Riverpod state/controllers → adapters → Android/Firebase/Stripe. Handwritten providers, no application setState or ValueNotifier. `lib/app` composes adaptive navigation. `lib/core` owns configuration, operation status and typed platform failures. Features own their SDK adapters. No gamification dependency exists.
+Widgets → Riverpod state/controllers → adapters → Android/Firebase/Stripe. Handwritten providers, no application setState or ValueNotifier. `lib/app` composes adaptive navigation (`shell/`), the theme (`theme/`), the design system and buddy (`design_system/`), local UI preferences (`preferences.dart`) and debug-only developer tools (`developer/`). Feature screens live in `lib/features/<feature>/presentation/` with their Riverpod controllers in `application/`. See `docs/DESIGN_SYSTEM.md` and ADR-002/008. `lib/core` owns configuration, operation status and typed platform failures. Features own their SDK adapters. No gamification dependency exists.
 
 ## Android alarm authority
 

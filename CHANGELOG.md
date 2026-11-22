@@ -1,4 +1,7 @@
 # Changelog
 
+## Unreleased — Phase 2 design system
+Bimbi brand design system (lavender light/dark tokens from Wake, bundled Instrument Serif + Nunito, themed Material 3 components, Icons8 Claude Hand Drawn icons), animated Bimbi buddy in Lilac by default, with six moods and the wake-up sequence, adaptive navigation (bar / rail / two panes), onboarding, light/dark with an in-app toggle, circular Focus timer, designed Alarm/Sleep/Focus/Running/Profile screens, restyled native wake screen, launcher icon, splash and notification icon. The Wake design prototype was retired after its palette and typography moved to the main app. Phase 1 experiments moved to debug-only Developer tools. Evidence in `docs/evidence/phase2/REPORT.md`.
+
 ## 0.1.0 — Phase 1 development harness
 Adaptive five-tab Android shell, native alarm experiment, Firebase/FCM adapters and probe rules, foreground GPS/motion, Stripe test payment backend, automated validation and setup/evidence documentation. Configuration and physical acceptance status are recorded in the Phase 1 report; this is not the final product release.

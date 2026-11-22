@@ -1,0 +1,26 @@
+76:00:08 +67: All tests passed!
+159:exit=0
+✔ rejects missing and invalid authentication before creating a payment (1.141958ms)
+✔ rejects unverified accounts (0.098542ms)
+✔ rejects client prices, unknown plans and invalid attempt identifiers (0.605416ms)
+✔ retries return the same payment and do not recreate it (0.239625ms)
+✔ same attempt cannot change plans (0.109792ms)
+✔ stale unrecorded attempt cannot recreate a payment after Stripe key expiry (0.082041ms)
+✔ only the owner can verify a test payment (0.083417ms)
+✔ only server-observed success verifies payment; decline/cancel/pending do not (0.118125ms)
+✔ live mode, wrong price and wrong currency cannot verify (0.176959ms)
+✔ unavailable Stripe does not produce a success response (0.136625ms)
+✔ concurrent retries use exactly the same Stripe idempotency inputs (11.467875ms)
+ℹ tests 11
+ℹ pass 11
+ℹ fail 0
+✔ verified owner can write/read/delete the strict probe schema (328.812541ms)
+✔ anonymous, unverified and other-user reads/writes are denied (49.253833ms)
+✔ unknown fields, future timestamps, entitlements and payment records are denied (29.195417ms)
+✔ owner can roundtrip a small PNG and remove it (102.083375ms)
+✔ other-user, anonymous and unverified image access denied (75.931041ms)
+✔ oversized, wrong-type and out-of-scope image uploads denied (30.600291ms)
+ℹ tests 6
+ℹ pass 6
+ℹ fail 0
+✔  Script exited successfully (code 0)

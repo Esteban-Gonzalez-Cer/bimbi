@@ -9,4 +9,15 @@
 - Cloud probe is a tiny private PNG/record roundtrip. It does not prove offline image caching, full production schemas or avatar editing policy.
 - Stripe sandbox uses one-time test prices and server-verified status; no recurring subscription, webhook-driven entitlement, production payment or paid-access unlock.
 - Local CI configuration is prepared, but no remote repository/Actions run or branch protection exists yet.
-- Final typography, mascot, onboarding and polished responsive panels are Phase 2. Sleep/Focus product features remain later phases. Desktop rubric exception is still pending instructor approval.
+- Desktop rubric exception is still pending instructor approval.
+
+## Phase 2 (design system) limitations
+
+- The Alarm editor schedules one native alarm (the bridge holds one pending occurrence). "Every day" maps to a 24 h native interval; other weekday sets schedule only the next matching day until Phase 4 recurrence. Label, days and mission shown on the card live in memory for the session.
+- Wake missions (Shake, Math, Light) are designed but not selectable until Phase 4 implements them, so no alarm promises a mission it will not require.
+- The sleep diary and Focus session are in-memory (Phase 5 adds persistence/sync). Focus state is already timestamp-derived.
+- Running "Finish" stops GPS and keeps the in-memory trace on screen; saved runs are Phase 6.
+- Display name, theme mode, buddy colour and onboarding completion are stored locally in SharedPreferences, never uploaded.
+- Profile avatar uses the provider photo URL without offline caching (Phase 3).
+- Golden baselines are rendered on macOS; Linux CI may need its own baselines.
+- The native wake screen shows a static buddy with a bell wiggle (disabled when Android animations are off), not the full Flutter wake-up animation.

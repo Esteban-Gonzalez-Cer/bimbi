@@ -19,7 +19,9 @@
         <meta-data android:name="firebase_messaging_auto_init_enabled" android:value="false" />
         <meta-data android:name="firebase_analytics_collection_enabled" android:value="false" />
         <meta-data android:name="com.google.firebase.messaging.default_notification_channel_id" android:value="bimbi_messages" />
-        <activity android:name=".AlarmActivity" android:exported="false" android:showWhenLocked="true" android:turnScreenOn="true" android:theme="@android:style/Theme.Material.Light.NoActionBar" />
+        <meta-data android:name="com.google.firebase.messaging.default_notification_icon" android:resource="@drawable/ic_stat_bimbi" />
+        <meta-data android:name="com.google.firebase.messaging.default_notification_color" android:resource="@color/bimbi_lilac_accent" />
+        <activity android:name=".AlarmActivity" android:exported="false" android:showWhenLocked="true" android:turnScreenOn="true" android:theme="@android:style/Theme.Material.NoActionBar" />
         <service android:name=".AlarmService" android:exported="false" android:foregroundServiceType="mediaPlayback" />
         <receiver android:name=".AlarmReceiver" android:exported="false" />
         <receiver android:name=".RestoreReceiver" android:exported="false">

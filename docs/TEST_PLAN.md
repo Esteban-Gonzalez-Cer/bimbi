@@ -4,8 +4,13 @@ Every manual result must record date, actual device/API, exact build/checksum, p
 
 | ID | Steps | Expected result |
 |---|---|---|
-| UI-01 | Navigate five tabs at 360/412/700/900 logical widths, text scales 1/1.3/2 | No layout exception; correct NavigationBar/Rail; all labels accessible |
+| UI-01 | Navigate five tabs at 360/412/700/900 logical widths, text scales 1/1.3/2, light and dark | No layout exception; NavigationBar < 600, Rail ≥ 600, two panes ≥ 840; page header matches tab; all labels accessible |
 | UI-02 | Tablet portrait/landscape, Back, keyboard and TalkBack | Controls reachable; readable layout; no trap |
+| UI-03 | Brand tokens: text/background pairs in light and dark | ≥ 4.5:1 contrast (`test/unit/design_tokens_test.dart`); Tangerine always with Ink text |
+| UI-04 | Onboarding: four steps, Back, Skip, name and buddy colour | Reaches the shell; no permission requested; Back steps backwards |
+| UI-05 | Golden baselines: five tabs at four widths (light) and two widths (dark), onboarding, design gallery | `flutter test test/golden` matches committed images |
+| UI-06 | Restyled native wake screen over the lock screen | Shows Night screen, buddy, time; Dismiss ≥ 72dp; Dismiss and Back stop AlarmService |
+| FOCUS-02 | Focus timer pause/resume/complete with injected clock | Remaining time derived from timestamps; target 5–120 min in 5-min steps |
 | ALARM-01 | Deny exact access and schedule | Explicit denial, no false pending success |
 | ALARM-02 | Grant notifications/exact access; schedule 30s, background and screen off | Native alert at recorded time; sound confirmed; Dismiss ends audio |
 | ALARM-03 | Schedule; kill only Bimbi process without force-stop | New process delivers persisted occurrence; no cloud dependency |

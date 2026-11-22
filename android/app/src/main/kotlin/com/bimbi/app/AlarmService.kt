@@ -61,7 +61,7 @@ class AlarmService : Service() {
             val show = PendingIntent.getActivity(context, 201, Intent(context, AlarmActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP), PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
             val dismiss = PendingIntent.getBroadcast(context, 202, Intent(context, AlarmReceiver::class.java).setAction("dismiss"), PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
             return Notification.Builder(context, "bimbi_alarm")
-                .setSmallIcon(android.R.drawable.ic_lock_idle_alarm).setContentTitle("Bimbi wake alarm")
+                .setSmallIcon(R.drawable.ic_stat_bimbi).setColor(context.getColor(R.color.bimbi_lilac_accent)).setContentTitle("Bimbi wake alarm")
                 .setContentText("Dismiss is always available. Test audio stops after 2 minutes.")
                 .setCategory(Notification.CATEGORY_ALARM).setVisibility(Notification.VISIBILITY_PUBLIC)
                 .setOngoing(true).setContentIntent(show).setFullScreenIntent(show, true)
