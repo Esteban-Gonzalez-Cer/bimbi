@@ -1,4 +1,4 @@
-name: Android Phase 1
+name: Android checks
 on: [push, pull_request]
 jobs:
   checks:
@@ -21,8 +21,10 @@ jobs:
       - run: npm ci --prefix payment_demo/server
       - run: npm ci --prefix firebase/emulator-tests
       - run: ./scripts/check.sh
+        env:
+          BIMBI_SKIP_MAC_GOLDENS: "true"
       - uses: actions/upload-artifact@v4
         if: success()
         with:
-          name: bimbi-phase1-debug
+          name: bimbi-debug
           path: build/app/outputs/flutter-apk/app-debug.apk

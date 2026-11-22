@@ -18,6 +18,12 @@
 - The sleep diary and Focus session are in-memory (Phase 5 adds persistence/sync). Focus state is already timestamp-derived.
 - Running "Finish" stops GPS and keeps the in-memory trace on screen; saved runs are Phase 6.
 - Display name, theme mode, buddy colour and onboarding completion are stored locally in SharedPreferences, never uploaded.
-- Profile avatar uses the provider photo URL without offline caching (Phase 3).
+- The Phase 2 APK uses the provider photo URL without offline caching. Phase 3 adds a per-account disk cache and private custom photos.
 - Golden baselines are rendered on macOS; Linux CI may need its own baselines.
 - The native wake screen shows a static buddy with a bell wiggle (disabled when Android animations are off), not the full Flutter wake-up animation.
+
+## Phase 3 profile
+
+- Only the account profile name and avatar sync. Appearance settings and the guest name are local. New edits require connectivity; an interrupted name transaction stays pending for that session.
+- Avatar authorization requires a trusted Auth creation event for the original account. Legacy accounts without that claim can sync their name after verification and have read-only photos. The sign-in method alone never authorizes an avatar write.
+- An offline photo requires a previously downloaded copy for the restored account. The device cache expires on access seven days after the last successful fetch and is cleared on sign-out, account switch or photo removal.

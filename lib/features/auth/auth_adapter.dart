@@ -57,7 +57,12 @@ class FirebaseAuthAdapter implements AuthAdapter {
     _googleInit ??= GoogleSignIn.instance.initialize(
       serverClientId: AppConfig.googleServerClientId,
     );
-    await _googleInit;
+    try {
+      await _googleInit;
+    } catch (_) {
+      _googleInit = null;
+      rethrow;
+    }
     final account = await GoogleSignIn.instance.authenticate();
     await auth.signInWithCredential(
       GoogleAuthProvider.credential(idToken: account.authentication.idToken),
@@ -72,6 +77,9 @@ class FirebaseAuthAdapter implements AuthAdapter {
   @override
   Future<void> signOut() async {
     await auth.signOut();
+    if (_googleInit != null) {
+      await GoogleSignIn.instance.signOut();
+    }
   }
 
   @override

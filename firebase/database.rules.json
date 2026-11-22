@@ -4,6 +4,14 @@
     ".write": false,
     "users": {
       "$uid": {
+        "profile": {
+          ".read": "auth != null && auth.uid === $uid && auth.token.email_verified === true",
+          "displayName": {
+            ".write": "auth != null && auth.uid === $uid && auth.token.email_verified === true && newData.exists()",
+            ".validate": "newData.isString() && newData.val().length >= 1 && newData.val().length <= 40 && newData.val().matches(/^[^ ](.*[^ ])?$/)"
+          },
+          "$other": {".validate": false}
+        },
         "phase1": {
           "probe": {
             ".read": "auth != null && auth.uid === $uid && auth.token.email_verified === true",

@@ -31,7 +31,9 @@ class MessagingController extends Notifier<String> {
   static const topic = 'bimbi_phase1';
   @override
   String build() {
-    if (!ref.watch(firebaseReadyProvider)) return 'Firebase is not configured.';
+    if (!ref.watch(firebaseReadyProvider) || AppConfig.firebaseEmulators) {
+      return 'Firebase Messaging is unavailable in this build.';
+    }
     final foreground = FirebaseMessaging.onMessage.listen((_) {
       state = 'Foreground topic message received.';
     });
@@ -67,6 +69,7 @@ class MessagingController extends Notifier<String> {
   }
 
   Future<void> subscribe() async {
+    if (AppConfig.firebaseEmulators) return;
     final messaging = FirebaseMessaging.instance;
     final settings = await messaging.requestPermission();
     if (settings.authorizationStatus != AuthorizationStatus.authorized) {
@@ -79,6 +82,7 @@ class MessagingController extends Notifier<String> {
   }
 
   Future<void> unsubscribe() async {
+    if (AppConfig.firebaseEmulators) return;
     await FirebaseMessaging.instance.unsubscribeFromTopic(topic);
     await FirebaseMessaging.instance.unregister();
     await FirebaseMessaging.instance.setAutoInitEnabled(false);

@@ -5,7 +5,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/operation.dart';
 import '../../core/platform.dart';
+import '../../features/auth/auth_adapter.dart';
 import '../../features/focus/presentation/focus_page.dart';
+import '../../features/profile/application/cloud_profile.dart';
 import '../../features/notifications/messaging.dart';
 import '../../features/profile/presentation/profile_page.dart';
 import '../../features/running/presentation/running_page.dart';
@@ -44,7 +46,10 @@ class _AdaptiveShellState extends ConsumerState<AdaptiveShell> {
     _lifecycle = AppLifecycleListener(
       onPause: () => unawaited(ref.read(trackingProvider.notifier).stop()),
       onHide: () => unawaited(ref.read(trackingProvider.notifier).stop()),
-      onResume: () => ref.invalidate(capabilitiesProvider),
+      onResume: () {
+        ref.invalidate(capabilitiesProvider);
+        unawaited(_refreshAccount());
+      },
     );
   }
 
@@ -54,15 +59,32 @@ class _AdaptiveShellState extends ConsumerState<AdaptiveShell> {
     super.dispose();
   }
 
+  Future<void> _refreshAccount() async {
+    final auth = ref.read(authAdapterProvider);
+    if (auth?.user == null) return;
+    try {
+      await auth!.reload().timeout(const Duration(seconds: 8));
+    } catch (_) {
+      // Use the restored session and cached photo while disconnected.
+    }
+    if (mounted) await ref.read(cloudProfileProvider.notifier).refreshPhoto();
+  }
+
   void _select(int index) {
     ref.read(destinationProvider.notifier).select(index);
   }
 
   @override
   Widget build(BuildContext context) {
+    // Keep the profile coordinator active across tabs so account changes
+    // always retire listeners and cached media.
+    ref.watch(cloudProfileProvider.select((profile) => profile.uid));
     final selected = ref.watch(destinationProvider);
     final message = ref.watch(messagingProvider);
     ref.listen(destinationProvider, (previous, next) {
+      if (next == AppDestination.profile.index) {
+        unawaited(ref.read(cloudProfileProvider.notifier).refreshPhoto());
+      }
       if (previous == AppDestination.running.index &&
           next != AppDestination.running.index) {
         unawaited(ref.read(trackingProvider.notifier).stop());

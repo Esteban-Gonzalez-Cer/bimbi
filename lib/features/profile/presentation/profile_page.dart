@@ -12,6 +12,8 @@ import '../../../core/operation.dart';
 import '../../../core/platform.dart';
 import '../../auth/auth_adapter.dart';
 import '../../payments/payment_adapter.dart';
+import '../application/cloud_profile.dart';
+import 'profile_picture.dart';
 
 enum ProfileSection {
   account('Account', 'Sign-in and verification', BimbiIcons.profile),
@@ -194,33 +196,20 @@ class _ProfileSummary extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final user = ref.watch(sessionProvider).asData?.value;
-    final name = ref.watch(displayNameProvider);
-    final shown = name.isNotEmpty
-        ? name
-        : (user?.displayName?.isNotEmpty == true
-              ? user!.displayName!
-              : 'Hello there');
-    final photo = user?.photoURL;
+    final name = ref.watch(visibleProfileNameProvider);
+    final shown = name.isEmpty ? 'Hello there' : name;
     final c = context.bimbi;
     return BimbiCard(
       color: Theme.of(context).colorScheme.secondaryContainer,
       child: Row(
         children: [
-          if (photo != null)
-            Semantics(
-              image: true,
-              label: 'Profile photo',
-              child: CircleAvatar(
-                radius: 36,
-                backgroundImage: NetworkImage(photo),
-                backgroundColor: c.accentTint,
-              ),
-            )
-          else
-            DecoratedBox(
+          ProfilePicture(
+            size: 80,
+            fallback: DecoratedBox(
               decoration: BoxDecoration(color: c.card, shape: BoxShape.circle),
               child: const BimbiBuddy(size: 80, glow: false),
             ),
+          ),
           const SizedBox(width: BimbiSpace.md),
           Expanded(
             child: Column(
@@ -271,12 +260,20 @@ class _AccountSectionState extends ConsumerState<AccountSection> {
   @override
   Widget build(BuildContext context) {
     final auth = ref.watch(authAdapterProvider);
-    final user = ref.watch(sessionProvider).asData?.value;
+    final session = ref.watch(sessionProvider);
+    final user = session.asData?.value;
     final ready = ref.watch(firebaseReadyProvider);
     final busy = ref.watch(operationProvider).busy;
     final op = ref.read(operationProvider.notifier);
     VoidCallback? run(Future<String> Function() action, {bool when = true}) =>
         ready && when && !busy ? () => op.run(action) : null;
+
+    if (ready && session.isLoading) {
+      return const _SectionCard(
+        section: ProfileSection.account,
+        children: [Text('Restoring your account…'), LinearProgressIndicator()],
+      );
+    }
 
     if (user != null) {
       final providers = user.providerData.map((p) => p.providerId).toList();
@@ -309,10 +306,14 @@ class _AccountSectionState extends ConsumerState<AccountSection> {
           OutlinedButton(
             onPressed: run(() async {
               await auth!.reload();
+              if (mounted) {
+                await ref.read(cloudProfileProvider.notifier).refreshPhoto();
+              }
               return 'Session refreshed.';
             }),
             child: const Text('Refresh status'),
           ),
+          if (user.emailVerified) const _PhotoActions(),
           TextButton.icon(
             onPressed: run(() async {
               await auth!.signOut();
@@ -335,6 +336,12 @@ class _AccountSectionState extends ConsumerState<AccountSection> {
             message:
                 'Firebase configuration required. Alarms, sleep and focus '
                 'still work offline.',
+          ),
+        if (session.hasError)
+          const InlineBanner(
+            icon: BimbiIcons.info,
+            title: 'Could not restore your account',
+            message: 'Check your connection and try signing in again.',
           ),
         TextField(
           controller: _email,
@@ -408,6 +415,147 @@ class _AccountSectionState extends ConsumerState<AccountSection> {
   }
 }
 
+class _PhotoActions extends ConsumerWidget {
+  const _PhotoActions();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final profile = ref.watch(cloudProfileProvider);
+    final controller = ref.read(cloudProfileProvider.notifier);
+    final busy = profile.savingPhoto;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        if (profile.canEditAvatar)
+          Wrap(
+            spacing: BimbiSpace.xs,
+            children: [
+              OutlinedButton(
+                onPressed: busy ? null : () => controller.editPhoto(),
+                child: const Text('Choose photo'),
+              ),
+              if (profile.photo != null)
+                TextButton(
+                  onPressed: busy
+                      ? null
+                      : () async {
+                          final confirmed = await showDialog<bool>(
+                            context: context,
+                            builder: (context) => AlertDialog(
+                              title: const Text('Remove profile photo?'),
+                              content: const Text(
+                                'Your other devices will show the buddy after they refresh.',
+                              ),
+                              actions: [
+                                TextButton(
+                                  onPressed: () =>
+                                      Navigator.pop(context, false),
+                                  child: const Text('Keep photo'),
+                                ),
+                                FilledButton(
+                                  onPressed: () => Navigator.pop(context, true),
+                                  child: const Text('Remove photo'),
+                                ),
+                              ],
+                            ),
+                          );
+                          if (confirmed == true &&
+                              context.mounted &&
+                              ref.read(cloudProfileProvider).uid ==
+                                  profile.uid) {
+                            await controller.editPhoto(remove: true);
+                          }
+                        },
+                  child: const Text('Remove photo'),
+                ),
+            ],
+          )
+        else
+          const Text(
+            'Custom photos are available for verified email accounts created with a password.',
+          ),
+        if (busy) const LinearProgressIndicator(),
+        if (profile.photoStatus.isNotEmpty)
+          Semantics(liveRegion: true, child: Text(profile.photoStatus)),
+      ],
+    );
+  }
+}
+
+class _SyncedNameEditor extends ConsumerStatefulWidget {
+  const _SyncedNameEditor({super.key});
+
+  @override
+  ConsumerState<_SyncedNameEditor> createState() => _SyncedNameEditorState();
+}
+
+class _SyncedNameEditorState extends ConsumerState<_SyncedNameEditor> {
+  late final TextEditingController _text;
+
+  @override
+  void initState() {
+    super.initState();
+    _text = TextEditingController(text: ref.read(visibleProfileNameProvider));
+  }
+
+  @override
+  void dispose() {
+    _text.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    ref.listen(visibleProfileNameProvider, (previous, next) {
+      if (_text.text == previous) _text.text = next;
+    });
+    final profile = ref.watch(cloudProfileProvider);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        TextField(
+          controller: _text,
+          maxLength: 40,
+          enabled: profile.verified && !profile.savingName,
+          textCapitalization: TextCapitalization.words,
+          decoration: InputDecoration(
+            labelText: 'Profile name',
+            helperText: profile.verified
+                ? 'Syncs to devices signed into this account.'
+                : 'Verify your email to sync your profile.',
+            counterText: '',
+          ),
+        ),
+        const SizedBox(height: BimbiSpace.xs),
+        OutlinedButton(
+          onPressed: profile.verified && !profile.savingName
+              ? () =>
+                    ref.read(cloudProfileProvider.notifier).saveName(_text.text)
+              : null,
+          child: const Text('Save name'),
+        ),
+        if (profile.savingName)
+          Semantics(
+            liveRegion: true,
+            child: Text(
+              profile.online ? 'Saving name…' : 'Waiting for connection…',
+            ),
+          )
+        else if (profile.nameStatus.isNotEmpty ||
+            (profile.verified && !profile.online))
+          Semantics(
+            liveRegion: true,
+            child: Text(
+              profile.nameStatus.isNotEmpty
+                  ? profile.nameStatus
+                  : 'Waiting for the profile database to connect.',
+            ),
+          ),
+      ],
+    );
+  }
+}
+
 class AppearanceSection extends ConsumerStatefulWidget {
   const AppearanceSection({super.key});
   @override
@@ -415,9 +563,13 @@ class AppearanceSection extends ConsumerStatefulWidget {
 }
 
 class _AppearanceSectionState extends ConsumerState<AppearanceSection> {
-  late final TextEditingController _name = TextEditingController(
-    text: ref.read(displayNameProvider),
-  );
+  late final TextEditingController _name;
+
+  @override
+  void initState() {
+    super.initState();
+    _name = TextEditingController(text: ref.read(displayNameProvider));
+  }
 
   @override
   void dispose() {
@@ -427,22 +579,26 @@ class _AppearanceSectionState extends ConsumerState<AppearanceSection> {
 
   @override
   Widget build(BuildContext context) {
+    final user = ref.watch(sessionProvider).asData?.value;
     final mode = ref.watch(themeModeProvider);
     final buddy = ref.watch(buddyColorProvider);
     return _SectionCard(
       section: ProfileSection.appearance,
       children: [
-        TextField(
-          controller: _name,
-          maxLength: 40,
-          textCapitalization: TextCapitalization.words,
-          decoration: const InputDecoration(
-            labelText: 'Your name',
-            helperText: 'What Bimbi calls you. Stays on this device.',
-            counterText: '',
+        if (user != null)
+          _SyncedNameEditor(key: ValueKey(user.uid))
+        else
+          TextField(
+            controller: _name,
+            maxLength: 40,
+            textCapitalization: TextCapitalization.words,
+            decoration: const InputDecoration(
+              labelText: 'Your name',
+              helperText: 'What Bimbi calls you. Stays on this device.',
+              counterText: '',
+            ),
+            onChanged: ref.read(displayNameProvider.notifier).set,
           ),
-          onChanged: ref.read(displayNameProvider.notifier).set,
-        ),
         const SizedBox(height: BimbiSpace.xs),
         const SectionLabel('Theme'),
         SegmentedButton<ThemeMode>(
@@ -648,6 +804,12 @@ class PrivacySection extends StatelessWidget {
         line(
           BimbiIcons.bell,
           'Bimbi asks for each permission only when you use the feature.',
+        ),
+        line(
+          BimbiIcons.profile,
+          'Verified accounts sync their profile name and photo. A cached photo '
+          'can be used on this device for up to seven days. Signing out clears '
+          'your local profile data.',
         ),
       ],
     );

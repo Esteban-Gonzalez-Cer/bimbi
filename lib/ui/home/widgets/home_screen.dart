@@ -7,6 +7,7 @@ import '../../../core/clock.dart';
 import '../../../core/operation.dart';
 import '../../../core/platform.dart';
 import '../../../features/alarm/application/alarm_draft.dart';
+import '../../../features/profile/presentation/profile_picture.dart';
 import '../../../features/alarm/presentation/alarm_editor.dart';
 import '../../../features/notifications/messaging.dart';
 import '../view_models/home_view_model.dart';
@@ -149,7 +150,10 @@ class _Header extends ConsumerWidget {
             backgroundColor: c.accentTint,
             foregroundColor: c.link,
           ),
-          icon: BimbiIcon(BimbiIcons.profile, size: 22),
+          icon: const ProfilePicture(
+            size: 26,
+            fallback: BimbiIcon(BimbiIcons.profile, size: 22),
+          ),
         ),
       ],
     );

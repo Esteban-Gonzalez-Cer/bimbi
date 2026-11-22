@@ -1,4 +1,4 @@
-# Phase 1 architecture
+# Bimbi architecture
 
 Widgets → Riverpod state/controllers → adapters → Android/Firebase/Stripe. Handwritten providers, no application setState or ValueNotifier. `lib/app` composes adaptive navigation (`shell/`), the theme (`theme/`), the design system and buddy (`design_system/`), local UI preferences (`preferences.dart`) and debug-only developer tools (`developer/`). Feature screens live in `lib/features/<feature>/presentation/` with their Riverpod controllers in `application/`. See `docs/DESIGN_SYSTEM.md` and ADR-002/008. `lib/core` owns configuration, operation status and typed platform failures. Features own their SDK adapters. No gamification dependency exists.
 
@@ -12,6 +12,12 @@ BOOT_COMPLETED, package replacement and exact-access grant restore pending futur
 
 ## Integration boundaries
 
-Firebase initialization failure leaves offline alarms available. Cloud paths are verified-owner probes only. FCM listeners register at startup; notification destination data is allowlisted. Permission/topic enablement is explicit. GPS/motion are stopped when leaving the foreground or Running tab. GPS route is bounded to 1000 accepted in-memory points and never uploaded.
+Firebase initialization failure leaves offline alarms available. FCM listeners register at startup; notification destination data is allowlisted. Permission/topic enablement is explicit. GPS/motion are stopped when leaving the foreground or Running tab. GPS route is bounded to 1000 accepted in-memory points and never uploaded.
+
+## Account profile
+
+Firebase Auth restores the session. The profile controller subscribes to the verified owner's name at `users/{uid}/profile/displayName` and submits a transaction without optimistic local updates. An interrupted write stays pending until confirmation or the session is closed. The local guest name and device appearance preferences use SharedPreferences.
+
+The Auth creation event sets `bimbiAuthOrigin` with the Admin SDK. Storage permits custom avatar writes only for a verified owner with password origin and a current password sign-in. A single JPEG per account lives at `users/{uid}/avatar.jpg`. Google and GitHub photos come from the respective provider profile. The application-private disk cache is keyed by Firebase project and UID, and uses a seven-day expiry for images. Account transitions retire listeners and disregard results from earlier sessions.
 
 Payment creation/verification are authenticated HTTPS endpoints, backed by server-private RTDB attempt records and Stripe test PaymentIntents. A transaction reserves uid/requestId/plan before creating with Stripe idempotency. Retries with a recorded PaymentIntent retrieve it. Unrecorded attempts older than 23 hours are rejected to avoid recreation after Stripe's idempotency expiry. The UI does not write an entitlement.

@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased — Phase 3 Firebase profile
+
+Verified accounts sync their profile name and avatar. Firebase rules isolate private data by UID and require a server-recorded email/password origin for custom avatar writes. Profile photos have a private, time-limited disk cache. Debug builds can connect to the Firebase Emulator Suite.
+
 ## Unreleased — Phase 2 design system
 Bimbi brand design system (lavender light/dark tokens from Wake, bundled Instrument Serif + Nunito, themed Material 3 components, Icons8 Claude Hand Drawn icons), animated Bimbi buddy in Lilac by default, with six moods and the wake-up sequence, adaptive navigation (bar / rail / two panes), onboarding, light/dark with an in-app toggle, circular Focus timer, designed Alarm/Sleep/Focus/Running/Profile screens, restyled native wake screen, launcher icon, splash and notification icon. The Wake design prototype was retired after its palette and typography moved to the main app. Phase 1 experiments moved to debug-only Developer tools. Evidence in `docs/evidence/phase2/REPORT.md`.
 

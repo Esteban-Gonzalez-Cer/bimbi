@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../app/design_system/components/alarm_parts.dart';
-import '../../../app/preferences.dart';
 import '../../../core/capabilities.dart';
 import '../../../core/clock.dart';
 import '../../../core/platform.dart';
 import '../../../features/alarm/application/alarm_draft.dart';
 import '../../../features/sleep/application/sleep_diary.dart';
+import '../../../features/profile/application/cloud_profile.dart';
 
 /// One alarm row on Home.
 @immutable
@@ -99,7 +99,7 @@ final homeViewModelProvider = Provider<HomeState>((ref) {
 
   return HomeState(
     greeting: greetingFor(now),
-    name: ref.watch(displayNameProvider),
+    name: ref.watch(visibleProfileNameProvider),
     night: now.hour >= 19 || now.hour < 5,
     nextAlarmIn: pending?.at.difference(now),
     nextAlarmAt: pending?.at,

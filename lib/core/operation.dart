@@ -25,7 +25,9 @@ class OperationController extends Notifier<OperationState> {
       state = OperationState(message: e.message);
     } on FirebaseException catch (e) {
       state = OperationState(
-        message: 'Firebase: ${e.code}. Check setup or try again.',
+        message: e.code == 'network-request-failed'
+            ? 'No connection. Connect to the internet and try again.'
+            : 'Firebase: ${e.code}. Check setup or try again.',
       );
     } catch (_) {
       state = const OperationState(

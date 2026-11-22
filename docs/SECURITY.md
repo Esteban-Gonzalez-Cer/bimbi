@@ -1,7 +1,8 @@
-# Phase 1 security and privacy
+# Bimbi security and privacy
 
 - No secrets, private keystores, OAuth refresh tokens, account exports, full routes or personal health records in Git. Local configuration is ignored.
-- Firebase user probe paths require authenticated matching UID and verified email; schema, PNG content type and 2 KiB size are restricted. All other paths, including server payment attempts and entitlements, are denied to clients.
+- Firebase user probe and profile paths require matching UID and verified email. Rules validate the probe fields and size, the profile name, and custom avatar metadata. Client access to server payment attempts and entitlements is denied.
+- Avatar writes also require the server-managed `bimbiAuthOrigin` claim and a password sign-in. Profile downloads use authenticated SDK calls, and cached images reside in app-private storage. The photo picker recompresses images and discards source metadata.
 - The server accepts only known plan IDs and prices, validates auth and ownership, rejects live Stripe mode and unexpected currency/amount. Provider client secrets are returned only to the owner and not logged.
 - Logs intentionally exclude SDK error bodies and request payloads. Only native alarm timing and generic statuses are retained as evidence. Use personal-free test screenshots.
 - Android location is foreground-only; no background location permission. No raw app usage package list leaves native Android. No Accessibility-service workaround.

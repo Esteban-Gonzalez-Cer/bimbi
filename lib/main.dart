@@ -1,5 +1,8 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -13,10 +16,25 @@ import 'features/notifications/messaging.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   var ready = false;
-  if (AppConfig.harness && AppConfig.firebaseConfigured) {
+  if (AppConfig.firebaseConfigured) {
     try {
       await Firebase.initializeApp(options: AppConfig.firebaseOptions);
-      FirebaseMessaging.onBackgroundMessage(backgroundMessage);
+      if (AppConfig.firebaseEmulators) {
+        await FirebaseAuth.instance.useAuthEmulator(
+          AppConfig.emulatorHost,
+          9099,
+        );
+        FirebaseDatabase.instance.useDatabaseEmulator(
+          AppConfig.emulatorHost,
+          9000,
+        );
+        await FirebaseStorage.instance.useStorageEmulator(
+          AppConfig.emulatorHost,
+          9199,
+        );
+      } else {
+        FirebaseMessaging.onBackgroundMessage(backgroundMessage);
+      }
       ready = true;
     } catch (_) {
       /* The offline alarm shell remains available. */

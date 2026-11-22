@@ -3,6 +3,7 @@ import {getAuth} from 'firebase-admin/auth';
 import {getDatabase} from 'firebase-admin/database';
 import {defineSecret} from 'firebase-functions/params';
 import {onRequest} from 'firebase-functions/v2/https';
+export {assignBimbiAuthOrigin} from './identity';
 import Stripe from 'stripe';
 import {ApiError, Attempt, handlePayment, PaymentDependencies, PLANS} from './payments.js';
 initializeApp();

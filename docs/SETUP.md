@@ -16,7 +16,7 @@ Project selected by owner: `bimbi-26ae2`. Android application ID: `com.bimbi.app
 ./scripts/firebase.sh deploy --only database,storage --project bimbi-26ae2
 ```
 
-These Phase 1 rules intentionally deny all product paths other than the verified owner's small probe. Do not reuse them unchanged as a complete Phase 3 schema.
+The rules support the verified owner's small Phase 1 probe and the Phase 3 profile and avatar. Other user data paths remain closed until their phases.
 
 8. Rebuild with `--dart-define-from-file=config/dev.json`. On Profile create an account, check email, refresh verification, then run the private-data/image probe. Use two separate accounts for cross-user testing. Screenshots of actual account data must stay private.
 
@@ -25,6 +25,39 @@ These Phase 1 rules intentionally deny all product paths other than the verified
 A physical-tablet test encountered the hosted handler's “missing initial state” page after consent with the correct Firebase callback. Closing the failed Chrome custom tab and starting a new GitHub attempt from Bimbi succeeded; native-session restoration also passed. Treat this as an observed recovery, not a proven permanent fix.
 
 Keep the callback Firebase supplies. Start sign-in from the app and complete it within the same browser context. If this error occurs, close the failed custom tab and retry from the app; do not open the callback URL directly, disable OAuth state validation, clear all browser data, or change database rules as a workaround. Repeated occurrences require recording browser/SDK versions and sanitized redirect diagnostics before choosing a change. Never export OAuth codes, state values, or credentials in evidence.
+
+## Phase 3 profile and emulator verification
+
+Use JDK 21, Node 22 and the pinned Flutter SDK. Install the two Node projects from their lockfiles before running the complete check. The emulator run uses the isolated `demo-bimbi` project and exercises Auth creation events, profile sync, and Database and Storage rules.
+
+```sh
+npm ci --prefix payment_demo/server
+npm ci --prefix firebase/emulator-tests
+./scripts/check.sh
+```
+
+For an interactive Android emulator build, start the four services after compiling the functions. Use emulator-only test accounts and the Auth emulator's local verification and reset links.
+
+```sh
+npm --prefix payment_demo/server run build
+./scripts/firebase.sh emulators:start --project demo-bimbi --only auth,database,storage,functions
+```
+
+In a separate terminal run `flutter run --debug --dart-define=FIREBASE_EMULATORS=true`. The Android emulator reaches the host at `10.0.2.2`. Auth creation events reach the Functions emulator through the suite. The app accesses Auth, Realtime Database and Storage directly.
+
+To test the signed-in Android profile, seed an isolated account with a synthetic JPEG of at most 256 KiB. Run the integration test on a compact Android emulator while the Firebase emulators are running.
+
+```sh
+node firebase/emulator-tests/seed-profile.cjs /path/to/synthetic-test.jpg
+flutter test --disable-dds --dart-define=FIREBASE_EMULATORS=true integration_test/profile_emulator_test.dart -d <android-emulator>
+```
+
+For the development project, deploy only the tested rules and identity function. The function records the origin of accounts created after deployment. Use a fresh email/password test account and refresh its session after verification to test custom photo edits.
+
+```sh
+./scripts/firebase.sh deploy --only database,storage,functions:bimbi-phase1:assignBimbiAuthOrigin --project bimbi-26ae2
+flutter build apk --debug --dart-define-from-file=config/dev.json
+```
 
 ## FCM console experiment
 

@@ -1,6 +1,22 @@
 rules_version = '2';
 service firebase.storage {
   match /b/{bucket}/o {
+    match /users/{uid}/avatar.jpg {
+      function verifiedOwner() {
+        return request.auth != null && request.auth.uid == uid &&
+          request.auth.token.email_verified == true;
+      }
+      function canEditAvatar() {
+        return verifiedOwner() &&
+          request.auth.token.bimbiAuthOrigin == 'password' &&
+          request.auth.token.firebase.sign_in_provider == 'password';
+      }
+      allow get: if verifiedOwner();
+      allow create, update: if canEditAvatar() &&
+        request.resource.size > 0 && request.resource.size <= 256 * 1024 &&
+        request.resource.contentType == 'image/jpeg';
+      allow delete: if canEditAvatar();
+    }
     match /users/{uid}/phase1/probe.png {
       function owner() { return request.auth != null && request.auth.uid == uid && request.auth.token.email_verified == true; }
       allow read, delete: if owner();
