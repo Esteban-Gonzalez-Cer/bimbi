@@ -1,6 +1,5 @@
 package com.bimbi.app
 
-import android.Manifest
 import android.app.*
 import android.app.usage.UsageStatsManager
 import android.content.*
@@ -12,12 +11,48 @@ import android.os.*
 import android.provider.Settings
 import io.flutter.embedding.android.FlutterFragmentActivity
 import io.flutter.embedding.engine.FlutterEngine
+import io.flutter.plugin.common.EventChannel
 import io.flutter.plugin.common.MethodChannel
 
 class MainActivity : FlutterFragmentActivity() {
+    private var alarmEvents: EventChannel.EventSink? = null
+    private var reconciledOnLaunch = false
+    private val alarmChanges = object : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent) {
+            alarmEvents?.success(null)
+        }
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        val filter = IntentFilter(AlarmEngine.CHANGED)
+        if (Build.VERSION.SDK_INT >= 33) registerReceiver(alarmChanges, filter, RECEIVER_NOT_EXPORTED)
+        else @Suppress("DEPRECATION") registerReceiver(alarmChanges, filter)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        val alarms = AlarmEngine(this)
+        runCatching { alarms.restore(forceRearm = !reconciledOnLaunch) }
+            .onSuccess { reconciledOnLaunch = true }
+            .onFailure { alarms.event("resume_restore_failed") }
+    }
+
+    override fun onDestroy() {
+        unregisterReceiver(alarmChanges)
+        alarmEvents = null
+        super.onDestroy()
+    }
+
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
         AlarmEngine.channels(this)
+        EventChannel(flutterEngine.dartExecutor.binaryMessenger, "com.bimbi.app/alarms").setStreamHandler(
+            object : EventChannel.StreamHandler {
+                override fun onListen(arguments: Any?, events: EventChannel.EventSink?) { alarmEvents = events }
+                override fun onCancel(arguments: Any?) { alarmEvents = null }
+            }
+        )
         MethodChannel(flutterEngine.dartExecutor.binaryMessenger, "com.bimbi.app/platform").setMethodCallHandler { call, result ->
             val alarms = AlarmEngine(this)
             try {
@@ -25,20 +60,37 @@ class MainActivity : FlutterFragmentActivity() {
                     "capabilities" -> {
                         val meta = packageManager.getApplicationInfo(packageName, PackageManager.GET_META_DATA).metaData
                         result.success(mapOf("exactAlarm" to alarms.exactAllowed(), "notifications" to alarms.notificationsAllowed(),
-                            "fullScreen" to alarms.fullScreenAllowed(), "pending" to alarms.pending(), "active" to (alarms.active() != null),
+                            "fullScreen" to alarms.fullScreenAllowed(), "alarms" to alarms.view(), "active" to (alarms.active() != null),
+                            "snoozedUntil" to alarms.nextSnooze(),
                             "lastEvent" to alarms.lastEvent(), "model" to Build.MODEL, "api" to Build.VERSION.SDK_INT,
                             "mapsConfigured" to !meta.getString("com.google.android.geo.API_KEY").isNullOrBlank(),
                             "accelerometer" to (getSystemService(SensorManager::class.java).getDefaultSensor(Sensor.TYPE_ACCELEROMETER) != null),
                             "gps" to packageManager.hasSystemFeature(PackageManager.FEATURE_LOCATION_GPS), "usageAccess" to usageAllowed()))
                     }
-                    "schedule" -> { alarms.schedule(call.argument<String>("id")!!, call.argument<Number>("atMillis")!!.toLong(), call.argument<Number>("intervalSeconds")!!.toLong()); result.success(null) }
-                    "cancel" -> { alarms.cancel(); result.success(null) }
-                    "dismiss" -> { alarms.dismiss(); result.success(null) }
+                    "schedule" -> { alarms.scheduleTest(call.argument<String>("id")!!, call.argument<Number>("atMillis")!!.toLong(), call.argument<Number>("intervalSeconds")!!.toLong()); result.success(null) }
+                    "cancel" -> { alarms.cancelTest(); result.success(null) }
+                    "saveAlarm" -> result.success(alarms.saveDraft(
+                        id = call.argument<String>("id"),
+                        label = call.argument<String>("label").orEmpty(),
+                        hour = requireNotNull(call.argument<Int>("hour")),
+                        minute = requireNotNull(call.argument<Int>("minute")),
+                        days = call.argument<List<Int>>("days").orEmpty().toSet(),
+                        challenge = requireNotNull(WakeChallenge.parse(call.argument<String>("challenge"))),
+                        difficulty = requireNotNull(WakeDifficulty.parse(call.argument<String>("difficulty"))),
+                    ))
+                    "enableAlarm" -> result.success(alarms.setEnabled(
+                        requireNotNull(call.argument<String>("id")),
+                        requireNotNull(call.argument<Boolean>("enabled")),
+                    ))
+                    "deleteAlarm" -> { alarms.delete(requireNotNull(call.argument<String>("id"))); result.success(null) }
+                    "openChallenge" -> {
+                        if (alarms.active() != null) startActivity(Intent(this, AlarmActivity::class.java))
+                        result.success(null)
+                    }
                     "exactSettings" -> { if (Build.VERSION.SDK_INT >= 31) startActivity(Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM, Uri.parse("package:$packageName"))); result.success(null) }
                     "fullScreenSettings" -> { if (Build.VERSION.SDK_INT >= 34) startActivity(Intent(Settings.ACTION_MANAGE_APP_USE_FULL_SCREEN_INTENT, Uri.parse("package:$packageName"))); result.success(null) }
                     "notificationSettings" -> {
-                        if (Build.VERSION.SDK_INT >= 33 && !alarms.notificationsAllowed()) requestPermissions(arrayOf(Manifest.permission.POST_NOTIFICATIONS), 400)
-                        else startActivity(Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS).putExtra(Settings.EXTRA_APP_PACKAGE, packageName))
+                        startActivity(Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS).putExtra(Settings.EXTRA_APP_PACKAGE, packageName))
                         result.success(null)
                     }
                     "usageSettings" -> { startActivity(Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS)); result.success(null) }

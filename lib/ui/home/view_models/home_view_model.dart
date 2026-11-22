@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../app/design_system/components/alarm_parts.dart';
-import '../../../core/capabilities.dart';
 import '../../../core/clock.dart';
 import '../../../core/platform.dart';
 import '../../../features/alarm/application/alarm_draft.dart';
@@ -19,6 +18,7 @@ class HomeAlarm {
     required this.enabled,
     required this.mission,
     required this.draft,
+    this.status = AlarmScheduleStatus.armed,
   });
   final TimeOfDay time;
   final String label;
@@ -26,6 +26,7 @@ class HomeAlarm {
   final bool enabled;
   final WakeMission mission;
   final AlarmDraft draft;
+  final AlarmScheduleStatus status;
 }
 
 /// Everything the Home screen shows, derived in one place so the widgets
@@ -41,6 +42,7 @@ class HomeState {
     required this.averageSleep,
     required this.alarms,
     required this.loading,
+    this.active = false,
   });
 
   /// "Good morning" / "Good afternoon" / "Good evening".
@@ -54,6 +56,7 @@ class HomeState {
   final Duration? averageSleep;
   final List<HomeAlarm> alarms;
   final bool loading;
+  final bool active;
 }
 
 String greetingFor(DateTime now) {
@@ -66,8 +69,16 @@ String greetingFor(DateTime now) {
 final homeViewModelProvider = Provider<HomeState>((ref) {
   final now = ref.watch(clockProvider)();
   final caps = ref.watch(capabilitiesProvider);
-  final pending = caps.whenData(DeviceCapabilities.new).asData?.value.pending;
-  final saved = ref.watch(savedAlarmProvider);
+  final snapshot = caps.value;
+  final nativeAlarms = (snapshot?['alarms'] as List? ?? const [])
+      .map(NativeAlarm.fromNative)
+      .whereType<NativeAlarm>();
+  final snooze = snapshot?['snoozedUntil'];
+  final next = <DateTime>[
+    for (final alarm in nativeAlarms) ?alarm.next,
+    if (snooze is int) DateTime.fromMillisecondsSinceEpoch(snooze),
+  ]..sort();
+  final nextAt = next.firstOrNull;
   final diary = ref.watch(sleepDiaryProvider);
 
   final week = diary.where(
@@ -82,18 +93,15 @@ final homeViewModelProvider = Provider<HomeState>((ref) {
         );
 
   final alarms = <HomeAlarm>[
-    if (pending != null)
+    for (final alarm in nativeAlarms)
       HomeAlarm(
-        time: TimeOfDay.fromDateTime(pending.at),
-        label: saved?.label ?? 'Alarm',
-        days:
-            saved?.days ??
-            (pending.repeat == const Duration(days: 1)
-                ? const {0, 1, 2, 3, 4, 5, 6}
-                : const <int>{}),
-        enabled: true,
-        mission: saved?.mission ?? WakeMission.none,
-        draft: saved ?? AlarmDraft(time: TimeOfDay.fromDateTime(pending.at)),
+        time: alarm.draft.time,
+        label: alarm.draft.label,
+        days: alarm.draft.days,
+        enabled: alarm.enabled,
+        mission: alarm.draft.mission,
+        draft: alarm.draft,
+        status: alarm.status,
       ),
   ];
 
@@ -101,11 +109,12 @@ final homeViewModelProvider = Provider<HomeState>((ref) {
     greeting: greetingFor(now),
     name: ref.watch(visibleProfileNameProvider),
     night: now.hour >= 19 || now.hour < 5,
-    nextAlarmIn: pending?.at.difference(now),
-    nextAlarmAt: pending?.at,
+    nextAlarmIn: nextAt?.difference(now),
+    nextAlarmAt: nextAt,
     averageSleep: average,
     alarms: alarms,
-    loading: caps.isLoading,
+    loading: caps.isLoading && snapshot == null,
+    active: snapshot?['active'] == true,
   );
 });
 

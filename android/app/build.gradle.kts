@@ -58,4 +58,7 @@ flutter {
     source = "../.."
 }
 
-dependencies { implementation("com.google.android.material:material:1.13.0") }
+dependencies {
+    implementation("com.google.android.material:material:1.13.0")
+    testImplementation("junit:junit:4.13.2")
+}

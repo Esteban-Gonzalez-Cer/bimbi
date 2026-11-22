@@ -51,9 +51,13 @@ class AlarmEditor extends ConsumerStatefulWidget {
 }
 
 class _AlarmEditorState extends ConsumerState<AlarmEditor> {
-  late final TextEditingController _label = TextEditingController(
-    text: ref.read(alarmEditorProvider)?.label ?? '',
-  );
+  late final TextEditingController _label;
+
+  @override
+  void initState() {
+    super.initState();
+    _label = TextEditingController(text: ref.read(alarmEditorProvider)?.label);
+  }
 
   @override
   void dispose() {
@@ -81,15 +85,40 @@ class _AlarmEditorState extends ConsumerState<AlarmEditor> {
   Future<void> _save(AlarmDraft draft) async {
     final label = _label.text.trim().isEmpty ? 'Wake up' : _label.text.trim();
     final toSave = draft.copyWith(label: label);
-    final localizations = MaterialLocalizations.of(context);
     var saved = false;
     await ref.read(operationProvider.notifier).run(() async {
-      final at = await ref.read(savedAlarmProvider.notifier).schedule(toSave);
+      final result = await ref.read(alarmActionsProvider).save(toSave);
       saved = true;
-      return 'Alarm set for ${localizations.formatMediumDate(at)}, '
-          '${localizations.formatTimeOfDay(TimeOfDay.fromDateTime(at))}.';
+      return result;
     });
     if (saved && mounted) _close();
+  }
+
+  Future<void> _delete(String id) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (dialog) => AlertDialog(
+        title: const Text('Delete alarm?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialog, false),
+            child: const Text('Keep alarm'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(dialog, true),
+            child: const Text('Delete'),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true || !mounted) return;
+    var deleted = false;
+    await ref.read(operationProvider.notifier).run(() async {
+      final result = await ref.read(alarmActionsProvider).delete(id);
+      deleted = true;
+      return result;
+    });
+    if (deleted && mounted) _close();
   }
 
   @override
@@ -162,19 +191,45 @@ class _AlarmEditorState extends ConsumerState<AlarmEditor> {
           const SizedBox(height: BimbiSpace.xs),
           Text(describeDays(draft.days), style: context.text.bodySmall),
           const SizedBox(height: BimbiSpace.lg),
-          const SectionLabel('Wake-up mission'),
+          const SectionLabel('Wake-up challenge'),
           const SizedBox(height: BimbiSpace.xs),
           WakeMissionSelector(
             value: draft.mission,
-            available: kAvailableMissions,
             onChanged: (m) => _update(draft.copyWith(mission: m)),
+          ),
+          if (draft.mission == WakeMission.none) ...[
+            const SizedBox(height: BimbiSpace.xs),
+            const Text('Choose a challenge to save this alarm.'),
+          ],
+          const SizedBox(height: BimbiSpace.md),
+          const SectionLabel('Difficulty'),
+          const SizedBox(height: BimbiSpace.xs),
+          Wrap(
+            spacing: BimbiSpace.xs,
+            runSpacing: BimbiSpace.xs,
+            children: [
+              for (final difficulty in WakeDifficulty.values)
+                ChoiceChip(
+                  label: Text(difficulty.label),
+                  selected: draft.difficulty == difficulty,
+                  onSelected: (_) =>
+                      _update(draft.copyWith(difficulty: difficulty)),
+                ),
+            ],
           ),
           const SizedBox(height: BimbiSpace.xl),
           FilledButton(
-            onPressed: busy ? null : () => _save(draft),
+            onPressed: busy || draft.mission == WakeMission.none
+                ? null
+                : () => _save(draft),
             child: const Text('Save alarm'),
           ),
           const SizedBox(height: BimbiSpace.xs),
+          if (draft.id case final id?)
+            TextButton(
+              onPressed: busy ? null : () => _delete(id),
+              child: const Text('Delete alarm'),
+            ),
           TextButton(onPressed: _close, child: const Text('Cancel')),
         ],
       ),

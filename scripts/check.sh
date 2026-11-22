@@ -11,4 +11,5 @@ fi
 "${F[@]}" test "${test_args[@]}"
 npm --prefix payment_demo/server test
 (cd firebase/emulator-tests && npm run emulators)
+(cd android && ./gradlew :app:testDebugUnitTest)
 "${F[@]}" build apk --debug

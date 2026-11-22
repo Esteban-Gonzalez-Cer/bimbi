@@ -61,6 +61,16 @@ class DayChips extends StatelessWidget {
   final Set<int> selected;
   final ValueChanged<Set<int>>? onChanged;
 
+  VoidCallback? _toggle(int day) {
+    final change = onChanged;
+    if (change == null) return null;
+    return () {
+      final next = {...selected};
+      if (!next.remove(day)) next.add(day);
+      change(next);
+    };
+  }
+
   @override
   Widget build(BuildContext context) {
     final c = context.bimbi;
@@ -73,15 +83,10 @@ class DayChips extends StatelessWidget {
             label: weekdayNames[i],
             selected: selected.contains(i),
             button: onChanged != null,
+            onTap: _toggle(i),
             excludeSemantics: true,
             child: InkResponse(
-              onTap: onChanged == null
-                  ? null
-                  : () {
-                      final next = {...selected};
-                      if (!next.remove(i)) next.add(i);
-                      onChanged!(next);
-                    },
+              onTap: _toggle(i),
               radius: 26,
               child: AnimatedContainer(
                 duration: BimbiMotion.quick,
@@ -160,9 +165,11 @@ String describeDays(Set<int> days) {
 
 enum WakeMission {
   none('No mission', BimbiIcons.alarm, 'Dismiss right away'),
-  shake('Shake', BimbiIcons.shake, 'Shake 30×'),
-  math('Math', BimbiIcons.math, '3 sums'),
-  light('Light', BimbiIcons.light, 'Lights on');
+  shake('Shake', BimbiIcons.shake, 'Move your device'),
+  math('Math', BimbiIcons.math, 'Solve operations'),
+  ballMonte('Ball Monte', BimbiIcons.focus, 'Find the ball'),
+  pattern('Follow the pattern', BimbiIcons.edit, 'Repeat the sequence'),
+  memory('Memorama', BimbiIcons.card, 'Find the pairs');
 
   const WakeMission(this.label, this.icon, this.detail);
   final String label;
@@ -288,17 +295,18 @@ class AlarmCard extends StatelessWidget {
   }
 }
 
-/// Choice of optional wake mission. Unavailable missions stay visible but
-/// disabled so the layout does not jump between phases.
+/// Select a wake-up challenge from the available missions.
 class WakeMissionSelector extends StatelessWidget {
   const WakeMissionSelector({
     super.key,
     required this.value,
     required this.onChanged,
     this.available = const {
-      WakeMission.none,
       WakeMission.shake,
       WakeMission.math,
+      WakeMission.ballMonte,
+      WakeMission.pattern,
+      WakeMission.memory,
     },
   });
 
@@ -313,16 +321,16 @@ class WakeMissionSelector extends StatelessWidget {
       spacing: BimbiSpace.xs,
       runSpacing: BimbiSpace.xs,
       children: [
-        for (final m in WakeMission.values)
+        for (final m in WakeMission.values.where(available.contains))
           Semantics(
             selected: value == m,
-            enabled: available.contains(m),
             button: true,
+            onTap: () => onChanged(m),
             label: '${m.label}, ${m.detail}',
             excludeSemantics: true,
             child: InkWell(
               borderRadius: BimbiRadius.inputBorder,
-              onTap: available.contains(m) ? () => onChanged(m) : null,
+              onTap: () => onChanged(m),
               child: AnimatedContainer(
                 duration: BimbiMotion.quick,
                 constraints: const BoxConstraints(minWidth: 96, minHeight: 88),
@@ -337,22 +345,19 @@ class WakeMissionSelector extends StatelessWidget {
                     width: 2,
                   ),
                 ),
-                child: Opacity(
-                  opacity: available.contains(m) ? 1 : 0.45,
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      BimbiIcon(m.icon),
-                      const SizedBox(height: 6),
-                      Text(m.label, style: context.text.labelLarge),
-                      Text(
-                        available.contains(m) ? m.detail : 'Later',
-                        style: context.text.labelSmall?.copyWith(
-                          color: c.textMuted,
-                        ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    BimbiIcon(m.icon),
+                    const SizedBox(height: 6),
+                    Text(m.label, style: context.text.labelLarge),
+                    Text(
+                      m.detail,
+                      style: context.text.labelSmall?.copyWith(
+                        color: c.textMuted,
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
             ),

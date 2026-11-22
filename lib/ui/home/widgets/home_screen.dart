@@ -39,6 +39,12 @@ class HomeScreen extends ConsumerWidget {
       _Stats(state: state),
     ];
     final alarms = <Widget>[
+      if (state.active)
+        FilledButton.icon(
+          onPressed: ref.read(platformProvider).openChallenge,
+          icon: const BimbiIcon(BimbiIcons.bell, onAccent: true),
+          label: const Text('Open wake-up challenge'),
+        ),
       _SectionHeader(onAdd: openEditor),
       if (state.loading)
         const LinearProgressIndicator()
@@ -47,7 +53,6 @@ class HomeScreen extends ConsumerWidget {
       else
         for (final a in state.alarms)
           _AlarmTile(alarm: a, onTap: () => openEditor(a.draft)),
-      const _EmergencyDismiss(),
     ];
 
     if (window.isExpanded) {
@@ -413,6 +418,10 @@ class _AlarmTile extends ConsumerWidget {
     final c = context.bimbi;
     final (digits, period) = splitTime(context, alarm.time);
     final repeat = describeDays(alarm.days);
+    final id = alarm.draft.id;
+    final busy = ref.watch(operationProvider).busy;
+    final setting = alarm.status.setting;
+    final status = alarm.status.message;
     return Semantics(
       container: true,
       label: 'Alarm $digits $period, ${alarm.label}, $repeat',
@@ -466,20 +475,19 @@ class _AlarmTile extends ConsumerWidget {
                         label: '${alarm.label} alarm',
                         child: Switch(
                           value: alarm.enabled,
-                          onChanged: (on) {
-                            if (on) return;
-                            ref.read(operationProvider.notifier).run(() async {
-                              await ref
-                                  .read(savedAlarmProvider.notifier)
-                                  .cancel();
-                              return 'Alarm turned off.';
-                            });
-                          },
+                          onChanged: busy || id == null
+                              ? null
+                              : (on) => ref
+                                    .read(operationProvider.notifier)
+                                    .run(
+                                      () => ref
+                                          .read(alarmActionsProvider)
+                                          .enable(id, on),
+                                    ),
                         ),
                       ),
                     ],
                   ),
-                  // Off alarms show only time and label, as in the artboard.
                   if (alarm.enabled &&
                       (alarm.days.isNotEmpty ||
                           alarm.mission != WakeMission.none)) ...[
@@ -503,9 +511,9 @@ class _AlarmTile extends ConsumerWidget {
                           if (alarm.mission != WakeMission.none) ...[
                             const SizedBox(height: 10),
                             Container(
-                              height: 32,
                               padding: const EdgeInsets.symmetric(
                                 horizontal: 12,
+                                vertical: 7,
                               ),
                               decoration: BoxDecoration(
                                 color: c.accentTint,
@@ -516,10 +524,12 @@ class _AlarmTile extends ConsumerWidget {
                                 children: [
                                   BimbiIcon(alarm.mission.icon, size: 16),
                                   const SizedBox(width: 6),
-                                  Text(
-                                    alarm.mission.detail,
-                                    style: context.text.labelMedium?.copyWith(
-                                      color: c.link,
+                                  Flexible(
+                                    child: Text(
+                                      '${alarm.mission.label} · ${alarm.draft.difficulty.label}',
+                                      style: context.text.labelMedium?.copyWith(
+                                        color: c.link,
+                                      ),
                                     ),
                                   ),
                                 ],
@@ -530,6 +540,23 @@ class _AlarmTile extends ConsumerWidget {
                       ),
                     ),
                   ],
+                  if (status != null)
+                    if (setting != null)
+                      TextButton(
+                        onPressed: () =>
+                            ref.read(operationProvider.notifier).run(() async {
+                              await ref
+                                  .read(platformProvider)
+                                  .settings(setting);
+                              return 'Return after reviewing Android settings.';
+                            }),
+                        child: Text(status),
+                      )
+                    else
+                      Padding(
+                        padding: const EdgeInsets.only(top: 8),
+                        child: Text(status, style: context.text.labelMedium),
+                      ),
                 ],
               ),
             ),
@@ -585,35 +612,6 @@ class _NoAlarms extends StatelessWidget {
             ),
           ),
         ],
-      ),
-    );
-  }
-}
-
-/// Safety net kept visible: dismissal never depends on anything else.
-/// Shown as a quiet text action unless an alarm is actually ringing.
-class _EmergencyDismiss extends ConsumerWidget {
-  const _EmergencyDismiss();
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final ringing =
-        ref.watch(capabilitiesProvider).asData?.value['active'] == true;
-    Future<void> dismiss() async {
-      await ref.read(platformProvider).dismiss();
-      ref.invalidate(capabilitiesProvider);
-    }
-
-    if (ringing) {
-      return FilledButton(
-        onPressed: dismiss,
-        style: FilledButton.styleFrom(minimumSize: const Size.fromHeight(56)),
-        child: const Text('Dismiss ringing alarm'),
-      );
-    }
-    return Center(
-      child: TextButton(
-        onPressed: dismiss,
-        child: const Text('Dismiss ringing alarm'),
       ),
     );
   }

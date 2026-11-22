@@ -1,3 +1,5 @@
+import 'dart:ui' show SemanticsAction;
+
 import 'package:bimbi/app/design_system/components/surfaces.dart';
 import 'package:bimbi/app/shell/adaptive_shell.dart';
 import 'package:bimbi/app/shell/layout.dart';
@@ -15,6 +17,22 @@ Finder _navLabel(String name) => find.descendant(
 
 String _pageTitle(WidgetTester tester) =>
     tester.widget<Text>(find.byKey(PageHeader.titleKey)).data!;
+
+void _expectSemanticTap(WidgetTester tester, String label) {
+  final semantics = tester.ensureSemantics();
+  try {
+    expect(
+      tester
+          .getSemantics(find.bySemanticsLabel(label))
+          .getSemanticsData()
+          .hasAction(SemanticsAction.tap),
+      isTrue,
+      reason: label,
+    );
+  } finally {
+    semantics.dispose();
+  }
+}
 
 void main() {
   // UI-01: five tabs at 360/412/700/900dp, text scale 1/1.3/2, light/dark.
@@ -65,46 +83,53 @@ void main() {
     }
   }
 
-  testWidgets('unconfigured build keeps sign-in disabled, dismissal ready', (
-    tester,
-  ) async {
-    final fake = await pumpBimbi(tester);
-    final dismiss = find.widgetWithText(TextButton, 'Dismiss ringing alarm');
-    await tester.ensureVisible(dismiss);
-    await tester.pumpAndSettle();
-    expect(dismiss, findsOneWidget);
-    await tester.tap(dismiss);
-    await tester.pump();
-    expect(fake.dismissCalls, 1);
+  testWidgets(
+    'unconfigured build keeps sign-in disabled, active challenge reachable',
+    (tester) async {
+      final fake = await pumpBimbi(
+        tester,
+        platform: FakePlatform(capabilities: {'active': true}),
+      );
+      final open = find.text('Open wake-up challenge');
+      await tester.scrollUntilVisible(
+        open,
+        180,
+        scrollable: find.byType(Scrollable).first,
+      );
+      await tester.tap(open);
+      await tester.pump();
+      expect(fake.openChallengeCalls, 1);
+      expect(find.text('Dismiss ringing alarm'), findsNothing);
 
-    await tester.tap(_navLabel('Profile'));
-    await tester.pumpAndSettle();
-    await tester.tap(find.widgetWithText(ListTile, 'Account'));
-    await tester.pumpAndSettle();
-    expect(
-      find.textContaining('Firebase configuration required'),
-      findsOneWidget,
-    );
-    final signIn = tester.widget<FilledButton>(
-      find.widgetWithText(FilledButton, 'Sign in'),
-    );
-    expect(signIn.onPressed, isNull);
-    await tester.pageBack();
-    await tester.pumpAndSettle();
-    expect(_navLabel('Profile'), findsOneWidget);
-    await tester.tap(find.widgetWithText(ListTile, 'Plans'));
-    await tester.pumpAndSettle();
-    // Checkout needs a verified account; never a client-side premium flag.
-    await tester.scrollUntilVisible(
-      find.widgetWithText(FilledButton, 'Try Plus'),
-      300,
-      scrollable: find.byType(Scrollable).first,
-    );
-    final tryPlus = tester.widget<FilledButton>(
-      find.widgetWithText(FilledButton, 'Try Plus'),
-    );
-    expect(tryPlus.onPressed, isNull);
-  });
+      await tester.tap(_navLabel('Profile'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.widgetWithText(ListTile, 'Account'));
+      await tester.pumpAndSettle();
+      expect(
+        find.textContaining('Firebase configuration required'),
+        findsOneWidget,
+      );
+      final signIn = tester.widget<FilledButton>(
+        find.widgetWithText(FilledButton, 'Sign in'),
+      );
+      expect(signIn.onPressed, isNull);
+      await tester.pageBack();
+      await tester.pumpAndSettle();
+      expect(_navLabel('Profile'), findsOneWidget);
+      await tester.tap(find.widgetWithText(ListTile, 'Plans'));
+      await tester.pumpAndSettle();
+      // Checkout needs a verified account; never a client-side premium flag.
+      await tester.scrollUntilVisible(
+        find.widgetWithText(FilledButton, 'Try Plus'),
+        300,
+        scrollable: find.byType(Scrollable).first,
+      );
+      final tryPlus = tester.widget<FilledButton>(
+        find.widgetWithText(FilledButton, 'Try Plus'),
+      );
+      expect(tryPlus.onPressed, isNull);
+    },
+  );
 
   testWidgets('Android Back returns to Alarm before leaving the app', (
     tester,
@@ -156,26 +181,60 @@ void main() {
     expect(find.text('Exact alarms'), findsOneWidget);
   });
 
-  testWidgets('creating an alarm schedules the native occurrence', (
-    tester,
-  ) async {
-    final fake = await pumpBimbi(tester);
-    final create = find.widgetWithText(FilledButton, 'Set alarm');
-    await tester.ensureVisible(create);
-    await tester.pumpAndSettle();
-    await tester.tap(create);
-    await tester.pumpAndSettle();
-    await tester.enterText(find.byType(TextField), 'Gym day');
-    await tester.tap(find.bySemanticsLabel('Monday'));
-    await tester.pumpAndSettle();
-    await tester.ensureVisible(find.text('Save alarm'));
-    await tester.tap(find.text('Save alarm'));
-    await tester.pumpAndSettle();
-    expect(fake.scheduled, hasLength(1));
-    // testNow is Saturday 08:30, so the next Monday 07:00 is the 23rd.
-    expect(fake.scheduled.single.at, DateTime(2026, 11, 23, 7));
-    expect(fake.scheduled.single.repeat, Duration.zero);
-    expect(find.byType(HomeScreen), findsOneWidget);
-    expect(find.textContaining('Gym day'), findsWidgets);
-  });
+  testWidgets(
+    'creating an alarm requires and persists the selected challenge',
+    (tester) async {
+      final fake = await pumpBimbi(tester);
+      final create = find.widgetWithText(FilledButton, 'Set alarm');
+      await tester.ensureVisible(create);
+      await tester.pumpAndSettle();
+      await tester.tap(create);
+      await tester.pumpAndSettle();
+      await tester.enterText(find.byType(TextField), 'Gym day');
+      _expectSemanticTap(tester, 'Monday');
+      await tester.tap(find.bySemanticsLabel('Monday'));
+      await tester.pumpAndSettle();
+      await tester.scrollUntilVisible(
+        find.text('Save alarm'),
+        250,
+        scrollable: find.byType(Scrollable).first,
+      );
+      expect(
+        tester
+            .widget<FilledButton>(
+              find.widgetWithText(FilledButton, 'Save alarm'),
+            )
+            .onPressed,
+        isNull,
+      );
+      await tester.scrollUntilVisible(
+        find.text('Ball Monte'),
+        -220,
+        scrollable: find.byType(Scrollable).first,
+      );
+      _expectSemanticTap(tester, 'Ball Monte, Find the ball');
+      await tester.tap(find.text('Ball Monte'));
+      await tester.pumpAndSettle();
+      await tester.scrollUntilVisible(
+        find.text('Extreme'),
+        220,
+        scrollable: find.byType(Scrollable).first,
+      );
+      await tester.tap(find.text('Extreme'));
+      await tester.pumpAndSettle();
+      await tester.scrollUntilVisible(
+        find.text('Save alarm'),
+        200,
+        scrollable: find.byType(Scrollable).first,
+      );
+      await tester.tap(find.text('Save alarm'));
+      await tester.pumpAndSettle();
+      final alarm = fake.alarms.values.single;
+      expect(alarm['challenge'], 'ballMonte');
+      expect(alarm['difficulty'], 'extreme');
+      expect(alarm['days'], [0]);
+      expect(find.byType(HomeScreen), findsOneWidget);
+      expect(find.textContaining('Gym day'), findsWidgets);
+    },
+  );
 }

@@ -4,11 +4,11 @@ Widgets → Riverpod state/controllers → adapters → Android/Firebase/Stripe.
 
 ## Android alarm authority
 
-`com.bimbi.app/platform` exposes capabilities, schedule, cancel, dismiss, permission-settings entrypoints and a usage summary. Method failures map to permission_denied, unsupported or platform_error. Scheduling takes id, future UTC epoch milliseconds and an optional fixed recurrence interval in seconds (minimum 60). This is an elapsed-interval experiment, not the later local-wall-clock/DST daily recurrence editor.
+`com.bimbi.app/platform` exposes capabilities, `saveAlarm`, `enableAlarm`, `deleteAlarm`, `openChallenge`, permission settings and a usage summary. Riverpod uses the native catalogue for the list and next wake time. `com.bimbi.app/alarms` emits invalidations when Android changes that catalogue. Each alarm has a stable ID, local time, active days, challenge and difficulty. The bounded developer experiment has its own schedule and cancel actions.
 
-One pending record is synchronously persisted in native app-private SharedPreferences before setAlarmClock. A stable PendingIntent replaces the previous test alarm. Delivery validates the occurrence timestamp, clears the delivered record, schedules the next recurring occurrence, then starts the foreground audio service. The service has a native full-screen notification/activity and a separate notification Dismiss action. Dismiss ends only the active alert; Cancel also removes recurrence. No Dart engine is required.
+The native catalogue, occurrence queue and snooze deadlines are kept in private SharedPreferences. Android registers exact occurrences with `setAlarmClock` and keys pending intents by alarm and occurrence. The receiver checks the current record before delivery and schedules the next recurrence. The foreground service owns one audio stream, a local challenge session and the monotonic 15-second activity window. A completed challenge closes its occurrence. A successful snooze registers a new exact wake-up five minutes later before pausing audio and keeps the count for that occurrence. The native activity and its notification open the challenge even when Flutter is inactive.
 
-BOOT_COMPLETED, package replacement and exact-access grant restore pending future occurrences. Missed one-time alarms are marked missed rather than falsely replayed as on-time; missed recurrence advances to the next future interval. Restoration before first unlock, powered-off delivery and force-stop are not guaranteed.
+The app re-registers future occurrences on boot after unlock, package replacement and exact alarm permission grant. Time and timezone changes recalculate local schedules. A one-time occurrence missed while the device was unavailable is recorded as missed. Recurring alarms advance to the next local occurrence. Android controls execution while the device is locked, stopped or powered off.
 
 ## Integration boundaries
 

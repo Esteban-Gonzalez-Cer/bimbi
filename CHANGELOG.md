@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased — Phase 4 wake alarms
+
+Multiple local alarms with weekday recurrence, native restoration and a required wake-up challenge per alarm. Shake, Math, Ball Monte, Follow the pattern and Memorama each have four difficulty levels. The native alert supports two five-minute snoozes and a fifteen-second interaction window that rolls back the challenge when it expires.
+
 ## Unreleased — Phase 3 Firebase profile
 
 Verified accounts sync their profile name and avatar. Firebase rules isolate private data by UID and require a server-recorded email/password origin for custom avatar writes. Profile photos have a private, time-limited disk cache. Debug builds can connect to the Firebase Emulator Suite.

@@ -1,42 +1,52 @@
+import 'package:bimbi/app/design_system/components/alarm_parts.dart';
 import 'package:bimbi/features/alarm/application/alarm_draft.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  // Saturday 21 November 2026, 08:30.
-  final now = DateTime(2026, 11, 21, 8, 30);
-
-  test('once: later today, otherwise tomorrow', () {
-    expect(
-      const AlarmDraft(time: TimeOfDay(hour: 9, minute: 0)).nextOccurrence(now),
-      DateTime(2026, 11, 21, 9),
-    );
-    expect(
-      const AlarmDraft(time: TimeOfDay(hour: 7, minute: 0)).nextOccurrence(now),
-      DateTime(2026, 11, 22, 7),
-    );
-    expect(
-      const AlarmDraft(time: TimeOfDay(hour: 8, minute: 30))
-          .nextOccurrence(now),
-      DateTime(2026, 11, 22, 8, 30),
-    );
+  test('new alarms require an explicit challenge and start at normal', () {
+    const draft = AlarmDraft();
+    expect(draft.id, isNull);
+    expect(draft.mission, WakeMission.none);
+    expect(draft.difficulty, WakeDifficulty.normal);
+    expect(draft.copyWith(mission: WakeMission.pattern).toNative(), {
+      'hour': 7,
+      'minute': 0,
+      'label': 'Wake up',
+      'days': <int>[],
+      'challenge': 'pattern',
+      'difficulty': 'normal',
+    });
   });
 
-  test('weekdays skip to the next allowed day', () {
-    const weekdays = AlarmDraft(
-      time: TimeOfDay(hour: 7, minute: 0),
-      days: {0, 1, 2, 3, 4},
+  test('editing keeps the native id and writes stable weekday and difficulty values', () {
+    final alarm = NativeAlarm.fromNative({
+      'id': 'second-alarm',
+      'enabled': true,
+      'hour': 7,
+      'minute': 20,
+      'label': 'Morning',
+      'days': [4, 0],
+      'challenge': 'ballMonte',
+      'difficulty': 'extreme',
+      'status': 'notifications',
+    })!;
+    expect(alarm.enabled, isTrue);
+    expect(alarm.status.setting, 'notification');
+    expect(alarm.next, isNull);
+    expect(
+      alarm.draft
+          .copyWith(time: const TimeOfDay(hour: 8, minute: 0))
+          .toNative(),
+      {
+        'id': 'second-alarm',
+        'hour': 8,
+        'minute': 0,
+        'label': 'Morning',
+        'days': [0, 4],
+        'challenge': 'ballMonte',
+        'difficulty': 'extreme',
+      },
     );
-    expect(weekdays.nextOccurrence(now), DateTime(2026, 11, 23, 7));
-    expect(weekdays.nativeRepeat, Duration.zero);
-  });
-
-  test('every day maps to a native 24 h interval', () {
-    const daily = AlarmDraft(days: {0, 1, 2, 3, 4, 5, 6});
-    expect(daily.nativeRepeat, const Duration(days: 1));
-  });
-
-  test('only implemented wake missions are selectable', () {
-    expect(kAvailableMissions, hasLength(1));
   });
 }

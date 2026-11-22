@@ -27,3 +27,10 @@
 - Only the account profile name and avatar sync. Appearance settings and the guest name are local. New edits require connectivity; an interrupted name transaction stays pending for that session.
 - Avatar authorization requires a trusted Auth creation event for the original account. Legacy accounts without that claim can sync their name after verification and have read-only photos. The sign-in method alone never authorizes an avatar write.
 - An offline photo requires a previously downloaded copy for the restored account. The device cache expires on access seven days after the last successful fetch and is cleared on sign-out, account switch or photo removal.
+
+## Phase 4 alarms
+
+- Android controls playback volume, notification delivery and foreground app stopping. Bimbi requires exact alarm access and an available notification channel to register wake-up occurrences. Full-screen access controls presentation over the lock screen.
+- Alarm recovery uses credential-protected storage and runs after the first unlock following a reboot. An expired one-time alarm or snooze after an unavailable period is reported as missed.
+- The app stores alarm definitions, active occurrences and snoozes on the device. The native service keeps round progress while the alarm is active. After the service process is stopped, reopening the challenge starts a round from the beginning.
+- The developer alarm uses a bounded audio test. Alarms configured in the editor finish in Bimbi when the selected challenge is completed.

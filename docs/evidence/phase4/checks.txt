@@ -1,0 +1,219 @@
+Suite de Flutter con referencias visuales de macOS
+Directorio de trabajo: /Users/estebangonzalezcervantes/AndroidStudioProjects/bimbi
+Comando: flutter test --no-pub --reporter expanded
+Código de salida: 0
+
+00:00 +0: loading /Users/estebangonzalezcervantes/AndroidStudioProjects/bimbi/test/unit/operation_test.dart
+00:00 +0: /Users/estebangonzalezcervantes/AndroidStudioProjects/bimbi/test/unit/design_tokens_test.dart: WCAG contrast light text pairs reach 4.5:1
+00:00 +1: /Users/estebangonzalezcervantes/AndroidStudioProjects/bimbi/test/unit/design_tokens_test.dart: WCAG contrast dark text pairs reach 4.5:1
+00:00 +2: /Users/estebangonzalezcervantes/AndroidStudioProjects/bimbi/test/unit/design_tokens_test.dart: WCAG contrast lavender primary controls meet text contrast in both themes
+00:00 +3: /Users/estebangonzalezcervantes/AndroidStudioProjects/bimbi/test/unit/design_tokens_test.dart: theme uses bundled brand fonts
+00:00 +4: /Users/estebangonzalezcervantes/AndroidStudioProjects/bimbi/test/unit/design_tokens_test.dart: buddy palette matches the canvas derive() for Lilac
+00:00 +5: /Users/estebangonzalezcervantes/AndroidStudioProjects/bimbi/test/unit/design_tokens_test.dart: every mood samples a finite, bounded face over its loop
+00:00 +6: /Users/estebangonzalezcervantes/AndroidStudioProjects/bimbi/test/unit/operation_test.dart: concurrent taps cannot start duplicate experiments
+00:00 +7: /Users/estebangonzalezcervantes/AndroidStudioProjects/bimbi/test/unit/operation_test.dart: typed denial becomes visible without false success
+00:00 +8: /Users/estebangonzalezcervantes/AndroidStudioProjects/bimbi/test/unit/operation_test.dart: unexpected provider errors do not expose raw credentials
+00:00 +9: /Users/estebangonzalezcervantes/AndroidStudioProjects/bimbi/test/unit/focus_session_test.dart: target snaps to 5-minute steps within 5–120 minutes
+00:00 +10: /Users/estebangonzalezcervantes/AndroidStudioProjects/bimbi/test/unit/focus_session_test.dart: remaining time derives from timestamps across pause and resume
+00:00 +11: /Users/estebangonzalezcervantes/AndroidStudioProjects/bimbi/test/unit/focus_session_test.dart: a session survives a rebuilt controller from its timestamps
+00:00 +12: /Users/estebangonzalezcervantes/AndroidStudioProjects/bimbi/test/unit/focus_session_test.dart: completes at the target and never goes negative
+00:00 +13: /Users/estebangonzalezcervantes/AndroidStudioProjects/bimbi/test/unit/focus_session_test.dart: target cannot change while running
+00:00 +14: /Users/estebangonzalezcervantes/AndroidStudioProjects/bimbi/test/unit/sleep_diary_test.dart: bedtime after wake time belongs to the previous evening
+00:00 +15: /Users/estebangonzalezcervantes/AndroidStudioProjects/bimbi/test/unit/sleep_diary_test.dart: after-midnight bedtime stays on the wake day
+00:00 +16: /Users/estebangonzalezcervantes/AndroidStudioProjects/bimbi/test/unit/sleep_diary_test.dart: one entry per day, newest first
+00:00 +17: /Users/estebangonzalezcervantes/AndroidStudioProjects/bimbi/test/unit/profile_test.dart: cache survives recreation, expires by age and is removed on account switch
+00:00 +18: /Users/estebangonzalezcervantes/AndroidStudioProjects/bimbi/test/unit/profile_test.dart: photo conversion bounds the longest edge and output bytes
+00:00 +19: /Users/estebangonzalezcervantes/AndroidStudioProjects/bimbi/test/unit/profile_test.dart: name stays pending until confirmed and a switched account ignores late media
+00:00 +20: /Users/estebangonzalezcervantes/AndroidStudioProjects/bimbi/test/unit/platform_test.dart: schedule/cancel use one native source of truth
+00:00 +21: /Users/estebangonzalezcervantes/AndroidStudioProjects/bimbi/test/unit/platform_test.dart: permission denial remains explicit and does not report scheduling success
+00:00 +22: /Users/estebangonzalezcervantes/AndroidStudioProjects/bimbi/test/unit/platform_test.dart: unsupported native bridge is a capability failure
+00:00 +23: /Users/estebangonzalezcervantes/AndroidStudioProjects/bimbi/test/unit/platform_test.dart: past alarm and rapid repeat rejected before native call
+00:00 +24: /Users/estebangonzalezcervantes/AndroidStudioProjects/bimbi/test/unit/tracking_test.dart: stop cancels GPS and motion subscriptions
+00:00 +25: /Users/estebangonzalezcervantes/AndroidStudioProjects/bimbi/test/unit/tracking_test.dart: permission resolving after leaving foreground cannot restart tracking
+00:01 +26: /Users/estebangonzalezcervantes/AndroidStudioProjects/bimbi/test/unit/alarm_draft_test.dart: new alarms require an explicit challenge and start at normal
+00:01 +27: /Users/estebangonzalezcervantes/AndroidStudioProjects/bimbi/test/unit/alarm_draft_test.dart: editing keeps the native id and writes stable weekday and difficulty values
+00:01 +28: /Users/estebangonzalezcervantes/AndroidStudioProjects/bimbi/test/golden/screens_golden_test.dart: tabs at 360dp light
+00:03 +29: /Users/estebangonzalezcervantes/AndroidStudioProjects/bimbi/test/golden/screens_golden_test.dart: tabs at 360dp light
+00:03 +30: /Users/estebangonzalezcervantes/AndroidStudioProjects/bimbi/test/widget_test.dart: five tabs at 360.0dp, text 1.0x, dark
+00:03 +31: /Users/estebangonzalezcervantes/AndroidStudioProjects/bimbi/test/onboarding_test.dart: onboarding: four steps, name and colour, then the shell
+00:03 +32: /Users/estebangonzalezcervantes/AndroidStudioProjects/bimbi/test/onboarding_test.dart: onboarding: four steps, name and colour, then the shell
+00:03 +33: /Users/estebangonzalezcervantes/AndroidStudioProjects/bimbi/test/onboarding_test.dart: onboarding: four steps, name and colour, then the shell
+00:03 +34: /Users/estebangonzalezcervantes/AndroidStudioProjects/bimbi/test/onboarding_test.dart: onboarding: four steps, name and colour, then the shell
+00:03 +35: /Users/estebangonzalezcervantes/AndroidStudioProjects/bimbi/test/onboarding_test.dart: onboarding: four steps, name and colour, then the shell
+00:03 +36: /Users/estebangonzalezcervantes/AndroidStudioProjects/bimbi/test/golden/screens_golden_test.dart: tabs at 700dp light
+00:03 +37: /Users/estebangonzalezcervantes/AndroidStudioProjects/bimbi/test/golden/screens_golden_test.dart: tabs at 700dp light
+00:03 +38: /Users/estebangonzalezcervantes/AndroidStudioProjects/bimbi/test/golden/screens_golden_test.dart: tabs at 700dp light
+00:04 +39: /Users/estebangonzalezcervantes/AndroidStudioProjects/bimbi/test/golden/screens_golden_test.dart: tabs at 700dp light
+00:04 +40: /Users/estebangonzalezcervantes/AndroidStudioProjects/bimbi/test/golden/screens_golden_test.dart: tabs at 700dp light
+00:04 +41: /Users/estebangonzalezcervantes/AndroidStudioProjects/bimbi/test/widget_test.dart: five tabs at 412.0dp, text 1.0x, dark
+00:04 +42: /Users/estebangonzalezcervantes/AndroidStudioProjects/bimbi/test/golden/screens_golden_test.dart: tabs at 900dp light
+00:04 +43: /Users/estebangonzalezcervantes/AndroidStudioProjects/bimbi/test/golden/screens_golden_test.dart: tabs at 900dp light
+00:04 +44: /Users/estebangonzalezcervantes/AndroidStudioProjects/bimbi/test/golden/screens_golden_test.dart: tabs at 900dp light
+00:04 +45: /Users/estebangonzalezcervantes/AndroidStudioProjects/bimbi/test/golden/screens_golden_test.dart: tabs at 900dp light
+00:04 +46: /Users/estebangonzalezcervantes/AndroidStudioProjects/bimbi/test/golden/screens_golden_test.dart: tabs at 900dp light
+00:04 +47: /Users/estebangonzalezcervantes/AndroidStudioProjects/bimbi/test/widget_test.dart: five tabs at 412.0dp, text 2.0x, light
+00:04 +48: /Users/estebangonzalezcervantes/AndroidStudioProjects/bimbi/test/golden/screens_golden_test.dart: tabs at 412dp dark
+00:05 +49: /Users/estebangonzalezcervantes/AndroidStudioProjects/bimbi/test/golden/screens_golden_test.dart: tabs at 412dp dark
+00:05 +50: /Users/estebangonzalezcervantes/AndroidStudioProjects/bimbi/test/golden/screens_golden_test.dart: tabs at 412dp dark
+00:05 +51: /Users/estebangonzalezcervantes/AndroidStudioProjects/bimbi/test/widget_test.dart: five tabs at 700.0dp, text 1.3x, dark
+00:05 +52: /Users/estebangonzalezcervantes/AndroidStudioProjects/bimbi/test/golden/screens_golden_test.dart: tabs at 900dp dark
+00:05 +53: /Users/estebangonzalezcervantes/AndroidStudioProjects/bimbi/test/golden/screens_golden_test.dart: tabs at 900dp dark
+00:05 +54: /Users/estebangonzalezcervantes/AndroidStudioProjects/bimbi/test/golden/screens_golden_test.dart: tabs at 900dp dark
+00:05 +55: /Users/estebangonzalezcervantes/AndroidStudioProjects/bimbi/test/golden/screens_golden_test.dart: tabs at 900dp dark
+00:06 +56: /Users/estebangonzalezcervantes/AndroidStudioProjects/bimbi/test/widget_test.dart: five tabs at 900.0dp, text 1.0x, dark
+00:06 +57: /Users/estebangonzalezcervantes/AndroidStudioProjects/bimbi/test/golden/screens_golden_test.dart: onboarding first step
+00:06 +58: /Users/estebangonzalezcervantes/AndroidStudioProjects/bimbi/test/widget_test.dart: five tabs at 900.0dp, text 1.0x, light
+00:06 +59: /Users/estebangonzalezcervantes/AndroidStudioProjects/bimbi/test/golden/screens_golden_test.dart: design gallery dark
+00:06 +60: /Users/estebangonzalezcervantes/AndroidStudioProjects/bimbi/test/widget_test.dart: five tabs at 900.0dp, text 1.3x, dark
+00:06 +61: /Users/estebangonzalezcervantes/AndroidStudioProjects/bimbi/test/golden/screens_golden_test.dart: design gallery light
+00:06 +62: /Users/estebangonzalezcervantes/AndroidStudioProjects/bimbi/test/widget_test.dart: five tabs at 900.0dp, text 1.3x, light
+00:06 +63: /Users/estebangonzalezcervantes/AndroidStudioProjects/bimbi/test/widget_test.dart: five tabs at 900.0dp, text 2.0x, dark
+00:06 +64: /Users/estebangonzalezcervantes/AndroidStudioProjects/bimbi/test/widget_test.dart: five tabs at 900.0dp, text 2.0x, light
+00:06 +65: /Users/estebangonzalezcervantes/AndroidStudioProjects/bimbi/test/widget_test.dart: unconfigured build keeps sign-in disabled, active challenge reachable
+00:07 +66: /Users/estebangonzalezcervantes/AndroidStudioProjects/bimbi/test/widget_test.dart: Android Back returns to Alarm before leaving the app
+00:07 +67: /Users/estebangonzalezcervantes/AndroidStudioProjects/bimbi/test/widget_test.dart: Focus start fits a short tablet viewport without scrolling
+00:07 +68: /Users/estebangonzalezcervantes/AndroidStudioProjects/bimbi/test/widget_test.dart: missing alarm permissions show a direct fix
+00:07 +69: /Users/estebangonzalezcervantes/AndroidStudioProjects/bimbi/test/widget_test.dart: creating an alarm requires and persists the selected challenge
+00:07 +70: All tests passed!
+
+Comprobación integrada (JDK 21, Node 22 y Flutter 3.47.5)
+Directorio de trabajo: /Users/estebangonzalezcervantes/AndroidStudioProjects/bimbi
+Comando: BIMBI_SKIP_MAC_GOLDENS=true ./scripts/check.sh
+Código de salida: 0
+
+Formatted 65 files (0 changed) in 0.35 seconds.
+No issues found! (ran in 10.2s)
+00:10 +60: All tests passed!
+# tests 13
+# pass 13
+# fail 0
+# tests 11
+# pass 11
+# fail 0
+> Task :app:testDebugUnitTest
+BUILD SUCCESSFUL in 18s
+✓ Built build/app/outputs/flutter-apk/app-debug.apk
+
+Casos JVM de la app
+Directorio de trabajo: /Users/estebangonzalezcervantes/AndroidStudioProjects/bimbi
+Comando: (cd android && ./gradlew :app:testDebugUnitTest)
+Código de salida: 0
+
+com.bimbi.app.LocalAlarmTest: 4 pruebas, 0 fallos, 0 errores
+  onceSchedulesTheNextFutureTimeAndAnExpiredDatedAlarmStaysExpired
+  recurrenceShiftsThroughAGapAndUsesTheFirstTimeInAnOverlap
+  eachOccurrenceHasTwoFiveMinuteSnoozesAndKeepsItsChallenge
+  weekdaysAndAFiredDateStayStableDuringClockChanges
+com.bimbi.app.WakeSessionTest: 6 pruebas, 0 fallos, 0 errores
+  expirationFromRoundThreeReturnsToTwoWhetherAudibleOrMuted
+  previewsAndActivityRecreationDoNotRearmTheDeadline
+  aWrongCupRetriesAtTheSameSpeedAndAWrongPatternReplaysInOrder
+  allChallengesCanFinishAtEveryDifficulty
+  activityAtFourteenSecondsExtendsTheSameRoundAndDeadline
+  inactivityInRoundOneRestartsShakeProgressEvenWithSensorReadings
+
+Compilación de entrega
+Directorio de trabajo: /Users/estebangonzalezcervantes/AndroidStudioProjects/bimbi
+Comando: flutter build apk --debug --no-pub --dart-define-from-file=config/dev.json
+Código de salida: 0
+
+Running Gradle task 'assembleDebug'...
+WARNING: Your app uses the following plugins that apply Kotlin Gradle Plugin (KGP): firebase_auth, firebase_core, firebase_database, firebase_storage
+Future versions of Flutter will fail to build if your app uses plugins that apply KGP.
+
+Please check the changelogs of these plugins and upgrade to a version that supports Built-in Kotlin.
+If no such version exists, report the issue to the plugin. If necessary, here is a guide on filing
+an issue against a plugin: https://docs.flutter.dev/release/breaking-changes/migrate-to-built-in-kotlin/for-app-developers#report-incompatible-kotlin-gradle-plugin-usage-to-plugin-authors
+
+If you are a plugin author, please migrate your plugin to Built-in Kotlin using this guide: https://docs.flutter.dev/release/breaking-changes/migrate-to-built-in-kotlin/for-plugin-authors
+Running Gradle task 'assembleDebug'...                              9.4s
+✓ Built build/app/outputs/flutter-apk/app-debug.apk
+
+Firma y SHA-256 del APK entregado
+Directorio de trabajo: /Users/estebangonzalezcervantes/AndroidStudioProjects/bimbi
+Comando: apksigner verify build/review/bimbi-phase4-debug.apk && shasum -a 256 build/review/bimbi-phase4-debug.apk
+Código de salida: 0
+
+f0f0fbc478ca99e7da53ac3912584f3590d7e5b11f7aa2a231be2b12e963bea9  build/review/bimbi-phase4-debug.apk
+
+Teléfono de 360 dp · alarma editada y cerrada tras dos posposiciones
+Registro de la prueba por ADB con datos sintéticos
+
+Editor saved and Android armed the normal Math alarm.
+Bimbi's old process ended before the alarm, without Android Force stop.
+Android delivered the exact alarm offline after the previous process ended.
+Advanced to round 3 and temporarily muted the native alarm.
+After 15 seconds without interaction, the native challenge went back to round 2 and restored sound.
+The same timeout rolled back while audio was on.
+First snooze stored an exact wake-up five minutes later.
+First snooze survived process termination and reopened at round 1.
+Second snooze delivered and the remaining count prevented a third request.
+Completing Math after the second snooze cleared the occurrence.
+
+Teléfono de 412 dp · migración y permisos
+Registro de la prueba por ADB con datos sintéticos
+
+412 dp: legacy daily schedule kept its exact next occurrence and migrated to Math · Normal.
+Revoking exact alarm access blocked the pending alarm and preserved its definition.
+Restoring exact access re-registered the same future occurrence.
+
+Tablet física · puente nativo, modo avión y bloqueo
+Registro de la prueba por ADB con datos sintéticos
+
+Original tablet connection settings restored.
+Tablet locked, Wi-Fi off, airplane mode on and old process terminated.
+Tablet: AlarmManager delivered the test occurrence while offline.
+Tablet: Android presented the native wake challenge.
+Tablet event: audio_muted
+Tablet event: inactivity_audio_resumed:round=1
+Tablet event: challenge_completed
+Original tablet connection settings restored.
+
+Tablet física · restauración y reto de movimiento
+Registro de la prueba por ADB con datos sintéticos
+
+Added one synthetic Shake Easy schedule; existing definitions were preserved.
+Tablet: programmed a normal Shake Easy alarm with full-screen access disabled.
+Rebooting tablet now.
+Original tablet full-screen access and connection settings restored.
+USB reconnected after unlock; the saved native alarm is armed or already active.
+Tablet: the persisted wake-up alarm fired after reboot, offline.
+Tablet fallback: alarm posted without opening the challenge automatically.
+Tablet: five-minute snooze stored; one snooze remains.
+Tablet: the snoozed occurrence returned after five minutes.
+Tablet: native Shake challenge completed and the occurrence cleared.
+Original tablet full-screen access and connection settings restored.
+
+Diseño final de los retos · Android con texto al 200 %
+Registro de la prueba por ADB con datos sintéticos
+
+Captured isolated pattern Extreme at 360 dp and 2× text.
+Captured isolated ballMonte Extreme at 412 dp and 2× text.
+
+Galaxy Tab A9 · editor, orientación y limpieza
+Registro de la prueba por ADB
+
+Tablet alarm editor verified in portrait.
+Tablet alarm editor verified in landscape.
+Removed the completed synthetic alarm from the editor.
+Original tablet rotation restored.
+
+Emulador 412 dp · visibilidad con TalkBack
+Observación de pantalla y del servicio de accesibilidad
+
+TalkBack bound: True
+Ball Monte True
+Use math challenge True
+Mute True
+Snooze 5 min True
+
+Galaxy Tab A9 · lectura con TalkBack
+Confirmación del propietario al recorrer los retos y dificultades del editor.
+
+Galaxy Tab A9 · instalación del APK de entrega con acciones accesibles
+
+adb install -r build/review/bimbi-phase4-debug.apk
+Success
+Starting: Intent { cmp=com.bimbi.app/.MainActivity }
+Orientación original: free
+Modo avión: 0

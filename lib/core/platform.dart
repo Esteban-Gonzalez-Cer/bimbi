@@ -17,13 +17,18 @@ abstract interface class PlatformAdapter {
     Duration repeat,
   });
   Future<void> cancel();
-  Future<void> dismiss();
+  Future<Map<String, dynamic>> saveAlarm(Map<String, Object> draft);
+  Future<Map<String, dynamic>> enableAlarm(String id, bool enabled);
+  Future<void> deleteAlarm(String id);
+  Future<void> openChallenge();
+  Stream<void> alarmChanges();
   Future<void> settings(String kind);
   Future<Map<String, dynamic>> usageSummary();
 }
 
 class AndroidPlatform implements PlatformAdapter {
   static const channel = MethodChannel('com.bimbi.app/platform');
+  static const _events = EventChannel('com.bimbi.app/alarms');
   Future<T?> _invoke<T>(String method, [Map<String, Object>? args]) async {
     try {
       return await channel.invokeMethod<T>(method, args);
@@ -66,7 +71,24 @@ class AndroidPlatform implements PlatformAdapter {
   @override
   Future<void> cancel() => _invoke<void>('cancel');
   @override
-  Future<void> dismiss() => _invoke<void>('dismiss');
+  Future<Map<String, dynamic>> saveAlarm(Map<String, Object> draft) =>
+      _alarmResult('saveAlarm', draft);
+  @override
+  Future<Map<String, dynamic>> enableAlarm(String id, bool enabled) =>
+      _alarmResult('enableAlarm', {'id': id, 'enabled': enabled});
+  Future<Map<String, dynamic>> _alarmResult(
+    String method,
+    Map<String, Object> args,
+  ) async => Map<String, dynamic>.from(
+    await _invoke<Map<dynamic, dynamic>>(method, args) ?? {},
+  );
+  @override
+  Future<void> deleteAlarm(String id) =>
+      _invoke<void>('deleteAlarm', {'id': id});
+  @override
+  Future<void> openChallenge() => _invoke<void>('openChallenge');
+  @override
+  Stream<void> alarmChanges() => _events.receiveBroadcastStream().map((_) {});
   @override
   Future<void> settings(String kind) => _invoke<void>('${kind}Settings');
   @override
@@ -77,6 +99,13 @@ class AndroidPlatform implements PlatformAdapter {
 }
 
 final platformProvider = Provider<PlatformAdapter>((ref) => AndroidPlatform());
-final capabilitiesProvider = FutureProvider(
-  (ref) => ref.watch(platformProvider).capabilities(),
-);
+final _alarmChangesProvider = StreamProvider<int>((ref) {
+  var revision = 0;
+  return ref.watch(platformProvider).alarmChanges().map((_) => ++revision);
+});
+final capabilitiesProvider = FutureProvider((ref) {
+  ref.listen(_alarmChangesProvider, (_, next) {
+    if (next.hasValue) ref.invalidateSelf();
+  });
+  return ref.watch(platformProvider).capabilities();
+});

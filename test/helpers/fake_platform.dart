@@ -17,11 +17,16 @@ class FakePlatform implements PlatformAdapter {
 
   final Map<String, dynamic> caps;
   final scheduled = <({String id, DateTime at, Duration repeat})>[];
-  var dismissCalls = 0;
+  final alarms = <String, Map<String, dynamic>>{};
+  var _nextId = 0;
+  var openChallengeCalls = 0;
   var cancelCalls = 0;
 
   @override
-  Future<Map<String, dynamic>> capabilities() async => caps;
+  Future<Map<String, dynamic>> capabilities() async => {
+    ...caps,
+    'alarms': alarms.values.toList(),
+  };
   @override
   Future<void> cancel() async {
     cancelCalls++;
@@ -29,7 +34,48 @@ class FakePlatform implements PlatformAdapter {
   }
 
   @override
-  Future<void> dismiss() async => dismissCalls++;
+  Future<void> openChallenge() async => openChallengeCalls++;
+  @override
+  Stream<void> alarmChanges() => const Stream.empty();
+
+  @override
+  Future<Map<String, dynamic>> saveAlarm(Map<String, Object> draft) async {
+    final id = draft['id'] as String? ?? 'alarm-${++_nextId}';
+    final enabled = alarms[id]?['enabled'] != false;
+    final row = {...draft, 'id': id};
+    alarms[id] = row;
+    return enableAlarm(id, enabled);
+  }
+
+  @override
+  Future<Map<String, dynamic>> enableAlarm(String id, bool enabled) async {
+    final row = alarms[id]!;
+    final status = !enabled
+        ? 'off'
+        : caps['exactAlarm'] == true
+        ? 'armed'
+        : 'exact';
+    row['enabled'] = enabled;
+    row['status'] = status;
+    if (status == 'armed') {
+      row['nextAt'] = DateTime(
+        2026,
+        11,
+        23,
+        row['hour'] as int,
+        row['minute'] as int,
+      ).millisecondsSinceEpoch;
+    } else {
+      row.remove('nextAt');
+    }
+    return row;
+  }
+
+  @override
+  Future<void> deleteAlarm(String id) async {
+    alarms.remove(id);
+  }
+
   @override
   Future<void> schedule({
     required String id,

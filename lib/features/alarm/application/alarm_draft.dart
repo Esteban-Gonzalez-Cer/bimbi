@@ -2,71 +2,145 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../app/design_system/components/alarm_parts.dart';
-import '../../../core/clock.dart';
 import '../../../core/platform.dart';
 
-const bimbiAlarmId = 'bimbi-alarm';
-const dailyAlarmDays = {0, 1, 2, 3, 4, 5, 6};
+enum WakeDifficulty {
+  easy('Easy'),
+  normal('Normal'),
+  difficult('Difficult'),
+  extreme('Extreme');
 
-/// Editable alarm. Phase 2 schedules one native alarm from it; full
-/// multi-alarm persistence and weekday recurrence arrive in Phase 4.
+  const WakeDifficulty(this.label);
+  final String label;
+}
+
 @immutable
 class AlarmDraft {
   const AlarmDraft({
+    this.id,
     this.time = const TimeOfDay(hour: 7, minute: 0),
     this.label = 'Wake up',
     this.days = const {},
     this.mission = WakeMission.none,
+    this.difficulty = WakeDifficulty.normal,
   });
 
+  final String? id;
   final TimeOfDay time;
   final String label;
 
   /// 0 = Monday … 6 = Sunday. Empty = once.
   final Set<int> days;
   final WakeMission mission;
+  final WakeDifficulty difficulty;
 
   AlarmDraft copyWith({
     TimeOfDay? time,
     String? label,
     Set<int>? days,
     WakeMission? mission,
+    WakeDifficulty? difficulty,
   }) => AlarmDraft(
+    id: id,
     time: time ?? this.time,
     label: label ?? this.label,
     days: days ?? this.days,
     mission: mission ?? this.mission,
+    difficulty: difficulty ?? this.difficulty,
   );
 
-  /// Every day maps to a native 24 h interval; other patterns schedule only
-  /// the next matching occurrence until Phase 4 recurrence lands.
-  Duration get nativeRepeat =>
-      days.length == 7 ? const Duration(days: 1) : Duration.zero;
+  Map<String, Object> toNative() => {
+    'id': ?id,
+    'hour': time.hour,
+    'minute': time.minute,
+    'label': label.trim(),
+    'days': days.toList()..sort(),
+    'challenge': mission.name,
+    'difficulty': difficulty.name,
+  };
+}
 
-  /// Next local occurrence strictly after [now] on an allowed weekday.
-  DateTime nextOccurrence(DateTime now) {
-    for (var offset = 0; offset <= 7; offset++) {
-      final day = DateTime(now.year, now.month, now.day + offset);
-      final candidate = DateTime(
-        day.year,
-        day.month,
-        day.day,
-        time.hour,
-        time.minute,
-      );
-      final weekdayOk = days.isEmpty || days.contains(candidate.weekday - 1);
-      if (weekdayOk && candidate.isAfter(now)) return candidate;
+enum AlarmScheduleStatus {
+  off,
+  armed,
+  exact,
+  notifications,
+  error,
+  finished,
+  missed,
+  ringing,
+  snoozed;
+
+  static AlarmScheduleStatus parse(Object? value) =>
+      values.where((status) => status.name == value).firstOrNull ?? error;
+
+  String? get message => switch (this) {
+    off || armed => null,
+    exact => 'Allow exact alarms',
+    notifications => 'Allow alarm notifications',
+    error => 'Android could not schedule this alarm',
+    finished => 'Completed',
+    missed => 'Missed while unavailable',
+    ringing => 'Wake-up challenge active',
+    snoozed => 'Snoozed',
+  };
+
+  String? get setting => switch (this) {
+    exact => 'exact',
+    notifications => 'notification',
+    _ => null,
+  };
+}
+
+@immutable
+class NativeAlarm {
+  const NativeAlarm({
+    required this.draft,
+    required this.enabled,
+    required this.status,
+    required this.next,
+  });
+
+  final AlarmDraft draft;
+  final bool enabled;
+  final AlarmScheduleStatus status;
+  final DateTime? next;
+
+  static NativeAlarm? fromNative(Object? value) {
+    if (value is! Map ||
+        value['id'] is! String ||
+        value['hour'] is! int ||
+        value['minute'] is! int) {
+      return null;
     }
-    throw StateError('No occurrence within a week');
+    final next = value['nextAt'];
+    return NativeAlarm(
+      draft: AlarmDraft(
+        id: value['id'] as String,
+        time: TimeOfDay(
+          hour: value['hour'] as int,
+          minute: value['minute'] as int,
+        ),
+        label: value['label'] as String? ?? 'Wake up',
+        days: (value['days'] as List? ?? const []).whereType<int>().toSet(),
+        mission:
+            WakeMission.values
+                .where((mission) => mission.name == value['challenge'])
+                .firstOrNull ??
+            WakeMission.math,
+        difficulty:
+            WakeDifficulty.values
+                .where((difficulty) => difficulty.name == value['difficulty'])
+                .firstOrNull ??
+            WakeDifficulty.normal,
+      ),
+      enabled: value['enabled'] == true,
+      status: AlarmScheduleStatus.parse(value['status']),
+      next: next is int ? DateTime.fromMillisecondsSinceEpoch(next) : null,
+    );
   }
 }
 
-/// Wake missions the native alarm can enforce today. Shake and Math are
-/// designed but only become selectable when Phase 4 implements them, so the
-/// UI never promises a mission the alarm will not require.
-const kAvailableMissions = {WakeMission.none};
-
-/// The draft currently open in the editor; null when closed.
 class AlarmEditorController extends Notifier<AlarmDraft?> {
   @override
   AlarmDraft? build() => null;
@@ -80,29 +154,53 @@ final alarmEditorProvider =
       AlarmEditorController.new,
     );
 
-/// Display details (label, days, mission) of the alarm saved this session.
-/// The native pending occurrence remains the source of truth for timing.
-class SavedAlarmController extends Notifier<AlarmDraft?> {
-  @override
-  AlarmDraft? build() => null;
+/// Persists definitions through Android and refreshes the observed catalogue.
+class AlarmActions {
+  const AlarmActions(this._platform, this._refresh);
+  final PlatformAdapter _platform;
+  final VoidCallback _refresh;
 
-  Future<DateTime> schedule(AlarmDraft draft) async {
-    final at = draft.nextOccurrence(ref.read(clockProvider)());
-    await ref
-        .read(platformProvider)
-        .schedule(id: bimbiAlarmId, at: at, repeat: draft.nativeRepeat);
-    state = draft;
-    ref.invalidate(capabilitiesProvider);
-    return at;
+  Future<String> save(AlarmDraft draft) async {
+    if (draft.mission == WakeMission.none) {
+      throw const CapabilityFailure(
+        'challenge_required',
+        'Choose a wake-up challenge.',
+      );
+    }
+    return _report(await _platform.saveAlarm(draft.toNative()));
   }
 
-  Future<void> cancel() async {
-    await ref.read(platformProvider).cancel();
-    state = null;
-    ref.invalidate(capabilitiesProvider);
+  Future<String> enable(String id, bool enabled) async =>
+      _report(await _platform.enableAlarm(id, enabled));
+
+  Future<String> delete(String id) async {
+    await _platform.deleteAlarm(id);
+    _refresh();
+    return 'Alarm deleted.';
+  }
+
+  String _report(Map<String, Object?> result) {
+    _refresh();
+    return switch (AlarmScheduleStatus.parse(result['status'])) {
+      AlarmScheduleStatus.armed => 'Alarm scheduled.',
+      AlarmScheduleStatus.off => 'Alarm saved and turned off.',
+      AlarmScheduleStatus.exact =>
+        'Alarm saved. Allow exact alarms to schedule it.',
+      AlarmScheduleStatus.notifications =>
+        'Alarm saved. Allow notifications to schedule it.',
+      AlarmScheduleStatus.missed => 'This occurrence has already passed.',
+      AlarmScheduleStatus.finished ||
+      AlarmScheduleStatus.ringing ||
+      AlarmScheduleStatus.snoozed => 'Alarm saved.',
+      AlarmScheduleStatus.error =>
+        'Alarm saved. Android could not schedule it.',
+    };
   }
 }
 
-final savedAlarmProvider = NotifierProvider<SavedAlarmController, AlarmDraft?>(
-  SavedAlarmController.new,
+final alarmActionsProvider = Provider<AlarmActions>(
+  (ref) => AlarmActions(
+    ref.watch(platformProvider),
+    () => ref.invalidate(capabilitiesProvider),
+  ),
 );

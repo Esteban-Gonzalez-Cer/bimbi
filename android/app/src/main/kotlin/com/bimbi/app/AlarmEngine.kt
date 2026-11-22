@@ -1,112 +1,418 @@
 package com.bimbi.app
 
-import android.Manifest
-import android.app.*
-import android.content.*
-import android.content.pm.PackageManager
+import android.app.AlarmManager
+import android.app.Notification
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import android.content.pm.ApplicationInfo
+import android.net.Uri
 import android.os.Build
 import android.os.PowerManager
+import android.os.SystemClock
+import android.provider.Settings
 import android.util.Log
-import org.json.JSONObject
+import java.time.Instant
+import java.time.ZoneId
+import java.util.UUID
 
-/** Single persisted experimental alarm. Native Android is the source of truth. */
-class AlarmEngine(private val context: Context) {
-    private val prefs = context.getSharedPreferences("bimbi_alarm", Context.MODE_PRIVATE)
-    private val manager = context.getSystemService(AlarmManager::class.java)
-    private val notifications = context.getSystemService(NotificationManager::class.java)
+/** All mutations and receiver callbacks run on Android's main thread. */
+internal class AlarmEngine(context: Context) {
+    private val app = context.applicationContext
+    private val store = AlarmStore(app)
+    private val manager = app.getSystemService(AlarmManager::class.java)
+    private val notifications = app.getSystemService(NotificationManager::class.java)
+    private val debug = app.applicationInfo.flags and ApplicationInfo.FLAG_DEBUGGABLE != 0
+    private val boot get() = Settings.Global.getInt(app.contentResolver, Settings.Global.BOOT_COUNT, -1)
 
     fun exactAllowed() = Build.VERSION.SDK_INT < 31 || manager.canScheduleExactAlarms()
     fun notificationsAllowed() = notifications.areNotificationsEnabled() &&
-        (Build.VERSION.SDK_INT < 33 || context.checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) &&
-        notifications.getNotificationChannel("bimbi_alarm")?.importance != NotificationManager.IMPORTANCE_NONE
+        (Build.VERSION.SDK_INT < 33 ||
+            app.checkSelfPermission(android.Manifest.permission.POST_NOTIFICATIONS) == android.content.pm.PackageManager.PERMISSION_GRANTED) &&
+        notifications.getNotificationChannel(CHANNEL)?.importance != NotificationManager.IMPORTANCE_NONE
     fun fullScreenAllowed() = Build.VERSION.SDK_INT < 34 || notifications.canUseFullScreenIntent()
-    fun pending(): Map<String, Any>? = prefs.getString("pending", null)?.let {
-        val value = JSONObject(it)
-        mapOf("id" to value.getString("id"), "atMillis" to value.getLong("atMillis"), "intervalSeconds" to value.getLong("intervalSeconds"))
-    }
-    fun active(): String? = prefs.getString("active", null)
-    fun lastEvent(): String = prefs.getString("lastEvent", "No alarm event recorded")!!
-    fun event(value: String) {
-        prefs.edit().putString("lastEvent", value).commit()
-        Log.i("BimbiAlarm", value) // No identity, routes or tokens.
-    }
-    private fun intent(id: String, at: Long): PendingIntent = PendingIntent.getBroadcast(
-        context, 100, Intent(context, AlarmReceiver::class.java).putExtra("id", id).putExtra("atMillis", at),
-        PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+    fun active() = store.load().active
+    fun nextSnooze(): Long? = if (blocked() == null) {
+        store.load().episodes.mapNotNull { it.snooze?.at }.minOrNull()
+    } else null
+    fun lastEvent() = store.lastEvent()
 
-    fun schedule(id: String, at: Long, intervalSeconds: Long) {
-        require(id.isNotBlank() && id.length <= 80 && at > System.currentTimeMillis()) { "Invalid future alarm" }
-        require(intervalSeconds == 0L || intervalSeconds >= 60L) { "Minimum repeat interval is 60 seconds" }
-        check(exactAllowed()) { "exact_permission_denied" }
-        check(notificationsAllowed()) { "notification_permission_denied" }
-        val next = JSONObject().put("id", id).put("atMillis", at).put("intervalSeconds", intervalSeconds)
-        // Commit before registering with the OS so boot recovery has a durable record.
-        check(prefs.edit().putString("pending", next.toString()).commit()) { "persistence_failed" }
-        try {
-            manager.setAlarmClock(AlarmManager.AlarmClockInfo(at,
-                PendingIntent.getActivity(context, 101, Intent(context, MainActivity::class.java), PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)), intent(id, at))
-            event("scheduled:$at")
-        } catch (e: Exception) {
-            prefs.edit().remove("pending").commit()
-            manager.cancel(intent(id, at))
-            throw e
+    fun event(message: String) {
+        store.record(message)
+        Log.i("BimbiAlarm", message)
+    }
+
+    fun changed() {
+        app.sendBroadcast(Intent(CHANGED).setPackage(app.packageName))
+    }
+
+    fun view(): List<Map<String, Any?>> {
+        val permission = blocked()
+        val book = store.load()
+        return book.alarms.sortedWith(compareBy({ it.next?.at ?: Long.MAX_VALUE }, { it.hour }, { it.minute })).map { alarm ->
+            val schedule = if (alarm.enabled && permission != null) permission else alarm.status
+            val episodes = book.episodes.filter { it.alarmId == alarm.id }
+            val status = when {
+                episodes.isNotEmpty() && permission != null -> permission.wire
+                episodes.any { it.snooze == null } -> "ringing"
+                episodes.isNotEmpty() -> "snoozed"
+                else -> schedule.wire
+            }
+            mapOf(
+                "id" to alarm.id, "label" to alarm.label,
+                "hour" to alarm.hour, "minute" to alarm.minute, "days" to alarm.days.sorted(),
+                "challenge" to alarm.challenge.wire, "difficulty" to alarm.difficulty.wire,
+                "enabled" to alarm.enabled, "status" to status,
+                "nextAt" to alarm.next?.at?.takeIf { schedule == AlarmStatus.ARMED },
+            )
         }
     }
-    fun cancel() {
-        manager.cancel(intent("", 0))
-        prefs.edit().remove("pending").commit()
-        dismiss()
-        event("cancelled")
+
+    fun saveDraft(
+        id: String?, label: String, hour: Int, minute: Int, days: Set<Int>,
+        challenge: WakeChallenge, difficulty: WakeDifficulty,
+    ): Map<String, Any?> {
+        require(hour in 0..23 && minute in 0..59 && days.all { it in 0..6 })
+        val book = store.load()
+        val old = id?.let { value -> book.alarms.firstOrNull { it.id == value } ?: error("alarm_not_found") }
+        val sameTime = old != null && old.hour == hour && old.minute == minute && old.days == days
+        val alarm = LocalAlarm(
+            id = old?.id ?: UUID.randomUUID().toString(),
+            label = label.trim().take(40).ifEmpty { "Wake up" },
+            hour = hour, minute = minute, days = days, challenge = challenge, difficulty = difficulty,
+            enabled = old?.enabled ?: true,
+            onceDay = old?.onceDay?.takeIf { sameTime },
+            lastFiredDay = old?.lastFiredDay?.takeIf { sameTime },
+        )
+        val result = replace(book, alarm, alarm.firstAfter(System.currentTimeMillis(), ZoneId.systemDefault()))
+        changed()
+        return result.viewStatus(alarm.id)
     }
-    fun dismiss() {
-        prefs.edit().remove("active").commit()
-        context.stopService(Intent(context, AlarmService::class.java))
-        notifications.cancel(200)
-        context.sendBroadcast(Intent("com.bimbi.app.ALARM_DISMISSED").setPackage(context.packageName))
-        event("dismissed")
+
+    fun setEnabled(id: String, enabled: Boolean): Map<String, Any?> {
+        val book = store.load()
+        val old = book.alarms.firstOrNull { it.id == id } ?: error("alarm_not_found")
+        if (old.enabled == enabled) return book.viewStatus(id)
+        val alarm = old.copy(enabled = enabled, onceDay = null, lastFiredDay = null)
+        val result = replace(book, alarm, alarm.firstAfter(System.currentTimeMillis(), ZoneId.systemDefault()))
+        changed()
+        return result.viewStatus(id)
     }
-    fun fire(id: String?, at: Long): Boolean {
-        val record = pending() ?: return false
-        if (record["id"] != id || record["atMillis"] != at) return false
-        // Access can change after scheduling. Never start audio without a
-        // notification through which the owner can reach Dismiss.
-        if (!notificationsAllowed()) {
-            cancel()
-            event("delivery_notification_permission_denied")
+
+    fun delete(id: String) {
+        val book = store.load()
+        val alarm = book.alarms.firstOrNull { it.id == id } ?: return
+        store.save(book.copy(alarms = book.alarms.filterNot { it.id == id }))
+        alarm.next?.let { cancelIntent("regular", id, it.at) }
+        changed()
+    }
+
+    private fun AlarmBook.viewStatus(id: String): Map<String, Any?> {
+        val alarm = alarms.first { it.id == id }
+        return mapOf("status" to alarm.status.wire, "nextAt" to alarm.next?.at?.takeIf {
+            alarm.status == AlarmStatus.ARMED
+        })
+    }
+
+    private fun blocked(): AlarmStatus? = when {
+        !exactAllowed() -> AlarmStatus.BLOCKED_EXACT
+        !notificationsAllowed() -> AlarmStatus.BLOCKED_NOTIFICATIONS
+        else -> null
+    }
+
+    private fun replace(book: AlarmBook, alarm: LocalAlarm, target: AlarmTime?): AlarmBook {
+        val permission = blocked()
+        val previous = book.alarms.firstOrNull { it.id == alarm.id }?.next
+        val staged = alarm.copy(
+            onceDay = if (alarm.days.isEmpty()) target?.day ?: alarm.onceDay else null,
+            enabled = alarm.enabled && target != null,
+            next = target,
+            status = when {
+                !alarm.enabled -> alarm.status.takeIf { it == AlarmStatus.FINISHED || it == AlarmStatus.MISSED }
+                    ?: AlarmStatus.OFF
+                target == null -> AlarmStatus.MISSED
+                else -> permission ?: AlarmStatus.ERROR
+            }
+        )
+        var result = book.put(staged)
+        if (result != book) store.save(result)
+        if (previous != null && (previous != target || permission != null)) {
+            cancelIntent("regular", alarm.id, previous.at)
+        }
+        if (target != null && permission == null) {
+            val registered = runCatching { arm("regular", alarm.id, target.at) }.isSuccess
+            if (registered) {
+                result = result.put(staged.copy(status = AlarmStatus.ARMED))
+                store.save(result)
+            } else {
+                event("regular_registration_failed")
+            }
+        }
+        return result
+    }
+
+    private fun fireIntent(kind: String, id: String, at: Long) =
+        Intent(app, AlarmReceiver::class.java).setAction(FIRE)
+            .setData(Uri.Builder().scheme("bimbi").authority("alarms")
+                .appendPath(kind).appendPath(id).appendPath(at.toString()).build())
+
+    private fun alarmIntent(kind: String, id: String, at: Long, flag: Int): PendingIntent? =
+        PendingIntent.getBroadcast(app, 0, fireIntent(kind, id, at), flag or PendingIntent.FLAG_IMMUTABLE)
+
+    private fun arm(kind: String, id: String, at: Long) {
+        val show = PendingIntent.getActivity(app, 101, Intent(app, MainActivity::class.java),
+            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
+        manager.setAlarmClock(AlarmManager.AlarmClockInfo(at, show),
+            requireNotNull(alarmIntent(kind, id, at, PendingIntent.FLAG_UPDATE_CURRENT)))
+    }
+
+    private fun cancelIntent(kind: String, id: String, at: Long) {
+        alarmIntent(kind, id, at, PendingIntent.FLAG_NO_CREATE)?.let { pending ->
+            manager.cancel(pending)
+            pending.cancel()
+        }
+    }
+
+    fun restore(recomputeTime: Boolean = false, afterBoot: Boolean = false, forceRearm: Boolean = false) {
+        channels(app)
+        val now = System.currentTimeMillis()
+        val zone = ZoneId.systemDefault()
+        var book = migrate(store.load(), zone)
+        for (alarm in book.alarms) {
+            if (!alarm.enabled) continue
+            val next = alarm.next
+            // A due broadcast already waiting on the main thread may still be delivered.
+            if (!afterBoot && !forceRearm && !recomputeTime && blocked() == null && alarm.status == AlarmStatus.ARMED &&
+                next != null && next.at <= now && now - next.at < 30_000
+            ) continue
+            val target = if (!recomputeTime && next != null && next.at > now) next else alarm.firstAfter(now, zone)
+            if (!afterBoot && !forceRearm && !recomputeTime && blocked() == null && alarm.status == AlarmStatus.ARMED &&
+                next != null && next == target
+            ) continue
+            book = replace(book, alarm, target)
+        }
+        book = restoreSnoozes(book, now, afterBoot, recomputeTime, forceRearm)
+        val test = book.test
+        if (debug && test != null && blocked() == null) {
+            val next = when {
+                test.at > now -> test.at
+                test.intervalSeconds > 0 -> nextTestTime(test, now)
+                else -> null
+            }
+            if (next != test.at) cancelIntent("test", TEST_ALARM_ID, test.at)
+            if (next != test.at) store.save(book.copy(test = next?.let { test.copy(at = it) }))
+            next?.let { runCatching { arm("test", TEST_ALARM_ID, it) } }
+        }
+        changed()
+    }
+
+    private fun migrate(book: AlarmBook, zone: ZoneId): AlarmBook {
+        val legacy = store.legacy() ?: return book
+        val name = legacy.optString("id")
+        val at = legacy.optLong("atMillis")
+        val interval = legacy.optLong("intervalSeconds")
+        val local = Instant.ofEpochMilli(at).atZone(zone)
+        val next = when {
+            at <= 0 -> book
+            debug && name == TEST_ALARM_ID && book.test == null -> book.copy(test = TestAlarm(at, interval))
+            name == "bimbi-alarm" && book.alarms.none { it.id == name } -> book.put(
+                LocalAlarm(
+                    id = name, label = "Wake up", hour = local.hour, minute = local.minute,
+                    days = if (interval == 86_400L) (0..6).toSet() else emptySet(),
+                    challenge = WakeChallenge.MATH, difficulty = WakeDifficulty.NORMAL,
+                    onceDay = local.toLocalDate().takeIf { interval != 86_400L },
+                    next = AlarmTime(at, local.toLocalDate()),
+                )
+            )
+            else -> book
+        }
+        store.save(next, clearLegacy = true)
+        PendingIntent.getBroadcast(app, 100, Intent(app, AlarmReceiver::class.java),
+            PendingIntent.FLAG_NO_CREATE or PendingIntent.FLAG_IMMUTABLE)?.let {
+            manager.cancel(it)
+            it.cancel()
+        }
+        event("legacy_migrated")
+        return next
+    }
+
+    private fun restoreSnoozes(
+        book: AlarmBook, now: Long, afterBoot: Boolean, recomputeTime: Boolean, forceRearm: Boolean,
+    ): AlarmBook {
+        var current = book
+        val elapsed = SystemClock.elapsedRealtime()
+        val bootCount = boot
+        for (episode in book.episodes) {
+            val snooze = episode.snooze ?: continue
+            val due = if (recomputeTime) snooze.resolve(now, elapsed, bootCount) else snooze.at
+            if (due <= now && (afterBoot || snooze.boot != bootCount)) {
+                current = current.copy(episodes = current.episodes.filterNot { it.id == episode.id })
+                current.alarms.firstOrNull { it.id == episode.alarmId && it.status == AlarmStatus.FINISHED }
+                    ?.let { current = current.put(it.copy(status = AlarmStatus.MISSED)) }
+                store.save(current)
+                cancelIntent("snooze", episode.id, snooze.at)
+                event("snooze_missed")
+            } else if (blocked() == null) {
+                // If an older alarm could not ring because permission was revoked,
+                // keep the episode and allow it to return when permission is granted.
+                val target = if (due <= now && (forceRearm || now - due >= 30_000)) now + 1_000 else due
+                if (target != snooze.at) {
+                    current = current.put(episode.copy(snooze = snooze.copy(at = target)))
+                    store.save(current)
+                    cancelIntent("snooze", episode.id, snooze.at)
+                }
+                if (target > now || afterBoot) runCatching { arm("snooze", episode.id, target) }
+            }
+        }
+        return current
+    }
+
+    fun fire(kind: String, id: String, at: Long): Boolean {
+        val now = System.currentTimeMillis()
+        if (at > now + 500) return false
+        val book = store.load()
+        val result = when (kind) {
+            "regular" -> fireRegular(book, id, at, now)
+            "snooze" -> fireSnooze(book, id, at, now)
+            "test" -> fireTest(book, at, now)
+            else -> false
+        }
+        if (result) {
+            val power = app.getSystemService(PowerManager::class.java)
+            event("fired:$kind:scheduled=$at:actual=$now:powerSave=${power.isPowerSaveMode}:idle=${power.isDeviceIdleMode}")
+        }
+        changed()
+        return result
+    }
+
+    private fun fireRegular(book: AlarmBook, id: String, at: Long, now: Long): Boolean {
+        val alarm = book.alarms.firstOrNull { it.id == id && it.enabled && it.next?.at == at } ?: return false
+        val recurring = alarm.days.isNotEmpty()
+        val allowed = blocked() == null
+        val consumed = alarm.copy(
+            enabled = recurring, lastFiredDay = alarm.next!!.day,
+            status = if (recurring) AlarmStatus.ERROR else if (allowed) AlarmStatus.FINISHED else AlarmStatus.MISSED,
+        )
+        val updated = if (allowed) book.copy(episodes = book.episodes + episode(
+            id, alarm.label, alarm.challenge, alarm.difficulty, now)) else book
+        val next = consumed.firstAfter(maxOf(now, at), ZoneId.systemDefault())
+        replace(updated, consumed, next)
+        if (!allowed) event("delivery_blocked_by_permissions")
+        return allowed
+    }
+
+    private fun fireSnooze(book: AlarmBook, id: String, at: Long, now: Long): Boolean {
+        val episode = book.episodes.firstOrNull { it.id == id && it.snooze?.at == at } ?: return false
+        val snooze = requireNotNull(episode.snooze)
+        val due = snooze.resolve(now, SystemClock.elapsedRealtime(), boot)
+        if (due > now + 500) {
+            val updated = book.put(episode.copy(snooze = snooze.copy(at = due)))
+            store.save(updated)
+            if (blocked() == null) runCatching { arm("snooze", id, due) }
             return false
         }
-        prefs.edit().remove("pending").putString("active", id).commit()
-        val repeat = record["intervalSeconds"] as Long
-        if (repeat > 0 && exactAllowed() && notificationsAllowed()) {
-            val interval = repeat * 1000
-            val next = at + ((System.currentTimeMillis() - at).coerceAtLeast(0) / interval + 1) * interval
-            try { schedule(id!!, next, repeat) } catch (_: Exception) { event("repeat_restore_failed") }
+        if (blocked() != null) {
+            event("snooze_blocked_by_permissions")
+            return false
         }
-        val power = context.getSystemService(PowerManager::class.java)
-        event("fired:scheduled=$at:actual=${System.currentTimeMillis()}:powerSave=${power.isPowerSaveMode}:deviceIdle=${power.isDeviceIdleMode}:interactive=${power.isInteractive}")
+        store.save(book.copy(episodes = book.episodes.filterNot { it.id == id } +
+            episode.copy(snooze = null, arrivedAt = now)))
         return true
     }
-    fun restore() {
-        val record = pending() ?: return
-        if (!exactAllowed() || !notificationsAllowed()) { event("restore_permission_denied"); return }
-        var at = record["atMillis"] as Long
-        val repeat = record["intervalSeconds"] as Long
-        if (at <= System.currentTimeMillis()) {
-            if (repeat == 0L) {
-                prefs.edit().remove("pending").commit()
-                event("missed_during_downtime")
-                return
-            }
-            val interval = repeat * 1000
-            at += ((System.currentTimeMillis() - at) / interval + 1) * interval
+
+    fun snooze(episodeId: String): Boolean {
+        val book = store.load()
+        val active = book.active?.takeIf { it.id == episodeId } ?: return false
+        val episode = active.postpone(System.currentTimeMillis(), SystemClock.elapsedRealtime(), boot) ?: return false
+        val next = requireNotNull(episode.snooze).at
+        if (blocked() != null) return false
+        try {
+            arm("snooze", episode.id, next)
+            store.save(book.put(episode))
+        } catch (_: Exception) {
+            cancelIntent("snooze", episode.id, next)
+            event("snooze_registration_failed")
+            return false
         }
-        try { schedule(record["id"] as String, at, repeat) } catch (_: Exception) { event("restore_failed") }
+        event("snoozed:remaining=${episode.snoozesLeft}")
+        changed()
+        return true
     }
+
+    fun complete(episodeId: String) {
+        val book = store.load()
+        if (book.active?.id != episodeId) return
+        store.save(book.copy(episodes = book.episodes.filterNot { it.id == episodeId }))
+        event("challenge_completed")
+        changed()
+    }
+
+    fun expireTest(episodeId: String) {
+        val book = store.load()
+        if (book.active?.takeIf { it.isTest }?.id != episodeId) return
+        store.save(book.copy(episodes = book.episodes.filterNot { it.id == episodeId }))
+        event("test_timeout")
+        changed()
+    }
+
+    fun scheduleTest(id: String, at: Long, intervalSeconds: Long) {
+        check(debug && id == TEST_ALARM_ID) { "test_alarm_unavailable" }
+        require(at > System.currentTimeMillis() && (intervalSeconds == 0L || intervalSeconds in 60..86_400))
+        check(exactAllowed()) { "exact_permission_denied" }
+        check(notificationsAllowed()) { "notification_permission_denied" }
+        val book = store.load()
+        arm("test", TEST_ALARM_ID, at)
+        try {
+            store.save(book.copy(test = TestAlarm(at, intervalSeconds)))
+        } catch (failure: Exception) {
+            cancelIntent("test", TEST_ALARM_ID, at)
+            throw failure
+        }
+        book.test?.let { if (it.at != at) cancelIntent("test", TEST_ALARM_ID, it.at) }
+        event("test_scheduled:$at")
+        changed()
+    }
+
+    fun cancelTest() {
+        check(debug) { "test_alarm_unavailable" }
+        val book = store.load()
+        store.save(book.copy(test = null, episodes = book.episodes.filterNot { it.isTest }))
+        book.test?.let { cancelIntent("test", TEST_ALARM_ID, it.at) }
+        AlarmService.current?.refresh()
+        event("test_cancelled")
+        changed()
+    }
+
+    private fun fireTest(book: AlarmBook, at: Long, now: Long): Boolean {
+        val test = book.test?.takeIf { debug && it.at == at } ?: return false
+        val allowed = blocked() == null
+        val next = if (allowed && test.intervalSeconds > 0) test.copy(at = nextTestTime(test, now)) else null
+        val episodes = if (allowed) book.episodes + episode(
+            TEST_ALARM_ID, "Bimbi test alarm", WakeChallenge.MATH, WakeDifficulty.EASY, now) else book.episodes
+        store.save(book.copy(test = next, episodes = episodes))
+        next?.let { runCatching { arm("test", TEST_ALARM_ID, it.at) } }
+        return allowed
+    }
+
+    private fun nextTestTime(test: TestAlarm, now: Long): Long {
+        val interval = test.intervalSeconds * 1_000
+        return test.at + ((now - test.at).coerceAtLeast(0) / interval + 1) * interval
+    }
+
+    private fun episode(alarmId: String, label: String, challenge: WakeChallenge, level: WakeDifficulty, at: Long) =
+        AlarmEpisode(UUID.randomUUID().toString(), alarmId, label, challenge, level, arrivedAt = at)
+
     companion object {
+        const val CHANNEL = "bimbi_alarm"
+        const val CHANGED = "com.bimbi.app.ALARMS_CHANGED"
+        const val FIRE = "com.bimbi.app.FIRE_ALARM"
+
         fun channels(context: Context) {
             val manager = context.getSystemService(NotificationManager::class.java)
-            val alarms = NotificationChannel("bimbi_alarm", "Wake alarms", NotificationManager.IMPORTANCE_HIGH)
-            // Audio is owned by AlarmService and stopped by both dismissal paths.
+            val alarms = NotificationChannel(CHANNEL, "Wake alarms", NotificationManager.IMPORTANCE_HIGH)
             alarms.setSound(null, null)
             alarms.lockscreenVisibility = Notification.VISIBILITY_PUBLIC
             manager.createNotificationChannel(alarms)
@@ -117,15 +423,28 @@ class AlarmEngine(private val context: Context) {
 
 class AlarmReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
+        if (intent.action != AlarmEngine.FIRE) return
+        val parts = intent.data?.pathSegments ?: return
+        if (parts.size != 3) return
+        val at = parts[2].toLongOrNull() ?: return
         val engine = AlarmEngine(context)
-        if (intent.action == "dismiss") { engine.dismiss(); return }
-        if (!engine.fire(intent.getStringExtra("id"), intent.getLongExtra("atMillis", 0))) return
-        try { context.startForegroundService(Intent(context, AlarmService::class.java)) }
-        catch (_: Exception) { engine.event("alert_service_failed"); AlarmService.postFallback(context) }
+        if (runCatching { engine.fire(parts[0], parts[1], at) }.getOrElse {
+            engine.event("receiver_failed")
+            false
+        }) AlarmService.start(context)
     }
 }
+
 class RestoreReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
-        if (intent.action in setOf(Intent.ACTION_BOOT_COMPLETED, Intent.ACTION_MY_PACKAGE_REPLACED, AlarmManager.ACTION_SCHEDULE_EXACT_ALARM_PERMISSION_STATE_CHANGED)) AlarmEngine(context).restore()
+        val engine = AlarmEngine(context)
+        runCatching {
+            engine.restore(
+                recomputeTime = intent.action == Intent.ACTION_TIME_CHANGED || intent.action == Intent.ACTION_TIMEZONE_CHANGED,
+                afterBoot = intent.action == Intent.ACTION_BOOT_COMPLETED,
+                forceRearm = intent.action == Intent.ACTION_MY_PACKAGE_REPLACED ||
+                    intent.action == AlarmManager.ACTION_SCHEDULE_EXACT_ALARM_PERMISSION_STATE_CHANGED,
+            )
+        }.onFailure { engine.event("restore_failed") }
     }
 }
