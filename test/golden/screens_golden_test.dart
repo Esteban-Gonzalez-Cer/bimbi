@@ -12,21 +12,6 @@ import 'package:flutter_test/flutter_test.dart';
 
 import '../helpers/pump.dart';
 
-Future<void> _settleImages(WidgetTester tester) async {
-  await tester.pumpAndSettle();
-  // Wait for each visible bundled asset to decode before taking the snapshot.
-  await tester.runAsync(() async {
-    final images = find.byType(Image).evaluate().toList();
-    await Future.wait(
-      images.map((element) {
-        final image = element.widget as Image;
-        return precacheImage(image.image, element);
-      }),
-    );
-  });
-  await tester.pumpAndSettle();
-}
-
 void main() {
   const widths = [360.0, 412.0, 700.0, 900.0];
   final cases = [
@@ -48,7 +33,7 @@ void main() {
             matching: find.text(d.label),
           ),
         );
-        await _settleImages(tester);
+        await settleSnapshotImages(tester);
         await expectLater(
           find.byType(MaterialApp),
           matchesGoldenFile(
@@ -61,7 +46,7 @@ void main() {
 
   testWidgets('onboarding first step', (tester) async {
     await pumpBimbi(tester, onboarded: false);
-    await _settleImages(tester);
+    await settleSnapshotImages(tester);
     await expectLater(
       find.byType(MaterialApp),
       matchesGoldenFile('goldens/onboarding_412_light.png'),
@@ -87,7 +72,7 @@ void main() {
           ),
         ),
       );
-      await _settleImages(tester);
+      await settleSnapshotImages(tester);
       await expectLater(
         find.byType(MaterialApp),
         matchesGoldenFile('goldens/gallery_${b.name}.png'),

@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased — Phase 5 sleep and Focus
+
+The sleep diary and the Focus timer are saved on the device and sync for verified accounts, with offline changes sent on reconnection. The Sleep report shows the night on a 12-hour dial, the snoozes from this morning's alarm, phone use in bed with Usage Access, the week and the diary, without scores. Focus winds up to four 2-hour turns, takes typed minutes, splits sessions into windows and plays a chime at each window end and a sparkle at the end. The opt-in Focus shield covers chosen apps during Focus or after a free hours-and-minutes daily limit (ADR-009).
+
 ## Unreleased — Phase 4 wake alarms
 
 Multiple local alarms with weekday recurrence, native restoration and a required wake-up challenge per alarm. Shake, Math, Ball Monte, Follow the pattern and Memorama each have four difficulty levels. The native alert supports two five-minute snoozes and a fifteen-second interaction window that rolls back the challenge when it expires. The native challenge screen uses one centred column in portrait and two panes in landscape, equal 56dp buttons, a clear type hierarchy, boards that shrink to keep every action on screen, and Spring Vibes artwork (CC BY 4.0) for Memorama.

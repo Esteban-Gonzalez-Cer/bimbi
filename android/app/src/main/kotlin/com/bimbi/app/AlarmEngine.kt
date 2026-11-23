@@ -39,6 +39,7 @@ internal class AlarmEngine(context: Context) {
         store.load().episodes.mapNotNull { it.snooze?.at }.minOrNull()
     } else null
     fun lastEvent() = store.lastEvent()
+    fun lastWake() = store.lastWake()
 
     fun event(message: String) {
         store.record(message)
@@ -349,8 +350,9 @@ internal class AlarmEngine(context: Context) {
 
     fun complete(episodeId: String) {
         val book = store.load()
-        if (book.active?.id != episodeId) return
+        val finished = book.active?.takeIf { it.id == episodeId } ?: return
         store.save(book.copy(episodes = book.episodes.filterNot { it.id == episodeId }))
+        if (!finished.isTest) store.recordWake(finished, System.currentTimeMillis())
         event("challenge_completed")
         changed()
     }
@@ -450,5 +452,8 @@ class RestoreReceiver : BroadcastReceiver() {
                     intent.action == AlarmManager.ACTION_SCHEDULE_EXACT_ALARM_PERMISSION_STATE_CHANGED,
             )
         }.onFailure { engine.event("restore_failed") }
+        // The Focus shield and daily limits come back after reboot, update or a clock change.
+        runCatching { FocusGuard.sync(context) }
+        runCatching { FocusChime.restore(context) }
     }
 }

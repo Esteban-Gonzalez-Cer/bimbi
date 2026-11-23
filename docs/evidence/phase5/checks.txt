@@ -1,0 +1,383 @@
+Comprobación integrada de la Fase 5 (JDK 21, Node 22 y Flutter 3.47.5)
+Fecha: 22 de noviembre de 2026, Ciudad de México
+Directorio de trabajo: bimbi
+Comando: ./scripts/check.sh
+Código de salida: 0
+
+Formatted 83 files (0 changed) in 0.25 seconds.
+Analyzing bimbi...                                              
+No issues found! (ran in 6.4s)
+00:00 +0: loading test/unit/focus_shield_test.dart
+00:00 +0: test/unit/operation_test.dart: concurrent taps cannot start duplicate experiments
+00:00 +1: test/unit/design_tokens_test.dart: WCAG contrast light text pairs reach 4.5:1
+00:00 +2: test/unit/design_tokens_test.dart: WCAG contrast light text pairs reach 4.5:1
+00:00 +3: test/unit/focus_shield_test.dart: the shield follows the session: on while running, off otherwise
+00:00 +4: test/unit/focus_shield_test.dart: the shield follows the session: on while running, off otherwise
+00:00 +5: test/unit/focus_shield_test.dart: the shield follows the session: on while running, off otherwise
+00:00 +6: test/unit/focus_shield_test.dart: the shield follows the session: on while running, off otherwise
+00:00 +7: test/unit/focus_shield_test.dart: the shield follows the session: on while running, off otherwise
+00:00 +8: test/unit/focus_shield_test.dart: the shield follows the session: on while running, off otherwise
+00:00 +9: test/unit/design_tokens_test.dart: every mood samples a finite, bounded face over its loop
+00:00 +10: test/unit/focus_shield_test.dart: window ends are sent for chimes and cleared on pause
+00:00 +11: test/unit/focus_shield_test.dart: choosing apps and limits stays on the device guard
+00:00 +12: test/unit/focus_shield_test.dart: a missing shield never breaks the timer
+00:00 +13: test/unit/focus_session_test.dart: the dial snaps to 5 minutes; typed minutes are exact; 8 h max
+00:00 +14: test/unit/focus_session_test.dart: winding past a full turn adds layers, unwinding removes them
+00:00 +15: test/unit/focus_session_test.dart: a split session reports its window and the window ends ahead
+00:00 +16: test/unit/focus_session_test.dart: remaining time derives from timestamps across pause and resume
+00:01 +17: test/unit/focus_session_test.dart: a session survives a rebuilt controller from its timestamps
+00:01 +18: test/unit/focus_session_test.dart: completes at the target and never goes negative
+00:01 +19: test/unit/focus_session_test.dart: target cannot change while running
+00:01 +20: test/unit/focus_session_test.dart: FOCUS-01 persistence a killed process restores the same remaining time
+00:01 +21: test/unit/focus_session_test.dart: FOCUS-01 persistence finishing records history once, with focused time only
+00:01 +22: test/unit/focus_session_test.dart: FOCUS-01 persistence sessions under a minute are not recorded; early end is ended
+00:01 +23: test/unit/focus_session_test.dart: FOCUS-01 persistence windows survive a restart; a bad split is dropped
+00:01 +24: test/unit/focus_session_test.dart: FOCUS-01 persistence a corrupt saved session falls back to idle
+00:01 +25: test/unit/profile_test.dart: cache survives recreation, expires by age and is removed on account switch
+00:01 +26: test/unit/profile_test.dart: photo conversion bounds the longest edge and output bytes
+00:01 +27: test/unit/profile_test.dart: photo conversion bounds the longest edge and output bytes
+00:01 +28: test/unit/local_collection_test.dart: an edit made after sending is not confirmed by the older write
+00:01 +29: test/unit/profile_test.dart: name stays pending until confirmed and a switched account ignores late media
+00:01 +30: test/unit/profile_test.dart: name stays pending until confirmed and a switched account ignores late media
+00:01 +31: test/unit/profile_test.dart: name stays pending until confirmed and a switched account ignores late media
+00:01 +32: test/unit/profile_test.dart: name stays pending until confirmed and a switched account ignores late media
+00:01 +33: test/unit/sleep_diary_test.dart: bedtime after wake time belongs to the previous evening
+00:01 +34: test/unit/sleep_diary_test.dart: after-midnight bedtime stays on the wake day
+00:01 +35: test/unit/sleep_diary_test.dart: one entry per day, newest first, and it survives a restart
+00:01 +36: test/unit/sleep_diary_test.dart: notes are trimmed and bounded; impossible nights are rejected
+00:01 +37: test/unit/sleep_diary_test.dart: the week covers seven days and averages logged nights only
+00:01 +38: test/unit/sleep_diary_test.dart: only a wake finished today prefills the diary
+00:01 +39: test/unit/sleep_diary_test.dart: phone use in bed needs Usage Access and an entry
+00:02 +40: test/unit/collection_sync_test.dart: guest entries upload once a verified account is online
+00:02 +41: test/unit/collection_sync_test.dart: edits from another device arrive; offline edits wait
+00:02 +42: test/unit/collection_sync_test.dart: deleting while synced removes the row from the cloud
+00:02 +43: test/unit/collection_sync_test.dart: switching accounts never carries entries across
+00:02 +44: test/unit/tracking_test.dart: stop cancels GPS and motion subscriptions
+00:02 +45: test/unit/tracking_test.dart: permission resolving after leaving foreground cannot restart tracking
+00:02 +46: test/unit/platform_test.dart: schedule/cancel use one native source of truth
+00:02 +47: test/unit/platform_test.dart: permission denial remains explicit and does not report scheduling success
+00:02 +48: test/unit/platform_test.dart: unsupported native bridge is a capability failure
+00:02 +49: test/unit/platform_test.dart: past alarm and rapid repeat rejected before native call
+00:02 +50: test/unit/alarm_draft_test.dart: new alarms require an explicit challenge and start at normal
+00:02 +51: test/unit/alarm_draft_test.dart: editing keeps the native id, sound, volume and difficulty
+00:03 +52: test/golden/screens_golden_test.dart: tabs at 360dp light
+00:04 +53: test/golden/screens_golden_test.dart: tabs at 360dp light
+00:04 +54: test/golden/screens_golden_test.dart: tabs at 360dp light
+00:04 +55: test/golden/screens_golden_test.dart: tabs at 360dp light
+00:04 +56: test/golden/screens_golden_test.dart: tabs at 360dp light
+00:05 +57: test/review/shield_compare_test.dart: shield needs access
+00:05 +58: test/review/shield_compare_test.dart: shield needs access
+00:05 +59: test/review/shield_compare_test.dart: shield needs access
+00:05 +60: test/review/shield_compare_test.dart: shield needs access
+00:05 +61: test/review/shield_compare_test.dart: shield needs access
+00:05 +62: test/onboarding_test.dart: onboarding: four steps, name and colour, then the shell
+00:05 +63: test/onboarding_test.dart: onboarding: four steps, name and colour, then the shell
+00:05 +64: test/onboarding_test.dart: onboarding: four steps, name and colour, then the shell
+00:05 +65: test/onboarding_test.dart: onboarding: four steps, name and colour, then the shell
+00:05 +66: test/onboarding_test.dart: onboarding: four steps, name and colour, then the shell
+00:05 +67: test/onboarding_test.dart: onboarding: four steps, name and colour, then the shell
+00:05 +68: test/review/shield_compare_test.dart: shield ready with choices
+00:05 +69: test/golden/screens_golden_test.dart: tabs at 700dp light
+00:05 +70: test/golden/screens_golden_test.dart: tabs at 700dp light
+00:05 +71: test/golden/screens_golden_test.dart: tabs at 700dp light
+00:06 +71: test/tz/sleep_dst_test.dart: a fall-back night reports one extra hour in bed
+  Skip: needs TZ=America/New_York
+00:06 +71 ~1: test/golden/screens_golden_test.dart: tabs at 700dp light
+00:06 +71 ~1: test/tz/sleep_dst_test.dart: a spring-forward night reports one hour less
+  Skip: needs TZ=America/New_York
+00:06 +71 ~2: test/golden/screens_golden_test.dart: tabs at 700dp light
+00:06 +72 ~2: test/golden/screens_golden_test.dart: tabs at 700dp light
+00:06 +73 ~2: test/golden/screens_golden_test.dart: tabs at 700dp light
+00:06 +74 ~2: test/golden/screens_golden_test.dart: tabs at 700dp light
+00:06 +75 ~2: test/golden/screens_golden_test.dart: tabs at 700dp light
+00:06 +76 ~2: test/review/shield_compare_test.dart: shield limit sheet
+00:06 +77 ~2: test/widget_test.dart: five tabs at 412.0dp, text 1.0x, light
+00:06 +78 ~2: test/review/focus_compare_test.dart: focus running dark
+00:06 +79 ~2: test/golden/screens_golden_test.dart: tabs at 900dp light
+00:06 +80 ~2: test/golden/screens_golden_test.dart: tabs at 900dp light
+00:06 +81 ~2: test/golden/screens_golden_test.dart: tabs at 900dp light
+00:06 +82 ~2: test/golden/screens_golden_test.dart: tabs at 900dp light
+00:06 +83 ~2: test/golden/screens_golden_test.dart: tabs at 900dp light
+00:06 +84 ~2: test/golden/screens_golden_test.dart: tabs at 900dp light
+00:06 +85 ~2: test/widget_test.dart: five tabs at 412.0dp, text 2.0x, light
+00:07 +86 ~2: test/golden/screens_golden_test.dart: tabs at 412dp dark
+00:07 +87 ~2: test/golden/screens_golden_test.dart: tabs at 412dp dark
+00:07 +88 ~2: test/golden/screens_golden_test.dart: tabs at 412dp dark
+00:07 +89 ~2: test/widget_test.dart: five tabs at 700.0dp, text 1.3x, dark
+00:07 +90 ~2: test/golden/screens_golden_test.dart: tabs at 900dp dark
+00:07 +91 ~2: test/golden/screens_golden_test.dart: tabs at 900dp dark
+00:07 +92 ~2: test/golden/screens_golden_test.dart: tabs at 900dp dark
+00:07 +93 ~2: test/golden/screens_golden_test.dart: tabs at 900dp dark
+00:08 +94 ~2: test/widget_test.dart: five tabs at 900.0dp, text 1.0x, dark
+00:08 +95 ~2: test/golden/screens_golden_test.dart: onboarding first step
+00:08 +96 ~2: test/widget_test.dart: five tabs at 900.0dp, text 1.0x, light
+00:08 +97 ~2: test/golden/screens_golden_test.dart: design gallery dark
+00:08 +98 ~2: test/golden/screens_golden_test.dart: design gallery dark
+00:08 +99 ~2: test/widget_test.dart: five tabs at 900.0dp, text 1.3x, light
+00:08 +100 ~2: test/golden/screens_golden_test.dart: design gallery light
+00:08 +101 ~2: test/golden/screens_golden_test.dart: design gallery light
+00:08 +102 ~2: test/widget_test.dart: five tabs at 900.0dp, text 2.0x, light
+00:08 +103 ~2: test/widget_test.dart: unconfigured build keeps sign-in disabled, active challenge reachable
+00:08 +104 ~2: test/widget_test.dart: Android Back returns to Alarm before leaving the app
+00:08 +105 ~2: test/widget_test.dart: Focus start fits a short tablet viewport without scrolling
+00:09 +106 ~2: test/widget_test.dart: Focus takes exact minutes and a split into windows
+00:09 +107 ~2: test/widget_test.dart: the Focus shield pauses an app and sets a daily limit
+00:09 +108 ~2: test/widget_test.dart: missing alarm permissions show a direct fix
+00:09 +109 ~2: test/widget_test.dart: creating an alarm requires and persists the selected challenge
+00:09 +110 ~2: test/widget_test.dart: previews, saves and reopens per-alarm sound at 360dp and 2x
+00:10 +111 ~2: All tests passed!
+00:00 +0: loading test/tz/sleep_dst_test.dart
+00:00 +0: a fall-back night reports one extra hour in bed
+00:00 +1: a spring-forward night reports one hour less
+00:00 +2: All tests passed!
+> bimbi-phase1-payments@0.1.0 test
+> npm run build && node --test test/*.test.cjs
+> bimbi-phase1-payments@0.1.0 build
+> tsc
+✔ only unequivocal password origin makes an account eligible (0.383ms)
+✔ uses the creation event and preserves unrelated claims on retry (0.409416ms)
+✔ rejects missing and invalid authentication before creating a payment (0.9155ms)
+✔ rejects unverified accounts (0.089667ms)
+✔ rejects client prices, unknown plans and invalid attempt identifiers (0.449041ms)
+✔ retries return the same payment and do not recreate it (0.155792ms)
+✔ same attempt cannot change plans (0.099958ms)
+✔ stale unrecorded attempt cannot recreate a payment after Stripe key expiry (0.075958ms)
+✔ only the owner can verify a test payment (0.082209ms)
+✔ only server-observed success verifies payment; decline/cancel/pending do not (0.095584ms)
+✔ live mode, wrong price and wrong currency cannot verify (0.139291ms)
+✔ unavailable Stripe does not produce a success response (0.138667ms)
+✔ concurrent retries use exactly the same Stripe idempotency inputs (11.398042ms)
+ℹ tests 13
+ℹ suites 0
+ℹ pass 13
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 313.515792
+> emulators
+> firebase emulators:exec --project demo-bimbi --config ../../firebase.json --only auth,database,storage,functions "npm test"
+i  emulators: Starting emulators: auth, functions, database, storage
+i  emulators: Detected demo project ID "demo-bimbi", emulated services will use a demo configuration and attempts to access non-emulated services for this project will fail.
+i  database: Database Emulator logging to database-debug.log
+WARNING: sun.misc.Unsafe::arrayBaseOffset has been called by com.google.protobuf.UnsafeUtil$MemoryAccessor (file:~/.cache/firebase/emulators/cloud-storage-rules-runtime-v1.1.3.jar)
+WARNING: Please consider reporting this to the maintainers of class com.google.protobuf.UnsafeUtil$MemoryAccessor
+WARNING: sun.misc.Unsafe::arrayBaseOffset will be removed in a future release
+i  functions: Watching "payment_demo/server" for Cloud Functions...
+⚠  functions: Your requested "node" version "22" doesn't match your global version "26". Using node@26 from host.
+Serving at port 8652
+✔  functions: Loaded functions definitions from source: assignBimbiAuthOrigin, paymentApi.
+✔  functions[us-central1-assignBimbiAuthOrigin]: auth function initialized.
+✔  functions[us-central1-paymentApi]: http function initialized (http://127.0.0.1:5001/demo-bimbi/us-central1/paymentApi).
+i  Running script: npm test
+> test
+> node --test *.test.cjs
+>  <claude-code-hint v="1" type="plugin" value="stripe@claude-plugins-official" />
+i  functions: Beginning execution of "us-central1-assignBimbiAuthOrigin"
+i  functions: Finished "us-central1-assignBimbiAuthOrigin" in 67.148125ms
+i  functions: Beginning execution of "us-central1-assignBimbiAuthOrigin"
+i  functions: Finished "us-central1-assignBimbiAuthOrigin" in 2.980167ms
+✔ auth emulator origin is stamped from actual email and federated creation events (1191.6695ms)
+✔ verified owner can write/read/delete the strict probe schema (314.868542ms)
+[2026-11-23T02:18:54.661Z]  @firebase/database: FIREBASE WARNING: set at /users/alice/phase1/probe failed: permission_denied 
+[2026-11-23T02:18:54.672Z]  @firebase/database: FIREBASE WARNING: set at /users/alice/phase1/probe failed: permission_denied 
+[2026-11-23T02:18:54.683Z]  @firebase/database: FIREBASE WARNING: set at /users/alice/phase1/probe failed: permission_denied 
+✔ anonymous, unverified and other-user reads/writes are denied (51.7235ms)
+[2026-11-23T02:18:54.708Z]  @firebase/database: FIREBASE WARNING: set at /users/alice/phase1/probe failed: permission_denied 
+[2026-11-23T02:18:54.710Z]  @firebase/database: FIREBASE WARNING: set at /users/alice/phase1/probe failed: permission_denied 
+[2026-11-23T02:18:54.712Z]  @firebase/database: FIREBASE WARNING: set at /users/alice/entitlements failed: permission_denied 
+✔ unknown fields, future timestamps, entitlements and payment records are denied (30.006833ms)
+✔ owner can roundtrip a small PNG and remove it (108.974958ms)
+✔ other-user, anonymous and unverified image access denied (73.238375ms)
+✔ oversized, wrong-type and out-of-scope image uploads denied (34.422916ms)
+✔ two verified clients of one account observe confirmed name changes (37.815792ms)
+[2026-11-23T02:18:54.996Z]  @firebase/database: FIREBASE WARNING: set at /users/alice/profile/displayName failed: permission_denied 
+[2026-11-23T02:18:54.997Z]  @firebase/database: FIREBASE WARNING: set at /users/alice/profile/displayName failed: permission_denied 
+[2026-11-23T02:18:54.999Z]  @firebase/database: FIREBASE WARNING: set at /users/alice/profile/displayName failed: permission_denied 
+[2026-11-23T02:18:55.000Z]  @firebase/database: FIREBASE WARNING: set at /users/alice/profile/displayName failed: permission_denied 
+[2026-11-23T02:18:55.001Z]  @firebase/database: FIREBASE WARNING: set at /users/alice/profile/displayName failed: permission_denied 
+[2026-11-23T02:18:55.003Z]  @firebase/database: FIREBASE WARNING: set at /users/alice/profile/displayName failed: permission_denied 
+[2026-11-23T02:18:55.007Z]  @firebase/database: FIREBASE WARNING: set at /users/alice/profile failed: permission_denied 
+[2026-11-23T02:18:55.008Z]  @firebase/database: FIREBASE WARNING: set at /users/alice/profile/authOrigin failed: permission_denied 
+[2026-11-23T02:18:55.016Z]  @firebase/database: FIREBASE WARNING: set at /users/alice/profile/displayName failed: permission_denied 
+[2026-11-23T02:18:55.027Z]  @firebase/database: FIREBASE WARNING: set at /users/alice/profile/displayName failed: permission_denied 
+[2026-11-23T02:18:55.039Z]  @firebase/database: FIREBASE WARNING: set at /users/alice/profile/displayName failed: permission_denied 
+✔ profile rules deny other accounts, parent access and malformed fields (70.643667ms)
+✔ verified password-origin account can upload, download and remove its avatar (50.203625ms)
+✔ avatar writes require a trusted original password account even after provider linking (122.4325ms)
+✔ verified owner keeps a sleep diary and focus history (30.322209ms)
+[2026-11-23T02:18:55.263Z]  @firebase/database: FIREBASE WARNING: set at /users/alice/sleep/2026-11-21 failed: permission_denied 
+[2026-11-23T02:18:55.265Z]  @firebase/database: FIREBASE WARNING: set at /users/alice/focus/1795370400000 failed: permission_denied 
+[2026-11-23T02:18:55.274Z]  @firebase/database: FIREBASE WARNING: set at /users/alice/sleep/2026-11-21 failed: permission_denied 
+[2026-11-23T02:18:55.276Z]  @firebase/database: FIREBASE WARNING: set at /users/alice/focus/1795370400000 failed: permission_denied 
+[2026-11-23T02:18:55.288Z]  @firebase/database: FIREBASE WARNING: set at /users/alice/sleep/2026-11-21 failed: permission_denied 
+[2026-11-23T02:18:55.291Z]  @firebase/database: FIREBASE WARNING: set at /users/alice/focus/1795370400000 failed: permission_denied 
+[2026-11-23T02:18:55.298Z]  @firebase/database: FIREBASE WARNING: set at /users/alice/sleep/2026-11-21 failed: permission_denied 
+[2026-11-23T02:18:55.300Z]  @firebase/database: FIREBASE WARNING: set at /users/alice/sleep/2026-11-21 failed: permission_denied 
+[2026-11-23T02:18:55.301Z]  @firebase/database: FIREBASE WARNING: set at /users/alice/sleep/2026-11-21 failed: permission_denied 
+[2026-11-23T02:18:55.302Z]  @firebase/database: FIREBASE WARNING: set at /users/alice/sleep/2026-11-21 failed: permission_denied 
+[2026-11-23T02:18:55.303Z]  @firebase/database: FIREBASE WARNING: set at /users/alice/sleep/2026-11-21 failed: permission_denied 
+[2026-11-23T02:18:55.304Z]  @firebase/database: FIREBASE WARNING: set at /users/alice/sleep/2026-11-21 failed: permission_denied 
+[2026-11-23T02:18:55.305Z]  @firebase/database: FIREBASE WARNING: set at /users/alice/sleep/yesterday failed: permission_denied 
+[2026-11-23T02:18:55.306Z]  @firebase/database: FIREBASE WARNING: set at /users/alice/focus/1795370400000 failed: permission_denied 
+[2026-11-23T02:18:55.307Z]  @firebase/database: FIREBASE WARNING: set at /users/alice/focus/1795370400000 failed: permission_denied 
+[2026-11-23T02:18:55.308Z]  @firebase/database: FIREBASE WARNING: set at /users/alice/focus/1795370400000 failed: permission_denied 
+[2026-11-23T02:18:55.310Z]  @firebase/database: FIREBASE WARNING: set at /users/alice/focus/1795370400000 failed: permission_denied 
+[2026-11-23T02:18:55.312Z]  @firebase/database: FIREBASE WARNING: set at /users/alice/focus/1795370400000 failed: permission_denied 
+[2026-11-23T02:18:55.313Z]  @firebase/database: FIREBASE WARNING: set at /users/alice/focus/session-one failed: permission_denied 
+✔ sleep and focus deny other accounts and malformed rows (71.029166ms)
+ℹ tests 13
+ℹ suites 0
+ℹ pass 13
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1253.8175
+✔  Script exited successfully (code 0)
+i  emulators: Shutting down emulators.
+i  functions: Stopping Functions Emulator
+i  database: Stopping Database Emulator
+i  auth: Stopping Authentication Emulator
+i  storage: Stopping Storage Emulator
+i  eventarc: Stopping Eventarc Emulator
+i  tasks: Stopping Cloud Tasks Emulator
+i  hub: Stopping emulator hub
+i  logging: Stopping Logging Emulator
+WARNING: A restricted method in java.lang.System has been called
+WARNING: Use --enable-native-access=ALL-UNNAMED to avoid a warning for callers in this module
+WARNING: Restricted methods will be blocked in a future release unless native access is enabled
+- To opt in to applying to both value parameter and property, add '-Xannotation-default-target=param-property' to your compiler arguments.
+- To keep applying to the value parameter only, use the '@param:' annotation target.
+See https://youtrack.jetbrains.com/issue/KT-73255 for more details.
+- To opt in to applying to both value parameter and property, add '-Xannotation-default-target=param-property' to your compiler arguments.
+- To keep applying to the value parameter only, use the '@param:' annotation target.
+See https://youtrack.jetbrains.com/issue/KT-73255 for more details.
+- To opt in to applying to both value parameter and property, add '-Xannotation-default-target=param-property' to your compiler arguments.
+- To keep applying to the value parameter only, use the '@param:' annotation target.
+See https://youtrack.jetbrains.com/issue/KT-73255 for more details.
+- To opt in to applying to both value parameter and property, add '-Xannotation-default-target=param-property' to your compiler arguments.
+- To keep applying to the value parameter only, use the '@param:' annotation target.
+See https://youtrack.jetbrains.com/issue/KT-73255 for more details.
+> Configure project :app
+The current default is 'true'.
+It will be removed in version 10.0 of the Android Gradle plugin.
+The current default is 'true'.
+It will be removed in version 10.0 of the Android Gradle plugin.
+The 'org.jetbrains.kotlin.android' plugin in project ':app' is no longer required for Kotlin support since AGP 9.0.
+Solution: Remove both `android.builtInKotlin=true` and `android.newDsl=false` from `gradle.properties`, then migrate to built-in Kotlin.
+See https://kotl.in/gradle/agp-built-in-kotlin for more details.
+> Configure project :firebase_auth
+The 'org.jetbrains.kotlin.android' plugin in project ':firebase_auth' is no longer required for Kotlin support since AGP 9.0.
+Solution: Remove both `android.builtInKotlin=true` and `android.newDsl=false` from `gradle.properties`, then migrate to built-in Kotlin.
+See https://kotl.in/gradle/agp-built-in-kotlin for more details.
+> Configure project :firebase_core
+The 'org.jetbrains.kotlin.android' plugin in project ':firebase_core' is no longer required for Kotlin support since AGP 9.0.
+Solution: Remove both `android.builtInKotlin=true` and `android.newDsl=false` from `gradle.properties`, then migrate to built-in Kotlin.
+See https://kotl.in/gradle/agp-built-in-kotlin for more details.
+> Configure project :firebase_database
+The 'org.jetbrains.kotlin.android' plugin in project ':firebase_database' is no longer required for Kotlin support since AGP 9.0.
+Solution: Remove both `android.builtInKotlin=true` and `android.newDsl=false` from `gradle.properties`, then migrate to built-in Kotlin.
+See https://kotl.in/gradle/agp-built-in-kotlin for more details.
+> Configure project :firebase_messaging
+The 'org.jetbrains.kotlin.android' plugin in project ':firebase_messaging' is no longer required for Kotlin support since AGP 9.0.
+Solution: Remove both `android.builtInKotlin=true` and `android.newDsl=false` from `gradle.properties`, then migrate to built-in Kotlin.
+See https://kotl.in/gradle/agp-built-in-kotlin for more details.
+> Configure project :firebase_storage
+The 'org.jetbrains.kotlin.android' plugin in project ':firebase_storage' is no longer required for Kotlin support since AGP 9.0.
+Solution: Remove both `android.builtInKotlin=true` and `android.newDsl=false` from `gradle.properties`, then migrate to built-in Kotlin.
+See https://kotl.in/gradle/agp-built-in-kotlin for more details.
+> Configure project :flutter_plugin_android_lifecycle
+The 'org.jetbrains.kotlin.android' plugin in project ':flutter_plugin_android_lifecycle' is no longer required for Kotlin support since AGP 9.0.
+Solution: Remove both `android.builtInKotlin=true` and `android.newDsl=false` from `gradle.properties`, then migrate to built-in Kotlin.
+See https://kotl.in/gradle/agp-built-in-kotlin for more details.
+> Configure project :geolocator_android
+The 'org.jetbrains.kotlin.android' plugin in project ':geolocator_android' is no longer required for Kotlin support since AGP 9.0.
+Solution: Remove both `android.builtInKotlin=true` and `android.newDsl=false` from `gradle.properties`, then migrate to built-in Kotlin.
+See https://kotl.in/gradle/agp-built-in-kotlin for more details.
+> Configure project :google_maps_flutter_android
+The 'org.jetbrains.kotlin.android' plugin in project ':google_maps_flutter_android' is no longer required for Kotlin support since AGP 9.0.
+Solution: Remove both `android.builtInKotlin=true` and `android.newDsl=false` from `gradle.properties`, then migrate to built-in Kotlin.
+See https://kotl.in/gradle/agp-built-in-kotlin for more details.
+> Configure project :google_sign_in_android
+The 'org.jetbrains.kotlin.android' plugin in project ':google_sign_in_android' is no longer required for Kotlin support since AGP 9.0.
+Solution: Remove both `android.builtInKotlin=true` and `android.newDsl=false` from `gradle.properties`, then migrate to built-in Kotlin.
+See https://kotl.in/gradle/agp-built-in-kotlin for more details.
+> Configure project :image_picker_android
+The 'org.jetbrains.kotlin.android' plugin in project ':image_picker_android' is no longer required for Kotlin support since AGP 9.0.
+Solution: Remove both `android.builtInKotlin=true` and `android.newDsl=false` from `gradle.properties`, then migrate to built-in Kotlin.
+See https://kotl.in/gradle/agp-built-in-kotlin for more details.
+> Configure project :integration_test
+The 'org.jetbrains.kotlin.android' plugin in project ':integration_test' is no longer required for Kotlin support since AGP 9.0.
+Solution: Remove both `android.builtInKotlin=true` and `android.newDsl=false` from `gradle.properties`, then migrate to built-in Kotlin.
+See https://kotl.in/gradle/agp-built-in-kotlin for more details.
+> Configure project :jni
+The 'org.jetbrains.kotlin.android' plugin in project ':jni' is no longer required for Kotlin support since AGP 9.0.
+Solution: Remove both `android.builtInKotlin=true` and `android.newDsl=false` from `gradle.properties`, then migrate to built-in Kotlin.
+See https://kotl.in/gradle/agp-built-in-kotlin for more details.
+> Configure project :jni_flutter
+The 'org.jetbrains.kotlin.android' plugin in project ':jni_flutter' is no longer required for Kotlin support since AGP 9.0.
+Solution: Remove both `android.builtInKotlin=true` and `android.newDsl=false` from `gradle.properties`, then migrate to built-in Kotlin.
+See https://kotl.in/gradle/agp-built-in-kotlin for more details.
+> Configure project :package_info_plus
+The 'org.jetbrains.kotlin.android' plugin in project ':package_info_plus' is no longer required for Kotlin support since AGP 9.0.
+Solution: Remove both `android.builtInKotlin=true` and `android.newDsl=false` from `gradle.properties`, then migrate to built-in Kotlin.
+See https://kotl.in/gradle/agp-built-in-kotlin for more details.
+> Configure project :sensors_plus
+The 'org.jetbrains.kotlin.android' plugin in project ':sensors_plus' is no longer required for Kotlin support since AGP 9.0.
+Solution: Remove both `android.builtInKotlin=true` and `android.newDsl=false` from `gradle.properties`, then migrate to built-in Kotlin.
+See https://kotl.in/gradle/agp-built-in-kotlin for more details.
+> Configure project :shared_preferences_android
+The 'org.jetbrains.kotlin.android' plugin in project ':shared_preferences_android' is no longer required for Kotlin support since AGP 9.0.
+Solution: Remove both `android.builtInKotlin=true` and `android.newDsl=false` from `gradle.properties`, then migrate to built-in Kotlin.
+See https://kotl.in/gradle/agp-built-in-kotlin for more details.
+> Configure project :stripe_android
+The 'org.jetbrains.kotlin.android' plugin in project ':stripe_android' is no longer required for Kotlin support since AGP 9.0.
+Solution: Remove both `android.builtInKotlin=true` and `android.newDsl=false` from `gradle.properties`, then migrate to built-in Kotlin.
+See https://kotl.in/gradle/agp-built-in-kotlin for more details.
+> Configure project :url_launcher_android
+The 'org.jetbrains.kotlin.android' plugin in project ':url_launcher_android' is no longer required for Kotlin support since AGP 9.0.
+Solution: Remove both `android.builtInKotlin=true` and `android.newDsl=false` from `gradle.properties`, then migrate to built-in Kotlin.
+See https://kotl.in/gradle/agp-built-in-kotlin for more details.
+WARNING: Your app uses the following plugins that apply Kotlin Gradle Plugin (KGP): firebase_auth, firebase_core, firebase_database, firebase_storage
+Future versions of Flutter will fail to build if your app uses plugins that apply KGP.
+If no such version exists, report the issue to the plugin. If necessary, here is a guide on filing
+an issue against a plugin: https://docs.flutter.dev/release/breaking-changes/migrate-to-built-in-kotlin/for-app-developers#report-incompatible-kotlin-gradle-plugin-usage-to-plugin-authors
+Try one of the following options:
+    1. [Recommended] Use Java toolchain with a lower language version
+    2. Set a higher source/target version
+    3. Use a lower version of the JDK running the build (if you're not using Java toolchain)
+For more details on how to configure these settings, see https://developer.android.com/build/jdks.
+To suppress this warning, set android.javaCompile.suppressSourceTargetDeprecationWarning=true in gradle.properties.
+warning: [options] source value 8 is obsolete and will be removed in a future release
+warning: [options] target value 8 is obsolete and will be removed in a future release
+warning: [options] To suppress warnings about obsolete options, use -Xlint:-options.
+3 warnings
+[Incubating] Problems report is available at: file://build/reports/problems/problems-report.html
+Deprecated Gradle features were used in this build, making it incompatible with Gradle 10.
+For more on this, please refer to https://docs.gradle.org/9.3.1/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation.
+BUILD SUCCESSFUL in 29s
+334 actionable tasks: 48 executed, 286 up-to-date
+Running Gradle task 'assembleDebug'...                          
+WARNING: Your app uses the following plugins that apply Kotlin Gradle Plugin (KGP): firebase_auth, firebase_core, firebase_database, firebase_storage
+Future versions of Flutter will fail to build if your app uses plugins that apply KGP.
+If no such version exists, report the issue to the plugin. If necessary, here is a guide on filing
+an issue against a plugin: https://docs.flutter.dev/release/breaking-changes/migrate-to-built-in-kotlin/for-app-developers#report-incompatible-kotlin-gradle-plugin-usage-to-plugin-authors
+warning: [options] source value 8 is obsolete and will be removed in a future release
+warning: [options] target value 8 is obsolete and will be removed in a future release
+warning: [options] To suppress warnings about obsolete options, use -Xlint:-options.
+3 warnings
+Running Gradle task 'assembleDebug'...                             21.5s
+✓ Built build/app/outputs/flutter-apk/app-debug.apk
+
+Pruebas JVM de Android (resultados de Gradle)
+testsuite name="com.bimbi.app.LocalAlarmTest" tests="6" skipped="0" failures="0" errors="0"
+testsuite name="com.bimbi.app.UsageTrackerTest" tests="7" skipped="0" failures="0" errors="0"
+testsuite name="com.bimbi.app.WakeSessionTest" tests="6" skipped="0" failures="0" errors="0"
+
+APK de entrega
+Comando: flutter build apk --debug --no-pub --dart-define-from-file=config/dev.json
+Copia: build/review/bimbi-phase5-debug.apk
+Verifies
+Verified using v2 scheme (APK Signature Scheme v2): true
+SHA-256 77b80f1b104376d17a8bd5a6ae4a8a2d36c25241825f8a4e09bc36298c391b37

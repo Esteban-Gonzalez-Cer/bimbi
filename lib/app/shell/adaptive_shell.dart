@@ -6,15 +6,18 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/operation.dart';
 import '../../core/platform.dart';
 import '../../features/auth/auth_adapter.dart';
-import '../../features/focus/presentation/focus_page.dart';
 import '../../features/profile/application/cloud_profile.dart';
 import '../../features/notifications/messaging.dart';
 import '../../features/profile/presentation/profile_page.dart';
 import '../../features/running/application/run_controller.dart';
 import '../../features/running/presentation/running_page.dart';
 import '../../features/running/tracking.dart';
-import '../../features/sleep/presentation/sleep_page.dart';
+import '../../ui/focus/view_models/focus_session.dart';
+import '../../ui/focus/view_models/focus_shield.dart';
+import '../../ui/focus/widgets/focus_screen.dart';
 import '../../ui/home/widgets/home_screen.dart';
+import '../../ui/sleep/view_models/sleep_diary.dart';
+import '../../ui/sleep/widgets/sleep_screen.dart';
 import '../design_system/design_system.dart';
 import 'layout.dart';
 
@@ -56,6 +59,7 @@ class _AdaptiveShellState extends ConsumerState<AdaptiveShell> {
       onHide: () => unawaited(ref.read(trackingProvider.notifier).stop()),
       onResume: () {
         ref.invalidate(capabilitiesProvider);
+        ref.invalidate(shieldStatusProvider);
         unawaited(_refreshAccount());
       },
     );
@@ -87,6 +91,10 @@ class _AdaptiveShellState extends ConsumerState<AdaptiveShell> {
     // Keep the profile coordinator active across tabs so account changes
     // always retire listeners and cached media.
     ref.watch(cloudProfileProvider.select((profile) => profile.uid));
+    // Diary and Focus history sync for verified accounts while the app runs.
+    ref.watch(sleepSyncProvider.select((status) => status.phase));
+    ref.watch(focusSyncProvider.select((status) => status.phase));
+    ref.watch(focusShieldLinkProvider);
     final selected = ref.watch(destinationProvider);
     final message = ref.watch(messagingProvider);
     ref.listen(destinationProvider, (previous, next) {
@@ -120,8 +128,8 @@ class _AdaptiveShellState extends ConsumerState<AdaptiveShell> {
             key: ValueKey(selected),
             child: switch (AppDestination.values[selected]) {
               AppDestination.alarm => const HomeScreen(),
-              AppDestination.sleep => const SleepPage(),
-              AppDestination.focus => const FocusPage(),
+              AppDestination.sleep => const SleepScreen(),
+              AppDestination.focus => const FocusScreen(),
               AppDestination.running => const RunningPage(),
               AppDestination.profile => const ProfilePage(),
             },

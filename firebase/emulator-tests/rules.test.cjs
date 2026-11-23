@@ -106,3 +106,46 @@ test('avatar writes require a trusted original password account even after provi
     await assertFails(deleteObject(avatar));
   }
 });
+
+const night = (extra = {}) => ({
+  bedtime: Date.UTC(2026, 10, 21, 5), wakeTime: Date.UTC(2026, 10, 21, 13),
+  utcOffsetMin: -360, source: 'diary', updatedAt: Date.now(), ...extra,
+});
+const session = (extra = {}) => ({
+  startedAt: Date.now() - 1500000, durationSec: 1500, status: 'completed', updatedAt: Date.now(), ...extra,
+});
+
+test('verified owner keeps a sleep diary and focus history', async () => {
+  const db = alice().database();
+  await assertSucceeds(set(ref(db, 'users/alice/sleep/2026-11-21'), night({note: 'Late tea'})));
+  await assertSucceeds(set(ref(db, 'users/alice/focus/1795370400000'), session({taskLabel: 'Chapter 3'})));
+  await assertSucceeds(set(ref(db, 'users/alice/focus/1795370400001'), session({durationSec: 28800})));
+  await assertSucceeds(get(ref(db, 'users/alice/sleep')));
+  await assertSucceeds(get(ref(db, 'users/alice/focus')));
+  await assertSucceeds(set(ref(db, 'users/alice/sleep/2026-11-21'), null));
+});
+
+test('sleep and focus deny other accounts and malformed rows', async () => {
+  const db = alice().database();
+  for (const ctx of [env.unauthenticatedContext(), env.authenticatedContext('bob',{email_verified:true}),
+    env.authenticatedContext('alice',{email_verified:false})]) {
+    await assertFails(get(ref(ctx.database(), 'users/alice/sleep')));
+    await assertFails(set(ref(ctx.database(), 'users/alice/sleep/2026-11-21'), night()));
+    await assertFails(get(ref(ctx.database(), 'users/alice/focus')));
+    await assertFails(set(ref(ctx.database(), 'users/alice/focus/1795370400000'), session()));
+  }
+  for (const bad of [
+    night({wakeTime: Date.UTC(2026, 10, 21, 4)}),            // wake before bed
+    night({wakeTime: Date.UTC(2026, 10, 22, 0)}),            // over 16 h
+    night({source: 'tracker'}),                              // not self-reported
+    night({stage: 'deep'}),                                  // no sleep stages
+    night({note: 'x'.repeat(281)}),
+    night({updatedAt: Date.now() + 86400000}),
+  ]) await assertFails(set(ref(db, 'users/alice/sleep/2026-11-21'), bad));
+  await assertFails(set(ref(db, 'users/alice/sleep/yesterday'), night()));
+  for (const bad of [
+    session({durationSec: 30000}), session({durationSec: 10}), session({status: 'won'}),
+    session({points: 10}), session({taskLabel: 'x'.repeat(41)}),
+  ]) await assertFails(set(ref(db, 'users/alice/focus/1795370400000'), bad));
+  await assertFails(set(ref(db, 'users/alice/focus/session-one'), session()));
+});

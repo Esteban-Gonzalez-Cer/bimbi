@@ -35,6 +35,8 @@ void main() {
       expect(title, findsOneWidget);
       if (destination == AppDestination.alarm) {
         expect(find.byType(HomeScreen), findsOneWidget);
+      } else if (destination == AppDestination.sleep) {
+        expect(tester.widget<Text>(title).data, 'Last night');
       } else {
         expect(tester.widget<Text>(title).data, destination.label);
       }

@@ -38,6 +38,24 @@ internal class AlarmStore(context: Context) {
         preferences.edit().putString("lastEvent", message).apply()
     }
 
+    /** The most recent finished wake, read by the Sleep diary to suggest a wake time. */
+    fun lastWake(): Map<String, Any>? = preferences.getString("lastWake", null)?.let { stored ->
+        runCatching {
+            val json = JSONObject(stored)
+            mapOf(
+                "scheduledAt" to json.getLong("scheduledAt"),
+                "completedAt" to json.getLong("completedAt"),
+                "snoozes" to json.getInt("snoozes"),
+            )
+        }.getOrNull()
+    }
+
+    fun recordWake(episode: AlarmEpisode, completedAt: Long) {
+        val json = JSONObject().put("scheduledAt", episode.scheduledAt)
+            .put("completedAt", completedAt).put("snoozes", episode.snoozes)
+        preferences.edit().putString("lastWake", json.toString()).apply()
+    }
+
     private fun alarm(json: JSONObject): LocalAlarm = LocalAlarm(
         id = json.getString("id"),
         label = json.getString("label"),

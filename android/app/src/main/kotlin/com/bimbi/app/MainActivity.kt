@@ -74,7 +74,7 @@ class MainActivity : FlutterFragmentActivity() {
                                     "available" to (!intensity.needsBoost || AlarmAudio.boostAvailable),
                                 )
                             },
-                            "snoozedUntil" to alarms.nextSnooze(),
+                            "snoozedUntil" to alarms.nextSnooze(), "lastWake" to alarms.lastWake(),
                             "lastEvent" to alarms.lastEvent(), "model" to Build.MODEL, "api" to Build.VERSION.SDK_INT,
                             "mapsConfigured" to !meta.getString("com.google.android.geo.API_KEY").isNullOrBlank(),
                             "accelerometer" to (getSystemService(SensorManager::class.java).getDefaultSensor(Sensor.TYPE_ACCELEROMETER) != null),
@@ -124,6 +124,62 @@ class MainActivity : FlutterFragmentActivity() {
                             result.success(mapOf("observedApps" to values.size, "totalForegroundSeconds" to values.sumOf { it.totalTimeInForeground } / 1000))
                         }
                     }
+                    "overlaySettings" -> {
+                        startActivity(Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:$packageName")))
+                        result.success(null)
+                    }
+                    "guardStatus" -> {
+                        val store = GuardStore(this)
+                        val rules = store.load()
+                        result.success(mapOf(
+                            "usageAccess" to FocusGuard.usageAllowed(this),
+                            "overlay" to FocusGuard.overlayAllowed(this),
+                            "focusApps" to rules.focusApps.toList(),
+                            "limits" to rules.limits,
+                            "focusUntil" to rules.focusUntil,
+                            "todayMinutes" to FocusGuard.today(this).mapValues { (it.value / 60_000).toInt() },
+                            "lastStop" to store.lastStop(),
+                        ))
+                    }
+                    "installedApps" -> {
+                        // Icons take a moment to encode; answer from a worker thread.
+                        Thread {
+                            val apps = runCatching { launchableApps() }
+                            runOnUiThread {
+                                apps.onSuccess(result::success)
+                                    .onFailure { result.error("platform_error", "Android could not list apps", null) }
+                            }
+                        }.start()
+                    }
+                    "setGuardRules" -> {
+                        val store = GuardStore(this)
+                        val limits = call.argument<Map<String, Int>>("limits").orEmpty().filterValues { it in 1..1440 }
+                        store.save(store.load().copy(
+                            focusApps = call.argument<List<String>>("focusApps").orEmpty().toSet(),
+                            limits = limits,
+                        ))
+                        FocusGuard.sync(this)
+                        result.success(null)
+                    }
+                    "focusShield" -> {
+                        val store = GuardStore(this)
+                        val until = call.argument<Number>("until")?.toLong()?.takeIf { it > System.currentTimeMillis() }
+                        store.save(store.load().copy(focusUntil = until))
+                        FocusGuard.sync(this)
+                        // Chimes at each window end and a sparkle at the end; none while paused or idle.
+                        val windows = call.argument<List<Number>>("windowEnds").orEmpty().map { it.toLong() }
+                        if (until == null) FocusChime.cancel(this) else FocusChime.schedule(this, windows, until)
+                        result.success(null)
+                    }
+                    "playFocusChime" -> {
+                        FocusChime.play(applicationContext, call.argument<String>("kind") ?: "done")
+                        result.success(null)
+                    }
+                    "phoneUseBetween" -> result.success(FocusGuard.between(
+                        this,
+                        requireNotNull(call.argument<Number>("from")).toLong(),
+                        requireNotNull(call.argument<Number>("to")).toLong(),
+                    )?.div(60_000)?.toInt())
                     else -> result.notImplemented()
                 }
             } catch (e: SecurityException) { result.error("permission_denied", "Android permission is missing or revoked", null) }
@@ -131,6 +187,27 @@ class MainActivity : FlutterFragmentActivity() {
             catch (_: Exception) { result.error("platform_error", "Android could not complete the operation", null) }
         }
     }
+    /** Apps with a launcher icon, minus the ones the shield never covers. */
+    private fun launchableApps(): List<Map<String, Any>> {
+        val exempt = FocusGuard.exemptions(this)
+        val size = (48 * resources.displayMetrics.density).toInt()
+        return packageManager.queryIntentActivities(Intent(Intent.ACTION_MAIN).addCategory(Intent.CATEGORY_LAUNCHER), 0)
+            .distinctBy { it.activityInfo.packageName }
+            .filter { it.activityInfo.packageName !in exempt }
+            .map { info ->
+                val bitmap = android.graphics.Bitmap.createBitmap(size, size, android.graphics.Bitmap.Config.ARGB_8888)
+                info.loadIcon(packageManager).apply {
+                    setBounds(0, 0, size, size)
+                    draw(android.graphics.Canvas(bitmap))
+                }
+                val png = java.io.ByteArrayOutputStream().also {
+                    bitmap.compress(android.graphics.Bitmap.CompressFormat.PNG, 100, it)
+                }.toByteArray()
+                mapOf("package" to info.activityInfo.packageName, "label" to info.loadLabel(packageManager).toString(), "icon" to png)
+            }
+            .sortedBy { (it["label"] as String).lowercase() }
+    }
+
     private fun usageAllowed(): Boolean = getSystemService(AppOpsManager::class.java).checkOpNoThrow(AppOpsManager.OPSTR_GET_USAGE_STATS, android.os.Process.myUid(), packageName) == AppOpsManager.MODE_ALLOWED
 }
 

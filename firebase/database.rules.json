@@ -10,7 +10,9 @@
             ".write": "auth != null && auth.uid === $uid && auth.token.email_verified === true && newData.exists()",
             ".validate": "newData.isString() && newData.val().length >= 1 && newData.val().length <= 40 && newData.val().matches(/^[^ ](.*[^ ])?$/)"
           },
-          "$other": {".validate": false}
+          "$other": {
+            ".validate": false
+          }
         },
         "runs": {
           ".read": "auth != null && auth.uid === $uid && auth.token.email_verified === true",
@@ -39,9 +41,68 @@
             ".read": "auth != null && auth.uid === $uid && auth.token.email_verified === true",
             ".write": "auth != null && auth.uid === $uid && auth.token.email_verified === true",
             ".validate": "newData.hasChildren(['ok', 'updatedAt'])",
-            "ok": {".validate": "newData.isBoolean() && newData.val() === true"},
-            "updatedAt": {".validate": "newData.isNumber() && newData.val() <= now && newData.val() >= now - 60000"},
-            "$other": {".validate": false}
+            "ok": {
+              ".validate": "newData.isBoolean() && newData.val() === true"
+            },
+            "updatedAt": {
+              ".validate": "newData.isNumber() && newData.val() <= now && newData.val() >= now - 60000"
+            },
+            "$other": {
+              ".validate": false
+            }
+          }
+        },
+        "sleep": {
+          ".read": "auth != null && auth.uid === $uid && auth.token.email_verified === true",
+          "$dateKey": {
+            ".write": "auth != null && auth.uid === $uid && auth.token.email_verified === true",
+            ".validate": "$dateKey.matches(/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/) && newData.hasChildren(['bedtime', 'wakeTime', 'source', 'updatedAt'])",
+            "bedtime": {
+              ".validate": "newData.isNumber() && newData.val() >= 1577836800000"
+            },
+            "wakeTime": {
+              ".validate": "newData.isNumber() && newData.val() > newData.parent().child('bedtime').val() && newData.val() - newData.parent().child('bedtime').val() <= 57600000 && newData.val() <= now + 172800000"
+            },
+            "utcOffsetMin": {
+              ".validate": "newData.isNumber() && newData.val() >= -840 && newData.val() <= 840"
+            },
+            "source": {
+              ".validate": "newData.val() === 'diary'"
+            },
+            "note": {
+              ".validate": "newData.isString() && newData.val().length >= 1 && newData.val().length <= 280"
+            },
+            "updatedAt": {
+              ".validate": "newData.isNumber() && newData.val() <= now + 300000"
+            },
+            "$other": {
+              ".validate": false
+            }
+          }
+        },
+        "focus": {
+          ".read": "auth != null && auth.uid === $uid && auth.token.email_verified === true",
+          "$id": {
+            ".write": "auth != null && auth.uid === $uid && auth.token.email_verified === true",
+            ".validate": "$id.matches(/^[0-9]{10,14}$/) && newData.hasChildren(['startedAt', 'durationSec', 'status', 'updatedAt'])",
+            "startedAt": {
+              ".validate": "newData.isNumber() && newData.val() >= 1577836800000 && newData.val() <= now + 300000"
+            },
+            "durationSec": {
+              ".validate": "newData.isNumber() && newData.val() >= 60 && newData.val() <= 28800"
+            },
+            "status": {
+              ".validate": "newData.val() === 'completed' || newData.val() === 'ended'"
+            },
+            "taskLabel": {
+              ".validate": "newData.isString() && newData.val().length >= 1 && newData.val().length <= 40"
+            },
+            "updatedAt": {
+              ".validate": "newData.isNumber() && newData.val() <= now + 300000"
+            },
+            "$other": {
+              ".validate": false
+            }
           }
         }
       }

@@ -21,8 +21,17 @@
 | Android JVM and debug build | Passed. 12 JVM tests. The configured APK passed Android signature verification. |
 | Backend and Firebase emulators | Passed. 13 server tests and 15 Firebase emulator tests on dedicated ports. The new rules were verified with two clients, other-account and unverified-account denials, coordinate rejection, and deletion followed by a stale retry. |
 | Android emulator | The native map displayed the public park marker. Location denial kept the controls recoverable at 360 dp, history was reachable at 412 dp with enlarged text, and Running opened in portrait and landscape at Galaxy Tab A9 dimensions. Pressing Android Home paused the active session. A synthetic draft saved in airplane mode, then its totals and route reopened after process restart and were deleted through the UI. |
-| Combined build and physical acceptance | Pending. Merge Claude's Phase 5 commit into this worktree, retest the combined rules, and coordinate the Galaxy Tab A9 outdoor walk, TalkBack walkthrough and two-device live sync. |
 
 The standalone branch starts from Phase 4 commit `0cc2163`. APK SHA-256 `4f4bcc7391652b50897871c8ccc17b4c459262de99e663c45f18b40832fdd958`. [Signed debug APK](../../../build/review/bimbi-phase6-running-debug.apk) · [Tablet-sized portrait](../../../build/review/phase6-tablet-size-portrait.png) · [Tablet-sized landscape](../../../build/review/phase6-tablet-size-landscape.png) · [Offline route fixture](../../../build/review/phase6-412dp-offline-route.png)
 
-**Gate verdict · Conditional.** The physical GPS test, combined Phase 5 build, and deployment of its merged development database rules are outstanding. Emulator layouts and synthetic GPS fixtures do not establish physical GPS accuracy.
+## Phase 5 integration
+
+Phase 5 commit `6d9b12c` brings Sleep, Focus and the Focus shield into `codex/phase6-running`. The combined navigation keeps the Running lifecycle checks. The merged Realtime Database rules cover the Sleep diary, Focus history and Running totals. The merged screenshot tests wait for bundled images to decode before comparing pixels.
+
+The combined checks passed formatting, analysis, 117 Flutter tests, two daylight-saving tests, 19 Android JVM tests, 13 payment server tests, and 17 Firebase emulator tests. [Check log](../../../build/review/phase5-phase6-checks.txt)
+
+The development APK passed Android signature verification. Its SHA-256 is `582d52e8904b0aaa3ecca1b0fcb352b939e2ce2c7c74bbfab07ac86bb59fef05`. [Combined APK](../../../build/review/bimbi-phase5-phase6-debug.apk)
+
+The signed APK installed on a separate Android phone emulator. All five destinations opened. A Sleep entry survived a process restart, a Focus session started, paused and ended, and Running showed the park map and run history. [Android smoke test log](../../../build/review/phase5-phase6-android-smoke.txt)
+
+**Gate verdict · Conditional.** Deployment of the merged development database rules, a two-device live sync check, and the Galaxy Tab A9 outdoor GPS and TalkBack checks are outstanding.

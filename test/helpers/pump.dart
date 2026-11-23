@@ -7,6 +7,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import 'package:bimbi/data/services/focus_guard_service.dart';
+
+import 'fake_focus_guard.dart';
 import 'fake_platform.dart';
 import 'memory_run_disk.dart';
 
@@ -32,6 +35,7 @@ Future<FakePlatform> pumpBimbi(
   bool onboarded = true,
   DateTime? now,
   FakePlatform? platform,
+  FakeFocusGuard? guard,
   List overrides = const [],
 }) async {
   final fake = platform ?? FakePlatform();
@@ -47,6 +51,7 @@ Future<FakePlatform> pumpBimbi(
     ProviderScope(
       overrides: [
         platformProvider.overrideWithValue(fake),
+        focusGuardProvider.overrideWithValue(guard ?? FakeFocusGuard()),
         clockProvider.overrideWithValue(() => now ?? testNow),
         onboardingProvider.overrideWith(() => _Onboarded(onboarded)),
         runStoreProvider.overrideWithValue(RunStore(MemoryRunDisk())),
@@ -57,4 +62,19 @@ Future<FakePlatform> pumpBimbi(
   );
   await tester.pumpAndSettle();
   return fake;
+}
+
+/// Wait for visible bundled artwork before comparing a screenshot.
+Future<void> settleSnapshotImages(WidgetTester tester) async {
+  await tester.pumpAndSettle();
+  await tester.runAsync(() async {
+    final images = find.byType(Image).evaluate().toList();
+    await Future.wait(
+      images.map((element) {
+        final image = element.widget as Image;
+        return precacheImage(image.image, element);
+      }),
+    );
+  });
+  await tester.pumpAndSettle();
 }
