@@ -145,7 +145,7 @@ Cuando el propietario estaba usando Focus en la tablet, la prueba de sonidos se 
 ## 11. Pendientes
 
 Faltan cinco pasos:
-- publicar las reglas en el proyecto de desarrollo y probar la sincronización entre dos dispositivos;
+- probar la sincronización entre dos dispositivos (las reglas ya se publicaron en el proyecto de desarrollo);
 - escuchar los sonidos en la tablet;
 - usar el escudo desde su pantalla en la tablet;
 - reiniciar con un límite activo;

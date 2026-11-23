@@ -32,7 +32,7 @@
 
 ## Pendiente para el propietario
 
-1. **Reglas en el proyecto de desarrollo.** Publicar las reglas nuevas de Realtime Database en `bimbi-26ae2` y comprobar en dos dispositivos que una noche y una sesión se sincronizan. Hasta publicarlas, la app guarda en el dispositivo y muestra que la sincronización no está disponible.
+1. **Sincronización entre dispositivos.** Las reglas nuevas de Realtime Database se publicaron en `bimbi-26ae2` el 22 de noviembre de 2026, con autorización del propietario ([registro](checks.txt)). Falta comprobar en dos dispositivos con la misma cuenta verificada que una noche y una sesión se sincronizan.
 2. **Sonidos en la tablet.** Confirmar que el sonido entre ventanas y el destello final se escuchan a tiempo.
 3. **Escudo desde su pantalla en la tablet.** Dar los dos permisos desde la app y elegir una app para pausar durante Focus.
 4. **Reinicio.** Reiniciar con un límite diario activo y confirmar que vuelve después de desbloquear.
