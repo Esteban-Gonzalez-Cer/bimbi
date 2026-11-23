@@ -5,7 +5,7 @@ import '../../../app/design_system/components/alarm_parts.dart';
 import '../../../core/clock.dart';
 import '../../../core/platform.dart';
 import '../../../features/alarm/application/alarm_draft.dart';
-import '../../../features/sleep/application/sleep_diary.dart';
+import '../../sleep/view_models/sleep_diary.dart';
 import '../../../features/profile/application/cloud_profile.dart';
 
 /// One alarm row on Home.

@@ -15,7 +15,7 @@
 
 - The Alarm editor schedules one native alarm (the bridge holds one pending occurrence). "Every day" maps to a 24 h native interval; other weekday sets schedule only the next matching day until Phase 4 recurrence. Label, days and mission shown on the card live in memory for the session.
 - Wake missions (Shake, Math, Light) are designed but not selectable until Phase 4 implements them, so no alarm promises a mission it will not require.
-- The sleep diary and Focus session are in-memory (Phase 5 adds persistence/sync). Focus state is already timestamp-derived.
+- The sleep diary and Focus session were in-memory in Phase 2; Phase 5 saves and syncs them.
 - Running "Finish" stops GPS and keeps the in-memory trace on screen; saved runs are Phase 6.
 - Display name, theme mode, buddy colour and onboarding completion are stored locally in SharedPreferences, never uploaded.
 - The Phase 2 APK uses the provider photo URL without offline caching. Phase 3 adds a per-account disk cache and private custom photos.
@@ -34,3 +34,11 @@
 - Alarm recovery uses credential-protected storage and runs after the first unlock following a reboot. An expired one-time alarm or snooze after an unavailable period is reported as missed.
 - The app stores alarm definitions, active occurrences and snoozes on the device. The native service keeps round progress while the alarm is active. After the service process is stopped, reopening the challenge starts a round from the beginning.
 - The developer alarm uses a bounded audio test. Alarms configured in the editor finish in Bimbi when the selected challenge is completed.
+
+## Phase 5 sleep and Focus
+
+- Sleep is self-reported time in bed. Bimbi does not measure sleep, stages or quality. "Phone use in bed" counts foreground minutes in other apps between the logged bedtime and wake, only with Usage Access, and is not synced.
+- Sync is last-write-wins per entry. Edits to the same night on two offline devices keep the later save. Signing out keeps the device copy. Signing in with another account clears it instead of uploading it.
+- Focus chimes use exact alarms when Bimbi has exact-alarm access. Otherwise Android may deliver them up to about a minute late. Silent mode and Do Not Disturb apply. There is no notification when a session ends (owner decision).
+- The Focus shield is a soft pause (ADR-009). It reacts in about a second, needs two special permissions and a persistent notification, and can be turned off by revoking access, force-stopping Bimbi or safe mode. OEM battery policies may stop the service.
+- The dial winds up to four turns (8 h) in 5-minute steps; typed lengths are exact from 1 minute. A split into windows fixes the length until the windows are edited or removed.

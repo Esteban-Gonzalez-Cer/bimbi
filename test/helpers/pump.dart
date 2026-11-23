@@ -6,6 +6,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import 'package:bimbi/data/services/focus_guard_service.dart';
+
+import 'fake_focus_guard.dart';
 import 'fake_platform.dart';
 
 /// Fixed morning so greetings, moods and the sleep week are deterministic.
@@ -30,6 +33,7 @@ Future<FakePlatform> pumpBimbi(
   bool onboarded = true,
   DateTime? now,
   FakePlatform? platform,
+  FakeFocusGuard? guard,
   List overrides = const [],
 }) async {
   final fake = platform ?? FakePlatform();
@@ -45,6 +49,7 @@ Future<FakePlatform> pumpBimbi(
     ProviderScope(
       overrides: [
         platformProvider.overrideWithValue(fake),
+        focusGuardProvider.overrideWithValue(guard ?? FakeFocusGuard()),
         clockProvider.overrideWithValue(() => now ?? testNow),
         onboardingProvider.overrideWith(() => _Onboarded(onboarded)),
         ...overrides.cast(),

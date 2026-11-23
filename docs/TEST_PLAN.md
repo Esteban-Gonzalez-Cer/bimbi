@@ -10,7 +10,16 @@ Every manual result must record date, actual device/API, exact build/checksum, p
 | UI-04 | Onboarding: four steps, Back, Skip, name and buddy colour | Reaches the shell; no permission requested; Back steps backwards |
 | UI-05 | Golden baselines: five tabs at four widths (light) and two widths (dark), onboarding, design gallery | `flutter test test/golden` matches committed images |
 | UI-06 | Restyled native wake screen over the lock screen | Shows Night screen, buddy, time; Dismiss ≥ 72dp; Dismiss and Back stop AlarmService |
-| FOCUS-02 | Focus timer pause/resume/complete with injected clock | Remaining time derived from timestamps; target 5–120 min in 5-min steps |
+| FOCUS-01 | Kill the process mid-session and reopen | Same remaining time, task and windows from saved timestamps; history recorded once |
+| FOCUS-02 | Focus timer pause/resume/complete with injected clock | Remaining time derived from timestamps; dial 5-min steps over up to four 2 h turns; typed 1–480 min |
+| FOCUS-03 | Split a session into windows and run it | Current window and next window time shown; chime at each window end and sparkle at the end; pause cancels chimes |
+| SLEEP-01 | Diary across DST (`TZ=America/New_York`, 1 Nov 2026) | Fall-back night 9 h, spring-forward 7 h, same date key after save/restore |
+| SYNC-01 | Guest entries, sign-in, offline edit, reconnect, account switch | Guest rows adopted once; offline edits pending then confirmed; other account never sees them |
+| DATA-02 | Sleep/focus rules in emulator | Owner read/write; other, anonymous, unverified denied; stages, scores, bad durations rejected |
+| SHIELD-01 | Choose an app to pause, start Focus, open the app | Pause screen within about 1 s; Go home and Back go home; lifts at session end |
+| SHIELD-02 | Daily limit reached | Pause screen until midnight; app shows "paused until midnight" |
+| SHIELD-03 | Revoke Usage Access or overlay mid-session | Overlay removed, service stopped, reason shown in Bimbi; Focus unaffected |
+| SHIELD-04 | Reboot with daily limits set | Service restored after unlock |
 | ALARM-01 | Deny exact access and schedule | Explicit denial, no false pending success |
 | ALARM-02 | Grant notifications/exact access; schedule 30s, background and screen off | Native alert at recorded time; sound confirmed; Dismiss ends audio |
 | ALARM-03 | Schedule; kill only Bimbi process without force-stop | New process delivers persisted occurrence; no cloud dependency |

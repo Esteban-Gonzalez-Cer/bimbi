@@ -4,9 +4,11 @@ import 'package:bimbi/app/design_system/components/surfaces.dart';
 import 'package:bimbi/app/shell/adaptive_shell.dart';
 import 'package:bimbi/app/shell/layout.dart';
 import 'package:bimbi/ui/home/widgets/home_screen.dart';
+import 'package:bimbi/domain/models/focus_shield.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import 'helpers/fake_focus_guard.dart';
 import 'helpers/fake_platform.dart';
 import 'helpers/pump.dart';
 
@@ -68,6 +70,12 @@ void main() {
                 // Home greets instead of showing a page title.
                 expect(find.byType(HomeScreen), findsOneWidget);
                 expect(_pageTitle(tester), 'Good morning');
+              } else if (d == AppDestination.sleep) {
+                // The Sleep report titles the night it describes.
+                expect(_pageTitle(tester), 'Last night');
+              } else if (d == AppDestination.focus) {
+                // Focus uses the Home/Sleep two-column layout, not TwoPane.
+                expect(_pageTitle(tester), 'Focus');
               } else {
                 expect(_pageTitle(tester), d.label);
                 expect(
@@ -161,6 +169,100 @@ void main() {
     expect(find.text('Pause'), findsOneWidget);
     await tester.tap(find.text('End'));
     await tester.pumpAndSettle();
+  });
+
+  testWidgets('Focus takes exact minutes and a split into windows', (
+    tester,
+  ) async {
+    await pumpBimbi(tester, width: 412, height: 1000);
+    await tester.tap(_navLabel('Focus'));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('Tap to type'));
+    await tester.pumpAndSettle();
+    await tester.enterText(find.byType(TextFormField).last, '7');
+    await tester.tap(find.widgetWithText(FilledButton, 'Set'));
+    await tester.pumpAndSettle();
+    expect(find.text('7'), findsOneWidget);
+
+    await tester.tap(find.text('Split into windows'));
+    await tester.pumpAndSettle();
+    expect(find.text('Total 7 min'), findsOneWidget);
+    await tester.tap(find.text('Add window'));
+    await tester.pumpAndSettle();
+    expect(find.text('Total 17 min'), findsOneWidget);
+    await tester.tap(find.text('Save windows'));
+    await tester.pumpAndSettle();
+    expect(find.text('Edit the windows to change the length'), findsOneWidget);
+    expect(find.text('17'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('the Focus shield pauses an app and sets a daily limit', (
+    tester,
+  ) async {
+    final guard = FakeFocusGuard(
+      usageAccess: true,
+      apps: const [
+        ShieldApp(package: 'com.video', label: 'VideoTube'),
+        ShieldApp(package: 'com.chat', label: 'Chatter'),
+      ],
+      todayMinutes: const {'com.video': 42},
+    );
+    await pumpBimbi(tester, width: 412, height: 1000, guard: guard);
+    await tester.tap(_navLabel('Focus'));
+    await tester.pumpAndSettle();
+    await tester.scrollUntilVisible(
+      find.text('Set up'),
+      200,
+      scrollable: find.byType(Scrollable).first,
+    );
+    await tester.tap(find.text('Set up'));
+    await tester.pumpAndSettle();
+
+    expect(_pageTitle(tester), 'Focus shield');
+    expect(find.text('Shield off'), findsOneWidget);
+    expect(find.text('Allow'), findsOneWidget, reason: 'overlay still needed');
+    await tester.tap(find.text('Allow'));
+    expect(guard.settingsOpened, ['overlay']);
+
+    await tester.scrollUntilVisible(
+      find.text('VideoTube'),
+      200,
+      scrollable: find.byType(Scrollable).first,
+    );
+    expect(find.text('42 min today'), findsOneWidget);
+    final pause = find.text('Pause during Focus').first;
+    await tester.ensureVisible(pause);
+    await tester.pumpAndSettle();
+    await tester.tap(pause);
+    await tester.pumpAndSettle();
+    expect(guard.focusApps, {'com.video'});
+
+    await tester.ensureVisible(find.text('Daily limit: off').first);
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Daily limit: off').first);
+    await tester.pumpAndSettle();
+    // Free entry: 1 h 15 min.
+    await tester.enterText(find.widgetWithText(TextFormField, 'Hours'), '1');
+    await tester.enterText(find.widgetWithText(TextFormField, 'Minutes'), '15');
+    await tester.pumpAndSettle();
+    expect(find.text('Limit: 1 h 15 min a day'), findsOneWidget);
+    await tester.tap(find.text('Save limit'));
+    await tester.pumpAndSettle();
+    expect(guard.limits, {'com.video': 75});
+    expect(find.text('Daily limit: 1 h 15 min'), findsOneWidget);
+
+    // Out-of-range minutes cannot be saved.
+    await tester.tap(find.text('Daily limit: 1 h 15 min'));
+    await tester.pumpAndSettle();
+    await tester.enterText(find.widgetWithText(TextFormField, 'Minutes'), '75');
+    await tester.pumpAndSettle();
+    expect(find.text('Minutes go from 0 to 59.'), findsOneWidget);
+    await tester.tap(find.text('Remove limit'));
+    await tester.pumpAndSettle();
+    expect(guard.limits, isEmpty);
+    expect(tester.takeException(), isNull);
   });
 
   testWidgets('missing alarm permissions show a direct fix', (tester) async {

@@ -52,3 +52,15 @@ The phone dock sits above the bottom inset with room for all five labeled destin
 3. Never colour alone: status pills carry words; selected chips also change fill and border.
 4. The buddy reacts to what the person just did; it never shames.
 5. Keep gradients inside the Focus card and the buddy artwork. Reserve reward visuals for Phase 9.
+
+## Phase 5 screens
+
+Sleep, Focus and the Focus shield follow the approved Home layout:
+- a header with a date eyebrow, a serif title and one round action on the right;
+- a tinted hero card (Night at night or in dark mode);
+- white `MetricTile`s (38 px tinted icon box, serif value, bold label);
+- white cards with a 28 radius;
+- lists of 20-radius rows.
+
+Expanded windows use two columns: the hero on the left, details on the right, offset by the header height. Status lines under the dial use the serif display face at 22 sp. The Sleep report removes the artboard's score, streak and points. The night dial shows when you slept, not how well. Sources and review renders: `docs/evidence/phase5/`.
+
