@@ -1,12 +1,12 @@
 package com.bimbi.app
 
 import android.animation.ValueAnimator
-import android.content.res.ColorStateList
 import android.graphics.Canvas
 import android.graphics.ColorFilter
 import android.graphics.Paint
 import android.graphics.Path
 import android.graphics.PixelFormat
+import android.graphics.drawable.GradientDrawable
 import android.graphics.drawable.Drawable
 import android.text.Editable
 import android.text.InputFilter
@@ -18,6 +18,7 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.TextView
+import kotlin.math.roundToInt
 import kotlin.math.sin
 
 internal class WakeRoundView(
@@ -29,23 +30,57 @@ internal class WakeRoundView(
 ) {
     private val cells = mutableListOf<Button>()
     private val cups = mutableListOf<CupShape>()
-    private val info = activity.text(16f)
+    private val cards = mutableListOf<MemoryCardArt>()
+    private val info = activity.text(16f).apply {
+        typeface = activity.strongFont
+        minimumHeight = activity.dp(28)
+    }
+    private var shakeProgress: TextView? = null
     private var previousCupStage = -2
+    private var tiles: SquareBoard? = null
+
+    /**
+     * Shrinks the board so the whole screen fits without scrolling, keeping 48dp touch targets.
+     * Called after layout with the number of pixels that overflow the visible area.
+     */
+    fun fit(overflow: Int) {
+        val board = tiles ?: return
+        if (overflow <= 0 || board.side <= 0) return
+        val target = maxOf(board.side - (overflow + board.rows - 1) / board.rows, activity.dp(MIN_TILE))
+        if (target < board.side) {
+            board.fitSide = target
+            board.requestLayout()
+        }
+    }
+
+    /** Lets the board grow again after the visible area changes. Returns true if it relaid out. */
+    fun resetFit(): Boolean {
+        val board = tiles ?: return false
+        if (board.fitSide == Int.MAX_VALUE) return false
+        board.fitSide = Int.MAX_VALUE
+        board.requestLayout()
+        return true
+    }
 
     init {
         content.addView(info, LinearLayout.LayoutParams(-1, -2))
         when (puzzle) {
-            WakeRound.Shake -> Unit
+            WakeRound.Shake -> {
+                info.text = "Gently shake your device"
+                shakeProgress = activity.text(48f, heading = true).also { content.addView(it) }
+            }
             is WakeRound.Math -> math(puzzle)
             is WakeRound.Cups -> cups(puzzle)
-            is WakeRound.Pattern -> grid(puzzle.side * puzzle.side, puzzle.side)
-            is WakeRound.Memory -> grid(puzzle.faces.size, if (puzzle.faces.size == 6) 3 else 4)
+            is WakeRound.Pattern -> board(puzzle.side * puzzle.side, puzzle.side, maxSize = 72)
+            is WakeRound.Memory -> memory(puzzle)
         }
     }
 
     fun refresh(session: WakeSession, elapsed: Long) {
         when (puzzle) {
-            WakeRound.Shake -> showText(info, "Gently shake your device\n${session.progress} of ${session.difficulty.shakes}")
+            WakeRound.Shake -> shakeProgress?.let {
+                showText(it, "${session.progress} of ${session.difficulty.shakes}")
+            }
             is WakeRound.Math -> Unit
             is WakeRound.Cups -> updateCups(puzzle, session.wrongCup, elapsed)
             is WakeRound.Pattern -> updatePattern(puzzle, session.progress, elapsed)
@@ -55,21 +90,29 @@ internal class WakeRoundView(
 
     private fun math(puzzle: WakeRound.Math) {
         info.text = "Solve the operation"
-        content.addView(activity.text(40f, heading = true).apply {
+        content.addView(activity.text(48f, heading = true).apply {
             text = puzzle.expression
             contentDescription = puzzle.expression.replace("×", "times").replace("−", "minus").replace("+", "plus")
-        })
+        }, LinearLayout.LayoutParams(-1, -2).apply { topMargin = activity.dp(10) })
         val input = EditText(activity).apply {
             inputType = InputType.TYPE_CLASS_NUMBER
             imeOptions = EditorInfo.IME_ACTION_DONE
             filters = arrayOf(InputFilter.LengthFilter(3))
-            textSize = 24f
-            hint = "Answer"
+            textSize = 22f
+            typeface = activity.strongFont
+            minHeight = activity.dp(BUTTON_HEIGHT)
+            hint = "Your answer"
             gravity = Gravity.CENTER
+            includeFontPadding = false
+            setPadding(activity.dp(12), 0, activity.dp(12), 0)
             setTextColor(activity.ink)
             setHintTextColor(activity.tint)
             setSelectAllOnFocus(true)
-            backgroundTintList = ColorStateList.valueOf(activity.tint)
+            background = GradientDrawable().apply {
+                cornerRadius = activity.dp(16).toFloat()
+                setColor(activity.raised)
+                setStroke(activity.dp(2), activity.tint)
+            }
             addTextChangedListener(object : TextWatcher {
                 override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) = Unit
                 override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
@@ -84,46 +127,56 @@ internal class WakeRoundView(
                 }
             }
         }
-        content.addView(input, LinearLayout.LayoutParams(-1, -2).apply {
-            marginStart = activity.dp(32)
-            marginEnd = activity.dp(32)
-        })
-        content.addView(activity.button("Check answer") { answer(input.text.toString().toIntOrNull()) })
+        // Same width as the Mute + Snooze row so every button on the screen lines up.
+        val controls = CappedColumn(activity, activity.dp(activity.controlWidth)).apply {
+            addView(input, LinearLayout.LayoutParams(-1, -2))
+            addView(activity.button("Check answer", primary = true) {
+                answer(input.text.toString().toIntOrNull())
+            }, LinearLayout.LayoutParams(-1, -2).apply { topMargin = activity.dp(BUTTON_GAP) })
+        }
+        content.addView(controls, LinearLayout.LayoutParams(-1, -2).apply { topMargin = activity.dp(16) })
     }
 
-    private fun grid(count: Int, columns: Int) {
-        for (start in 0 until count step columns) {
-            val row = LinearLayout(activity)
-            for (index in start until minOf(start + columns, count)) {
-                val button = activity.button("") { choose(index) }
-                cells.add(button)
-                row.addView(button, LinearLayout.LayoutParams(0, -2, 1f).apply {
-                    marginStart = activity.dp(1)
-                    marginEnd = activity.dp(1)
-                    topMargin = activity.dp(2)
-                })
-            }
-            content.addView(row, LinearLayout.LayoutParams(-1, -2))
+    private fun board(
+        count: Int,
+        columns: Int,
+        maxSize: Int,
+        top: Int = 12,
+        decorate: (Button, Int) -> Unit = { _, _ -> },
+    ) {
+        val tiles = SquareBoard(activity, columns, (count + columns - 1) / columns, maxSize)
+        this.tiles = tiles
+        repeat(count) { index ->
+            val button = activity.button("") { choose(index) }
+            button.setPadding(0, 0, 0, 0)
+            activity.paintButton(button, false, radius = 12)
+            decorate(button, index)
+            cells.add(button)
+            tiles.addTile(button, index)
         }
+        content.addView(tiles, LinearLayout.LayoutParams(-1, -2).apply { topMargin = activity.dp(top) })
+    }
+
+    private fun memory(puzzle: WakeRound.Memory) {
+        val columns = if (puzzle.faces.size == 6) 3 else 4
+        board(puzzle.faces.size, columns, maxSize = 112) { card, index ->
+            val art = MemoryCardArt(checkNotNull(activity.getDrawable(faces[puzzle.faces[index]].first)), activity.tint)
+            cards.add(art)
+            card.foreground = art
+        }
+        val credit = activity.text(12f).apply {
+            setTextColor(activity.tint)
+            text = "Spring Vibes by Kiwi · CC BY 4.0"
+        }
+        content.addView(credit, LinearLayout.LayoutParams(-1, -2).apply { topMargin = activity.dp(10) })
     }
 
     private fun cups(puzzle: WakeRound.Cups) {
-        val row = LinearLayout(activity).apply {
-            clipChildren = false
-            clipToPadding = false
-            setPadding(0, activity.dp(16), 0, activity.dp(12))
-        }
-        for (index in 0 until puzzle.count) {
+        board(puzzle.count, puzzle.count, maxSize = 96, top = 24) { cup, _ ->
             val shape = CupShape(activity.dp(1).toFloat(), activity.accent, activity.ink)
-            val cup = activity.button("") { choose(index) }.apply { foreground = shape }
+            cup.foreground = shape
             cups.add(shape)
-            cells.add(cup)
-            row.addView(cup, LinearLayout.LayoutParams(0, activity.dp(68), 1f).apply {
-                marginStart = activity.dp(1)
-                marginEnd = activity.dp(1)
-            })
         }
-        content.addView(row, LinearLayout.LayoutParams(-1, -2))
     }
 
     private fun updateCups(puzzle: WakeRound.Cups, wrongCup: Int?, elapsed: Long) {
@@ -149,7 +202,7 @@ internal class WakeRoundView(
                 move.second -> move.first
                 else -> position
             }
-            val distance = cup.width + 2 * activity.dp(1)
+            val distance = cup.width + activity.dp(TILE_GAP)
             val travel = if (softMotion) 0f else (destination - position) * fraction
             cup.translationX = (position - id + travel) * distance
             val lift = if (destination == position || softMotion) 0f else sin(fraction * Math.PI).toFloat()
@@ -183,10 +236,11 @@ internal class WakeRoundView(
             val face = puzzle.faces[index]
             val visible = preview || index in matched || index in exposed
             paint(cell, index in matched)
-            showText(cell, if (visible) symbols[face] else "◆")
+            cards[index].faceUp = visible
+            val name = faces[face].second
             describe(cell, "Card ${index + 1}, " + when {
-                index in matched -> "${names[face]}, matched"
-                visible -> names[face]
+                index in matched -> "$name, matched"
+                visible -> name
                 else -> "face down"
             })
         }
@@ -195,7 +249,7 @@ internal class WakeRoundView(
     private fun paint(button: Button, selected: Boolean) {
         if (button.isSelected == selected) return
         button.isSelected = selected
-        activity.paintButton(button, selected)
+        activity.paintButton(button, selected, radius = 12)
     }
 
     private fun showText(view: TextView, value: String) {
@@ -207,9 +261,126 @@ internal class WakeRoundView(
     }
 
     companion object {
-        private val symbols = listOf("★", "♥", "●", "▲", "☾", "✦", "♣", "■")
-        private val names = listOf("star", "heart", "circle", "triangle", "moon", "sparkle", "clover", "square")
+        private val faces = listOf(
+            R.drawable.memorama_bud_sprig to "bud sprig",
+            R.drawable.memorama_curling_vine to "curling vine",
+            R.drawable.memorama_striped_leaf to "striped leaf",
+            R.drawable.memorama_golden_buds to "golden buds",
+            R.drawable.memorama_twin_leaves to "twin leaves",
+            R.drawable.memorama_pink_blossom to "pink blossom",
+            R.drawable.memorama_daisies to "daisies",
+            R.drawable.memorama_purple_flower to "purple flower",
+        )
     }
+}
+
+private const val TILE_GAP = 8
+private const val MIN_TILE = 48
+
+/** A vertical column that is never wider than [limit] pixels and centres in wider parents. */
+internal class CappedColumn(context: android.content.Context, private val limit: Int) : LinearLayout(context) {
+    init { orientation = VERTICAL }
+
+    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+        val width = minOf(MeasureSpec.getSize(widthMeasureSpec), limit)
+        super.onMeasure(MeasureSpec.makeMeasureSpec(width, MeasureSpec.EXACTLY), heightMeasureSpec)
+    }
+}
+
+/**
+ * Square tiles sized to the board width, including the gaps, and capped by [fitSide] so the
+ * whole challenge stays on screen (see [WakeRoundView.fit]).
+ */
+private class SquareBoard(
+    activity: AlarmActivity,
+    private val columns: Int,
+    val rows: Int,
+    maxSize: Int,
+) : LinearLayout(activity) {
+    var fitSide = Int.MAX_VALUE
+    var side = 0
+        private set
+    private val gap = activity.dp(TILE_GAP)
+    private val limit = activity.dp(maxSize)
+
+    init {
+        orientation = VERTICAL
+        clipChildren = false
+    }
+
+    fun addTile(tile: Button, index: Int) {
+        val column = index % columns
+        if (column == 0) {
+            addView(LinearLayout(context).apply {
+                gravity = Gravity.CENTER
+                clipChildren = false
+            }, LayoutParams(-1, -2).apply { if (index > 0) topMargin = gap })
+        }
+        val row = getChildAt(childCount - 1) as LinearLayout
+        row.addView(tile, LayoutParams(limit, limit).apply { if (column > 0) marginStart = gap })
+    }
+
+    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+        val width = MeasureSpec.getSize(widthMeasureSpec)
+        val previous = side
+        side = minOf(((width - gap * (columns - 1)) / columns).coerceIn(1, limit), fitSide)
+        for (index in 0 until childCount) {
+            val row = getChildAt(index) as LinearLayout
+            // Rows cache their measurement for an unchanged width; a new tile size must reach them.
+            if (side != previous) row.forceLayout()
+            for (column in 0 until row.childCount) {
+                row.getChildAt(column).layoutParams.apply {
+                    this.width = side
+                    height = side
+                }
+            }
+        }
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec)
+    }
+}
+
+private class MemoryCardArt(private val icon: Drawable, tint: Int) : Drawable() {
+    private val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        color = tint
+        style = Paint.Style.STROKE
+    }
+    var faceUp = false
+        set(value) {
+            if (field == value) return
+            field = value
+            invalidateSelf()
+        }
+
+    override fun draw(canvas: Canvas) {
+        val size = minOf(bounds.width(), bounds.height())
+        val x = bounds.exactCenterX()
+        val y = bounds.exactCenterY()
+        if (faceUp) {
+            val side = (size * 0.8f).roundToInt()
+            val left = (x - side / 2f).roundToInt()
+            val top = (y - side / 2f).roundToInt()
+            icon.setBounds(left, top, left + side, top + side)
+            icon.draw(canvas)
+        } else {
+            val half = size * 0.13f
+            paint.strokeWidth = size * 0.026f
+            canvas.save()
+            canvas.rotate(45f, x, y)
+            canvas.drawRoundRect(x - half, y - half, x + half, y + half, half / 3, half / 3, paint)
+            canvas.restore()
+        }
+    }
+
+    override fun setAlpha(alpha: Int) {
+        paint.alpha = alpha
+        icon.alpha = alpha
+    }
+    override fun setColorFilter(colorFilter: ColorFilter?) {
+        paint.colorFilter = colorFilter
+        icon.colorFilter = colorFilter
+    }
+    @Deprecated("Drawable opacity is no longer consulted by Android")
+    override fun getOpacity() = PixelFormat.TRANSLUCENT
 }
 
 private class CupShape(private val stroke: Float, private val lavender: Int, private val ink: Int) : Drawable() {

@@ -3,6 +3,8 @@
 <resources>
     <color name="bimbi_night">#191421</color>
     <color name="bimbi_text_on_night">#F5EAFD</color>
+    <color name="bimbi_night_raised">#282032</color>
+    <color name="bimbi_night_high">#3A2C4C</color>
     <color name="bimbi_lavender">#D0BBDD</color>
     <color name="bimbi_lilac_accent">#E3C9F5</color>
     <color name="bimbi_lilac_accent_pressed">#D2B1E9</color>

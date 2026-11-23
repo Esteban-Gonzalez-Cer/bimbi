@@ -8,6 +8,7 @@ The rubric requires a licensed custom font; the app must work offline; golden te
 ## Decision
 - **Fonts**: bundle Instrument Serif Regular and Nunito (500, 600, 700, 800) TTFs from Google Fonts with their SIL OFL 1.1 licences in `assets/fonts/`. Instrument Serif Regular and Nunito Medium/ExtraBold are also copied to `android/app/src/main/res/font/` for the native alarm screen. No `google_fonts` package (runtime download).
 - **Icons** use unmodified PNGs from the [Claude Hand Drawn collection](https://icons8.com/icons/claude-hand-drawn). Each `BimbiIcons` slug identifies an asset at `https://img.icons8.com/claude-hand-drawn/100/{slug}.png`. Profile links to Icons8 using `url_launcher`. Include the Icons8 credit in any future store listing under the [free license terms](https://icons8.com/license).
+- **Memorama artwork**: eight unmodified illustrations from [Spring Vibes by Kiwi](https://icon-icons.com/es/pack/spring-vibes/2573) (CC BY 4.0) in `android/app/src/main/res/drawable-nodpi/memorama_*`. The challenge shows the credit under the board and `res/raw/memorama_artwork_notice.txt` records source, author, licence and icon IDs.
 - **Buddy in Flutter**: `CustomPainter` port of the canvas geometry and keyframes; no animation package.
 - **Buddy on Android**: `scripts/generate_native_buddy.py` generates VectorDrawables (wake-screen buddy, adaptive launcher foreground and monochrome, notification small icon) from the same geometry.
 

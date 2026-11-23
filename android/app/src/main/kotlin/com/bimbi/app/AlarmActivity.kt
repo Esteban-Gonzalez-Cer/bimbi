@@ -2,7 +2,7 @@ package com.bimbi.app
 
 import android.app.Activity
 import android.content.res.ColorStateList
-import android.graphics.Color
+import android.content.res.Configuration
 import android.graphics.drawable.GradientDrawable
 import android.graphics.drawable.RippleDrawable
 import android.hardware.Sensor
@@ -16,14 +16,21 @@ import android.os.Handler
 import android.os.Looper
 import android.os.SystemClock
 import android.text.format.DateFormat
+import android.text.SpannableString
+import android.text.Spanned
 import android.text.TextUtils
+import android.text.style.ForegroundColorSpan
+import android.text.style.RelativeSizeSpan
+import android.text.style.TypefaceSpan
 import android.view.Gravity
 import android.view.KeyEvent
 import android.view.MotionEvent
+import android.view.View
 import android.view.WindowInsets
 import android.view.WindowManager
 import android.view.accessibility.AccessibilityManager
 import android.widget.Button
+import android.widget.FrameLayout
 import android.widget.LinearLayout
 import android.widget.ProgressBar
 import android.widget.ScrollView
@@ -41,14 +48,16 @@ class AlarmActivity : Activity(), SensorEventListener {
     private val engine by lazy { AlarmEngine(this) }
     private val sensors by lazy { getSystemService(SensorManager::class.java) }
     private lateinit var bar: ProgressBar
-    private var clock: TextView? = null
+    private lateinit var clock: TextView
     private lateinit var header: TextView
+    private lateinit var challengeTitle: TextView
     private lateinit var roundLabel: TextView
     private lateinit var status: TextView
     private lateinit var mute: Button
     private lateinit var snooze: Button
     private lateinit var alternative: Button
     private lateinit var body: LinearLayout
+    private lateinit var controls: LinearLayout
     private var currentRound: WakeRoundView? = null
     private var displayedSession: WakeSession? = null
     private var displayedAttempt = -1
@@ -56,15 +65,32 @@ class AlarmActivity : Activity(), SensorEventListener {
     private var sensorRegistered = false
     private val shakeDetector = ShakeDetector()
     private var serviceRequested = false
+    private var viewportHeight = 0
 
     internal val ink by lazy { getColor(R.color.bimbi_text_on_night) }
     private val night by lazy { getColor(R.color.bimbi_night) }
     internal val accent by lazy { getColor(R.color.bimbi_lilac_accent) }
     internal val tint by lazy { getColor(R.color.bimbi_lavender) }
     private val onAccent by lazy { getColor(R.color.bimbi_on_lilac) }
+    internal val raised by lazy { getColor(R.color.bimbi_night_raised) }
+    private val surface by lazy { getColor(R.color.bimbi_night_high) }
     private val bodyFont by lazy { resources.getFont(R.font.nunito_medium) }
-    private val strongFont by lazy { resources.getFont(R.font.nunito_extrabold) }
+    internal val strongFont by lazy { resources.getFont(R.font.nunito_extrabold) }
     private val headingFont by lazy { resources.getFont(R.font.instrument_serif_regular) }
+    internal val splitLayout: Boolean
+        get() = resources.configuration.run {
+            orientation == Configuration.ORIENTATION_LANDSCAPE && screenWidthDp >= 740 && fontScale < 1.5f
+        }
+
+    /** Width of the content column: one column on phones and portrait, two panes in landscape. */
+    private val contentWidth get() = minOf(resources.configuration.screenWidthDp - 2 * gutter, if (splitLayout) 792 else 432)
+    private val gutter get() = if (splitLayout) 24 else 16
+
+    /**
+     * Every full-width control on this screen (Mute + Snooze row, answer field, Check answer)
+     * shares one width so the buttons line up. In landscape that is the left pane.
+     */
+    internal val controlWidth get() = if (splitLayout) (contentWidth - PANE_GAP) * 2 / 5 else contentWidth
 
     private val updateScreen = object : Runnable {
         override fun run() {
@@ -97,30 +123,33 @@ class AlarmActivity : Activity(), SensorEventListener {
         setTextColor(ink)
         typeface = if (heading) headingFont else bodyFont
         gravity = Gravity.CENTER
+        includeFontPadding = false
     }
 
-    internal fun button(label: String, action: () -> Unit) = Button(this).apply {
+    /** One button style for the whole screen: 56dp tall, 16dp corners, Nunito ExtraBold 15sp. */
+    internal fun button(label: String, primary: Boolean = false, action: () -> Unit) = Button(this).apply {
         text = label
-        textSize = 16f
+        textSize = 15f
         typeface = strongFont
         isAllCaps = false
-        minHeight = dp(48)
-        minimumHeight = dp(48)
+        minHeight = dp(BUTTON_HEIGHT)
+        minimumHeight = dp(BUTTON_HEIGHT)
         minimumWidth = 0
         minWidth = 0
         stateListAnimator = null
-        setPadding(dp(8), dp(6), dp(8), dp(6))
-        paintButton(this, false)
+        setLineSpacing(0f, 1.05f)
+        setPadding(dp(12), dp(8), dp(12), dp(8))
+        paintButton(this, primary)
         setOnClickListener {
             interaction()
             action()
         }
     }
 
-    internal fun paintButton(button: Button, selected: Boolean) {
+    internal fun paintButton(button: Button, selected: Boolean, radius: Int = 16) {
         val shape = GradientDrawable().apply {
-            cornerRadius = dp(16).toFloat()
-            setColor(if (selected) accent else Color.rgb(59, 45, 72))
+            cornerRadius = dp(radius).toFloat()
+            setColor(if (selected) accent else surface)
         }
         button.background = RippleDrawable(ColorStateList.valueOf(tint), shape, null)
         button.setTextColor(if (selected) onAccent else ink)
@@ -146,86 +175,114 @@ class AlarmActivity : Activity(), SensorEventListener {
             max = ACTIVE_WINDOW_MS.toInt()
             progress = max
             progressTintList = ColorStateList.valueOf(tint)
-            progressBackgroundTintList = ColorStateList.valueOf(Color.rgb(71, 56, 83))
+            progressBackgroundTintList = ColorStateList.valueOf(surface)
             contentDescription = "Activity timer: 15 seconds"
             minimumHeight = dp(48)
-            setPadding(dp(12), dp(19), dp(12), dp(19))
+            setPadding(0, dp(20), 0, dp(20))
             setOnClickListener { interaction() }
         }
-        frame.addView(bar, LinearLayout.LayoutParams(-1, dp(48)))
+        val timer = FrameLayout(this).apply {
+            setPadding(dp(gutter), 0, dp(gutter), 0)
+            addView(CappedColumn(this@AlarmActivity, dp(contentWidth)).apply {
+                addView(bar, LinearLayout.LayoutParams(-1, dp(48)))
+            }, FrameLayout.LayoutParams(-1, -2, Gravity.CENTER))
+        }
+        frame.addView(timer, LinearLayout.LayoutParams(-1, -2))
 
-        val content = LinearLayout(this).apply {
-            orientation = LinearLayout.VERTICAL
-            gravity = Gravity.TOP or Gravity.CENTER_HORIZONTAL
-            setPadding(dp(12), dp(4), dp(12), dp(8))
-        }
-        val scroll = ScrollView(this).apply {
-            isFillViewport = false
-            addView(content)
-        }
-        val sideBySide = resources.configuration.screenWidthDp >= 600
-        val details = if (sideBySide) LinearLayout(this).apply {
-            orientation = LinearLayout.VERTICAL
-            setPadding(dp(24), dp(12), dp(12), dp(8))
-        } else content
-        if (sideBySide || resources.configuration.fontScale < 1.5f) {
-            val occurrenceTime = text(26f, heading = true)
-            clock = occurrenceTime
-            details.addView(occurrenceTime)
-        }
-        header = text(21f, heading = true).apply {
+        // Hierarchy: alarm label (eyebrow) → time (display) → challenge (heading) → round (caption).
+        val details = column()
+        header = text(15f).apply {
+            typeface = strongFont
+            setTextColor(tint)
             maxLines = 2
             ellipsize = TextUtils.TruncateAt.END
+        }
+        details.addView(header, spaced())
+        clock = text(44f, heading = true)
+        details.addView(clock, spaced(4))
+        challengeTitle = text(26f, heading = true).apply {
             if (Build.VERSION.SDK_INT >= 28) isAccessibilityHeading = true
         }
-        details.addView(header)
-        roundLabel = text(14f)
-        details.addView(roundLabel)
+        details.addView(challengeTitle, spaced(18))
+        roundLabel = text(14f).apply { setTextColor(tint) }
+        details.addView(roundLabel, spaced(4))
 
-        body = LinearLayout(this).apply {
-            orientation = LinearLayout.VERTICAL
-            gravity = Gravity.CENTER_HORIZONTAL
-            setPadding(0, dp(8), 0, dp(4))
+        body = column()
+        status = text(14f).apply {
+            minimumHeight = dp(24)
+            setTextColor(tint)
+            accessibilityLiveRegion = View.ACCESSIBILITY_LIVE_REGION_POLITE
         }
-        content.addView(body, LinearLayout.LayoutParams(-1, -2))
-        status = text(15f).apply { accessibilityLiveRegion = android.view.View.ACCESSIBILITY_LIVE_REGION_POLITE }
-        content.addView(status, LinearLayout.LayoutParams(-1, -2))
+        val challenge = column().apply {
+            addView(body, spaced())
+            addView(status, spaced(12))
+        }
 
-        val controls = LinearLayout(this).apply {
-            orientation = LinearLayout.VERTICAL
-            setPadding(dp(12), 0, dp(12), dp(10))
-        }
         mute = button("Mute") {
             displayedSession?.episode?.id?.let { AlarmService.current?.mute(it) }
-        }.apply { textSize = 14f }
-        snooze = button("Snooze 5 min") {
+        }
+        snooze = button("Snooze") {
             displayedSession?.episode?.id?.let { AlarmService.current?.postpone(it) }
-        }.apply { textSize = 14f }
+        }
         alternative = button("Use math challenge") {
             displayedSession?.fallbackToMath()
-        }
+        }.apply { visibility = View.GONE }
         val actions = LinearLayout(this).apply {
             orientation = LinearLayout.HORIZONTAL
             isBaselineAligned = false
-            gravity = Gravity.CENTER_VERTICAL
-            addView(mute, LinearLayout.LayoutParams(0, -2, 2f).apply { marginEnd = dp(5) })
-            addView(snooze, LinearLayout.LayoutParams(0, -2, 3f).apply { marginStart = dp(5) })
+            addView(mute, LinearLayout.LayoutParams(0, -1, 1f))
+            addView(snooze, LinearLayout.LayoutParams(0, -1, 1f).apply { marginStart = dp(BUTTON_GAP) })
         }
-        controls.addView(alternative)
-        controls.addView(actions)
-        if (sideBySide) {
-            details.addView(controls, LinearLayout.LayoutParams(-1, -2))
-            val panes = LinearLayout(this).apply {
-                addView(details, LinearLayout.LayoutParams(0, -1, 2f))
-                addView(scroll, LinearLayout.LayoutParams(0, -1, 3f))
+        controls = CappedColumn(this@AlarmActivity, dp(controlWidth)).apply {
+            addView(actions, spaced())
+            addView(alternative, spaced(BUTTON_GAP))
+        }
+        val content = CappedColumn(this@AlarmActivity, dp(contentWidth)).apply {
+            if (splitLayout) {
+                orientation = LinearLayout.HORIZONTAL
+                gravity = Gravity.CENTER_VERTICAL
+                details.addView(controls, spaced(28))
+                addView(details, LinearLayout.LayoutParams(0, -2, 2f))
+                addView(challenge, LinearLayout.LayoutParams(0, -2, 3f).apply { marginStart = dp(PANE_GAP) })
+            } else {
+                addView(details, spaced())
+                addView(challenge, spaced(28))
+                addView(controls, spaced(20))
             }
-            frame.addView(panes, LinearLayout.LayoutParams(-1, 0, 1f))
-        } else {
-            frame.addView(scroll, LinearLayout.LayoutParams(-1, 0, 1f))
-            frame.addView(controls, LinearLayout.LayoutParams(-1, -2))
         }
+        val scroll = ScrollView(this).apply { isFillViewport = true }
+        val page = FrameLayout(this).apply {
+            setPadding(dp(gutter), dp(16), dp(gutter), dp(24))
+            addView(content, FrameLayout.LayoutParams(-1, -2, Gravity.CENTER))
+        }
+        scroll.addView(page)
+        // Keep the whole challenge, including Mute and Snooze, on screen: when the page overflows
+        // the visible area the board gives up the difference. A new visible size starts over.
+        // Layout requests made inside a layout callback can wait for an unrelated frame, so the
+        // adjustment runs as its own message right after this pass.
+        val fitToScreen = Runnable {
+            val visible = scroll.height
+            if (visible != viewportHeight) {
+                viewportHeight = visible
+                if (currentRound?.resetFit() == true) return@Runnable
+            }
+            val overflow = page.height - visible
+            if (visible > 0 && overflow > 0) currentRound?.fit(overflow)
+        }
+        scroll.viewTreeObserver.addOnGlobalLayoutListener {
+            handler.removeCallbacks(fitToScreen)
+            handler.post(fitToScreen)
+        }
+        frame.addView(scroll, LinearLayout.LayoutParams(-1, 0, 1f))
         setContentView(frame)
     }
+
+    private fun column() = LinearLayout(this).apply {
+        orientation = LinearLayout.VERTICAL
+        gravity = Gravity.CENTER_HORIZONTAL
+    }
+
+    private fun spaced(top: Int = 0) = LinearLayout.LayoutParams(-1, -2).apply { topMargin = dp(top) }
 
     override fun onStart() {
         super.onStart()
@@ -248,6 +305,7 @@ class AlarmActivity : Activity(), SensorEventListener {
                 finish()
                 return
             }
+            controls.visibility = View.INVISIBLE
             if (!serviceRequested) {
                 serviceRequested = true
                 if (engine.notificationsAllowed()) AlarmService.start(this)
@@ -257,6 +315,7 @@ class AlarmActivity : Activity(), SensorEventListener {
             return
         }
         serviceRequested = false
+        controls.visibility = View.VISIBLE
         val id = session.episode.id
         service.showRound(id)
         val now = SystemClock.elapsedRealtime()
@@ -266,13 +325,14 @@ class AlarmActivity : Activity(), SensorEventListener {
             if (displayedSession !== session) {
                 val time = Date(session.episode.scheduledAt)
                 val day = SimpleDateFormat("EEE", Locale.getDefault()).format(time)
-                clock?.text = "$day ${DateFormat.getTimeFormat(this).format(time)}"
+                clock.text = "$day ${DateFormat.getTimeFormat(this).format(time)}"
             }
             displayedSession = session
             displayedAttempt = expected
             shakeDetector.reset()
             header.text = session.episode.label
-            roundLabel.text = "${session.challenge.title}  ·  Round ${session.round} of ${session.totalRounds}"
+            challengeTitle.text = session.challenge.title
+            roundLabel.text = "Round ${session.round} of ${session.totalRounds}"
             body.removeAllViews()
             currentRound = WakeRoundView(this, session.board, body, choose = { cell ->
                 service.session?.takeIf { it === session }?.choose(SystemClock.elapsedRealtime(), expected, cell)
@@ -292,9 +352,19 @@ class AlarmActivity : Activity(), SensorEventListener {
         val mutedText = if (session.muted) "Resume sound" else "Mute"
         if (mute.text.toString() != mutedText) mute.text = mutedText
         snooze.isEnabled = !session.episode.isTest && session.episode.snoozesLeft > 0
-        snooze.visibility = if (session.episode.isTest) android.view.View.GONE else android.view.View.VISIBLE
-        val snoozeText = "Snooze 5 min\n${session.episode.snoozesLeft} left"
-        if (snooze.text.toString() != snoozeText) snooze.text = snoozeText
+        snooze.alpha = if (snooze.isEnabled) 1f else 0.6f
+        snooze.visibility = if (session.episode.isTest) View.GONE else View.VISIBLE
+        val left = session.episode.snoozesLeft
+        val snoozeText = "Snooze 5 min\n$left left"
+        if (snooze.text.toString() != snoozeText) {
+            snooze.contentDescription = "Snooze 5 minutes, $left left"
+            snooze.text = SpannableString(snoozeText).apply {
+                val start = snoozeText.indexOf('\n') + 1
+                setSpan(RelativeSizeSpan(0.87f), start, length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+                if (Build.VERSION.SDK_INT >= 28) setSpan(TypefaceSpan(bodyFont), start, length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+                setSpan(ForegroundColorSpan(tint), start, length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+            }
+        }
         val spokenNavigation = getSystemService(AccessibilityManager::class.java).isTouchExplorationEnabled
         alternative.visibility = if (spokenNavigation && session.challenge in setOf(
                 WakeChallenge.CUPS, WakeChallenge.PATTERN, WakeChallenge.MEMORY
@@ -347,6 +417,10 @@ class AlarmActivity : Activity(), SensorEventListener {
 
     override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) = Unit
 }
+
+internal const val BUTTON_HEIGHT = 56
+internal const val BUTTON_GAP = 12
+private const val PANE_GAP = 40
 
 internal class ShakeDetector {
     private var high = false
