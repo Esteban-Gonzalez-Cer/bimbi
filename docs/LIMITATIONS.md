@@ -42,3 +42,9 @@
 - Focus chimes use exact alarms when Bimbi has exact-alarm access. Otherwise Android may deliver them up to about a minute late. Silent mode and Do Not Disturb apply. There is no notification when a session ends (owner decision).
 - The Focus shield is a soft pause (ADR-009). It reacts in about a second, needs two special permissions and a persistent notification, and can be turned off by revoking access, force-stopping Bimbi or safe mode. OEM battery policies may stop the service.
 - The dial winds up to four turns (8 h) in 5-minute steps; typed lengths are exact from 1 minute. A split into windows fixes the length until the windows are edited or removed.
+
+## Phase 7 notifications and plans
+
+- Plans are Stripe TEST-mode 30-day passes with cosmetic perks. No production billing, recurring subscription, refund handling or Play Billing. Without a webhook, a payment completed while the app died is granted when the app verifies it or Restore purchases runs.
+- An expired pass falls back to Free on the device clock (`expiresAt`); a wrong device clock can show the plan early or late, but only for cosmetic perks.
+- Notifications come only from Firebase Console campaigns to `bimbi_tips` and `bimbi_updates`. After a force-stop Android delivers nothing until Bimbi is reopened; delivery timing depends on Google Play services and Doze. A message is never an alarm.

@@ -56,7 +56,7 @@ void main() {
       11,
     );
 
-    final entry = find.widgetWithText(ListTile, '11 m · 0:05');
+    final entry = find.text('11 m · 0:05');
     await tester.scrollUntilVisible(
       entry,
       250,

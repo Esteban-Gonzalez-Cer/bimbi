@@ -5,7 +5,7 @@ import {defineSecret} from 'firebase-functions/params';
 import {onRequest} from 'firebase-functions/v2/https';
 export {assignBimbiAuthOrigin} from './identity';
 import Stripe from 'stripe';
-import {ApiError, Attempt, handlePayment, PaymentDependencies, PLANS} from './payments.js';
+import {ApiError, applyGrant, Attempt, Entitlement, handlePayment, PaymentDependencies, PLANS, Receipt} from './payments.js';
 initializeApp();
 const stripeSecret = defineSecret('STRIPE_SECRET_KEY');
 
@@ -27,6 +27,16 @@ export const paymentApi = onRequest({region: 'us-central1', minInstances: 0, max
     save: async (uid, requestId, id) => { await attempts.child(uid).child(requestId).child('paymentIntentId').set(id); },
     create: async (plan, uid, requestId) => stripe.paymentIntents.create({amount: PLANS[plan], currency: 'mxn', allowed_payment_method_types: ['card'], metadata: {uid, plan}}, {idempotencyKey: `bimbi:${uid}:${requestId}`}),
     retrieve: id => stripe.paymentIntents.retrieve(id),
+    entitlement: async uid => (await getDatabase().ref(`users/${uid}/entitlements`).get()).val() as Entitlement | null,
+    grant: async (uid, plan, intent, now) => {
+      // One transaction on the entitlement node: its `grants` map makes a repeated verify a no-op.
+      const result = await getDatabase().ref(`users/${uid}/entitlements`).transaction(current => applyGrant(current as Entitlement | null, plan, intent.id, now).entitlement);
+      const entitlement = result.snapshot.val() as Entitlement;
+      const verifiedAt = entitlement.grants?.[intent.id] ?? now;
+      const receipt: Receipt = {plan, amount: intent.amount, currency: 'mxn', verifiedAt, testMode: true};
+      await getDatabase().ref(`users/${uid}/payments/${intent.id}`).set(receipt);
+      return entitlement;
+    },
   };
   try {
     const route = request.path.replace(/^\//, '');

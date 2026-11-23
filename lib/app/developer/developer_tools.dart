@@ -5,7 +5,6 @@ import '../../core/operation.dart';
 import '../../core/platform.dart';
 import '../../features/auth/auth_adapter.dart';
 import '../../features/cloud/cloud_probe.dart';
-import '../../features/notifications/messaging.dart';
 import '../../features/running/tracking.dart';
 import '../design_system/design_system.dart';
 import '../preferences.dart';
@@ -190,18 +189,12 @@ class _CloudExperiments extends ConsumerWidget {
   const _CloudExperiments();
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final ready = ref.watch(firebaseReadyProvider);
     final user = ref.watch(sessionProvider).asData?.value;
     return _Group('Cloud and notifications', [
-      Text(ref.watch(messagingProvider), style: context.text.bodySmall),
-      ActionButton('Enable test topic', () async {
-        await ref.read(messagingProvider.notifier).subscribe();
-        return 'Notification experiment updated.';
-      }, enabled: ready),
-      ActionButton('Disable test topic', () async {
-        await ref.read(messagingProvider.notifier).unsubscribe();
-        return 'Test topic disabled.';
-      }, enabled: ready),
+      Text(
+        'Notification topics live in Profile › Notifications.',
+        style: context.text.bodySmall,
+      ),
       ActionButton('Test private data and image', () async {
         await ref.read(cloudProbeProvider).run();
         return 'Private record and image matched after readback; probe data deleted.';

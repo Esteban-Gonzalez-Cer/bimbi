@@ -104,6 +104,33 @@
               ".validate": false
             }
           }
+        },
+        "entitlements": {
+          ".read": "auth != null && auth.uid === $uid && auth.token.email_verified === true",
+          ".write": false
+        },
+        "payments": {
+          ".read": "auth != null && auth.uid === $uid && auth.token.email_verified === true",
+          ".write": false
+        },
+        "preferences": {
+          "notificationTopics": {
+            ".read": "auth != null && auth.uid === $uid && auth.token.email_verified === true",
+            ".write": "auth != null && auth.uid === $uid && auth.token.email_verified === true",
+            ".validate": "newData.hasChildren(['tips', 'updates'])",
+            "tips": {
+              ".validate": "newData.isBoolean()"
+            },
+            "updates": {
+              ".validate": "newData.isBoolean()"
+            },
+            "$other": {
+              ".validate": false
+            }
+          },
+          "$other": {
+            ".validate": false
+          }
         }
       }
     }

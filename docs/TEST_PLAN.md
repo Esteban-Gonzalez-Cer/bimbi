@@ -29,11 +29,13 @@ Every manual result must record date, actual device/API, exact build/checksum, p
 | AUTH-01 | Each of email/Google/GitHub sign-in, sign-out and relaunch | Actual provider identity, restored authenticated session |
 | AUTH-02 | Unverified → resend → verify → refresh; reset password | Probe/payment gated before verification, authorized after fresh token |
 | DATA-01 | Owner writes/reads/removes probe; other user/anonymous tries | Own readback matches; other access denied |
-| FCM-01 | Topic sends in foreground/background/normal terminated; tap notification | Handler/notification visible; allowed destination opens |
-| FCM-02 | Force-stop then send | Document platform limitation; reopen restores registration |
+| FCM-01 | Console campaign to `bimbi_tips` with Bimbi open, in the background and after swiping it away; tap | Foreground banner with Open/Dismiss; notification on the Tips channel; tap opens the `destination` screen |
+| FCM-02 | Force-stop then send | Nothing until Bimbi is reopened; recorded as a platform limitation |
+| FCM-03 | Turn Tips on with notifications denied; sign in on a second device | Switch stays off with an explanation; the second device follows the account's topics |
 | RUN-01 | Deny GPS then allow; outdoor walk; stop/background | Real accepted samples, noisy jumps ignored, subscriptions end |
 | SENSOR-01 | Start accelerometer and gently move tablet | Real signal changes; stop cancels sensor |
-| PAY-01 | Success/decline/cancel/disconnect/retry with test card | Server-verifiable success only; no paid entitlement |
+| PAY-01 | Success/decline/cancel/disconnect/retry with test card | Server-verifiable success only; cancel and decline grant nothing |
+| PAY-03 | Successful test payment, repeat verify, Restore, upgrade, expiry | 30-day pass and receipt written by the server; no extra days on repeat; Premium replaces Plus; expired reads as Free and perks fall back |
 | PAY-02 | Missing auth, wrong owner, extra price fields, live mode | Server rejects; retry does not duplicate same attempt |
 | USAGE-01 | Deny/grant/revoke Usage Access | Optional aggregate available only with grant; Focus unaffected |
 

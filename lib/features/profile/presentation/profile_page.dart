@@ -11,7 +11,10 @@ import '../../../core/config.dart';
 import '../../../core/operation.dart';
 import '../../../core/platform.dart';
 import '../../auth/auth_adapter.dart';
-import '../../payments/payment_adapter.dart';
+import '../../../data/repositories/entitlement_repository.dart';
+import '../../../domain/models/plan.dart';
+import '../../../ui/notifications/widgets/notifications_screen.dart';
+import '../../../ui/plans/widgets/plans_screen.dart';
 import '../application/cloud_profile.dart';
 import 'profile_picture.dart';
 
@@ -19,6 +22,7 @@ enum ProfileSection {
   account('Account', 'Sign-in and verification', BimbiIcons.profile),
   appearance('Appearance', 'Name, theme and buddy', BimbiIcons.palette),
   permissions('Permissions', 'Alarms and device access', BimbiIcons.lock),
+  notifications('Notifications', 'Tips and updates', BimbiIcons.bell),
   plans('Plans', 'Free, Plus and Premium', BimbiIcons.card),
   privacy('Privacy', 'Location and account data', BimbiIcons.shield);
 
@@ -43,7 +47,9 @@ Widget _sectionBody(ProfileSection s) => switch (s) {
   ProfileSection.account => const AccountSection(),
   ProfileSection.appearance => const AppearanceSection(),
   ProfileSection.permissions => const PermissionsSection(),
-  ProfileSection.plans => const PlansSection(),
+  // Plans and Notifications are their own screens; the pane never shows them.
+  ProfileSection.plans ||
+  ProfileSection.notifications => const SizedBox.shrink(),
   ProfileSection.privacy => const PrivacySection(),
 };
 
@@ -64,7 +70,11 @@ class ProfilePage extends ConsumerWidget {
           const _ProfileSummary(),
           _ProfileMenu(
             selected: selected,
-            onSelect: ref.read(profileSectionProvider.notifier).select,
+            onSelect: (section) => switch (section) {
+              ProfileSection.plans => openPlans(context),
+              ProfileSection.notifications => openNotifications(context),
+              _ => ref.read(profileSectionProvider.notifier).select(section),
+            },
           ),
           if (AppConfig.harness) const DeveloperTools(),
         ],
@@ -76,20 +86,24 @@ class ProfilePage extends ConsumerWidget {
         header,
         const _ProfileSummary(),
         _ProfileMenu(
-          onSelect: (section) => Navigator.of(context).push(
-            MaterialPageRoute<void>(
-              builder: (_) => Scaffold(
-                appBar: AppBar(title: const Text('Profile')),
-                body: SafeArea(
-                  top: false,
-                  child: PageBody(
-                    maxWidth: 640,
-                    children: [_sectionBody(section)],
+          onSelect: (section) => section == ProfileSection.plans
+              ? openPlans(context)
+              : section == ProfileSection.notifications
+              ? openNotifications(context)
+              : Navigator.of(context).push(
+                  MaterialPageRoute<void>(
+                    builder: (_) => Scaffold(
+                      appBar: AppBar(title: const Text('Profile')),
+                      body: SafeArea(
+                        top: false,
+                        child: PageBody(
+                          maxWidth: 640,
+                          children: [_sectionBody(section)],
+                        ),
+                      ),
+                    ),
                   ),
                 ),
-              ),
-            ),
-          ),
         ),
         if (AppConfig.harness) const DeveloperTools(),
       ],
@@ -582,6 +596,8 @@ class _AppearanceSectionState extends ConsumerState<AppearanceSection> {
     final user = ref.watch(sessionProvider).asData?.value;
     final mode = ref.watch(themeModeProvider);
     final buddy = ref.watch(buddyColorProvider);
+    final tier = ref.watch(planTierProvider);
+    final appTheme = ref.watch(appThemeProvider);
     return _SectionCard(
       section: ProfileSection.appearance,
       children: [
@@ -613,6 +629,27 @@ class _AppearanceSectionState extends ConsumerState<AppearanceSection> {
               ref.read(themeModeProvider.notifier).set(s.first),
         ),
         const SizedBox(height: BimbiSpace.xs),
+        const SectionLabel('Colours'),
+        Wrap(
+          spacing: BimbiSpace.xs,
+          runSpacing: BimbiSpace.xs,
+          children: [
+            for (final t in AppTheme.values)
+              ChoiceChip(
+                label: Text(
+                  t == AppTheme.sunrise && !tier.includes(PlanTier.premium)
+                      ? '${t.label} · Premium'
+                      : t.label,
+                ),
+                selected: appTheme == t,
+                onSelected: (_) =>
+                    t == AppTheme.sunrise && !tier.includes(PlanTier.premium)
+                    ? openPlans(context)
+                    : ref.read(appThemeProvider.notifier).set(t),
+              ),
+          ],
+        ),
+        const SizedBox(height: BimbiSpace.xs),
         const SectionLabel('Buddy colour'),
         Row(
           children: [
@@ -622,6 +659,8 @@ class _AppearanceSectionState extends ConsumerState<AppearanceSection> {
               child: BuddyColorPicker(
                 value: buddy,
                 onChanged: ref.read(buddyColorProvider.notifier).set,
+                plusUnlocked: tier.includes(PlanTier.plus),
+                onLocked: () => openPlans(context),
               ),
             ),
           ],
@@ -694,81 +733,6 @@ class PermissionsSection extends ConsumerWidget {
           'usage',
           optional: true,
         ),
-      ],
-    );
-  }
-}
-
-class PlansSection extends ConsumerWidget {
-  const PlansSection({super.key});
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final ready = ref.watch(firebaseReadyProvider);
-    final user = ref.watch(sessionProvider).asData?.value;
-    final busy = ref.watch(operationProvider).busy;
-    final canPay = ready && user?.emailVerified == true && !busy;
-    VoidCallback? checkout(String plan) => canPay
-        ? () => ref
-              .read(operationProvider.notifier)
-              .run(() => ref.read(paymentAdapterProvider).checkout(plan))
-        : null;
-    final window = WindowScope.of(context);
-    final cards = [
-      const PlanCard(
-        name: 'Free',
-        price: r'MX$0',
-        period: 'forever',
-        current: true,
-        features: ['Alarms with safe dismissal', 'Sleep diary', 'Focus timer'],
-      ),
-      PlanCard(
-        name: 'Plus',
-        price: r'MX$10',
-        period: 'test payment',
-        featured: true,
-        features: const ['Everything in Free', 'Wake-up missions'],
-        actionLabel: 'Try Plus',
-        onPressed: checkout('plus'),
-      ),
-      PlanCard(
-        name: 'Premium',
-        price: r'MX$20',
-        period: 'test payment',
-        features: const ['Everything in Plus', 'All buddy colours'],
-        actionLabel: 'Try Premium',
-        onPressed: checkout('premium'),
-      ),
-    ];
-    return _SectionCard(
-      section: ProfileSection.plans,
-      children: [
-        const InlineBanner(
-          icon: BimbiIcons.card,
-          title: 'Test mode',
-          message: 'Stripe sandbox only. No real charges and no paid access.',
-        ),
-        if (!canPay && !busy)
-          Text(
-            'Sign in with a verified email to try a test checkout.',
-            style: context.text.bodySmall,
-          ),
-        if (window.isCompact)
-          ...cards
-        else
-          LayoutBuilder(
-            builder: (context, box) {
-              final columns = box.maxWidth >= 640 ? 3 : 2;
-              final width =
-                  (box.maxWidth - BimbiSpace.sm * (columns - 1)) / columns;
-              return Wrap(
-                spacing: BimbiSpace.sm,
-                runSpacing: BimbiSpace.sm,
-                children: [
-                  for (final card in cards) SizedBox(width: width, child: card),
-                ],
-              );
-            },
-          ),
       ],
     );
   }

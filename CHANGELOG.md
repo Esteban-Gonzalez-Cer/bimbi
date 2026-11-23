@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased — Phase 7 notifications and plans
+
+Opt-in Tips and Updates notification topics with their own Android channels, an in-app banner over any screen for messages that arrive while Bimbi is open, allowlisted deep links and topic choices that follow a verified account. Free, Plus and Premium are Stripe test-mode 30-day passes granted only by the trusted server, with test receipts, Restore purchases and cosmetic perks (extra buddy colours and alarm tones, the Sunrise theme, a Premium badge). The Running screen moves to the shared design language and drops the park card.
+
 ## Unreleased — Phase 5 sleep and Focus
 
 The sleep diary and the Focus timer are saved on the device and sync for verified accounts, with offline changes sent on reconnection. The Sleep report shows the night on a 12-hour dial, the snoozes from this morning's alarm, phone use in bed with Usage Access, the week and the diary, without scores. Focus winds up to four 2-hour turns, takes typed minutes, splits sessions into windows and plays a chime at each window end and a sparkle at the end. The opt-in Focus shield covers chosen apps during Focus or after a free hours-and-minutes daily limit (ADR-009).

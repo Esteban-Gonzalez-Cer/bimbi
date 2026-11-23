@@ -73,9 +73,10 @@ void main() {
               } else if (d == AppDestination.sleep) {
                 // The Sleep report titles the night it describes.
                 expect(_pageTitle(tester), 'Last night');
-              } else if (d == AppDestination.focus) {
-                // Focus uses the Home/Sleep two-column layout, not TwoPane.
-                expect(_pageTitle(tester), 'Focus');
+              } else if (d == AppDestination.focus ||
+                  d == AppDestination.running) {
+                // Focus and Running use the Home/Sleep two columns, not TwoPane.
+                expect(_pageTitle(tester), d.label);
               } else {
                 expect(_pageTitle(tester), d.label);
                 expect(
@@ -127,15 +128,17 @@ void main() {
       await tester.tap(find.widgetWithText(ListTile, 'Plans'));
       await tester.pumpAndSettle();
       // Checkout needs a verified account; never a client-side premium flag.
+      expect(_pageTitle(tester), 'Plans');
+      expect(find.text('Free'), findsWidgets);
       await tester.scrollUntilVisible(
-        find.widgetWithText(FilledButton, 'Try Plus'),
+        find.widgetWithText(FilledButton, 'Get Plus'),
         300,
         scrollable: find.byType(Scrollable).first,
       );
-      final tryPlus = tester.widget<FilledButton>(
-        find.widgetWithText(FilledButton, 'Try Plus'),
+      final getPlus = tester.widget<FilledButton>(
+        find.widgetWithText(FilledButton, 'Get Plus'),
       );
-      expect(tryPlus.onPressed, isNull);
+      expect(getPlus.onPressed, isNull);
     },
   );
 

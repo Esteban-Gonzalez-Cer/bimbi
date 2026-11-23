@@ -10,6 +10,8 @@ import '../../../features/alarm/application/alarm_draft.dart';
 import '../../../features/profile/presentation/profile_picture.dart';
 import '../../../features/alarm/presentation/alarm_editor.dart';
 import '../../../features/notifications/messaging.dart';
+import '../../../data/repositories/entitlement_repository.dart';
+import '../../../domain/models/plan.dart';
 import '../view_models/home_view_model.dart';
 
 /// Alarms opens with the next real wake time and its primary action.
@@ -110,6 +112,7 @@ class _Header extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final c = context.bimbi;
     final hasName = state.name.isNotEmpty;
+    final premium = ref.watch(planTierProvider) == PlanTier.premium;
     final date = MaterialLocalizations.of(context)
         .formatFullDate(ref.watch(clockProvider)());
     return Row(
@@ -148,17 +151,48 @@ class _Header extends ConsumerWidget {
           ),
         ),
         const SizedBox(width: BimbiSpace.xs),
-        IconButton.filledTonal(
-          tooltip: 'Open profile',
-          onPressed: () => ref.read(destinationProvider.notifier).select(4),
-          style: IconButton.styleFrom(
-            backgroundColor: c.accentTint,
-            foregroundColor: c.link,
-          ),
-          icon: const ProfilePicture(
-            size: 26,
-            fallback: BimbiIcon(BimbiIcons.profile, size: 22),
-          ),
+        Stack(
+          clipBehavior: Clip.none,
+          children: [
+            IconButton.filledTonal(
+              tooltip: premium ? 'Open profile, Premium' : 'Open profile',
+              onPressed: () => ref.read(destinationProvider.notifier).select(4),
+              style: IconButton.styleFrom(
+                backgroundColor: c.accentTint,
+                foregroundColor: c.link,
+              ),
+              icon: const ProfilePicture(
+                size: 26,
+                fallback: BimbiIcon(BimbiIcons.profile, size: 22),
+              ),
+            ),
+            if (premium)
+              Positioned(
+                right: -4,
+                bottom: -2,
+                child: ExcludeSemantics(
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 6,
+                      vertical: 1,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).colorScheme.primary,
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(color: c.background, width: 1.5),
+                    ),
+                    child: Text(
+                      'Premium',
+                      style: TextStyle(
+                        fontSize: 9,
+                        fontWeight: FontWeight.w800,
+                        color: Theme.of(context).colorScheme.onPrimary,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+          ],
         ),
       ],
     );

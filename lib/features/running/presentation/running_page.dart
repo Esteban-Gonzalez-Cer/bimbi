@@ -9,7 +9,9 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import '../../../app/design_system/design_system.dart';
 import '../../../app/shell/layout.dart';
 import '../../../core/capabilities.dart';
+import '../../../core/clock.dart';
 import '../../../core/platform.dart';
+import '../../../ui/core/widgets/metric_tile.dart';
 import '../application/run_controller.dart';
 import '../domain/run.dart';
 
@@ -35,50 +37,164 @@ final mapStyleProvider = FutureProvider.family<String?, Brightness>((
 class RunningPage extends ConsumerWidget {
   const RunningPage({super.key});
 
+  static const _pad = EdgeInsets.fromLTRB(20, 28, 20, 32);
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final state = ref.watch(runControllerProvider);
     final controller = ref.read(runControllerProvider.notifier);
     final window = WindowScope.of(context);
-    final segments = controller.visibleSegments;
+    final expanded = window.isExpanded;
     final recording = state.phase == RunPhase.recording;
-    const header = PageHeader(title: 'Running', subtitle: 'A little movement');
-    final session = _SessionCard(
+    final mapHeight = expanded
+        ? (MediaQuery.sizeOf(context).height - 330).clamp(220.0, 520.0)
+        : window.isCompact
+        ? 240.0
+        : 340.0;
+    final hero = _SessionCard(
       state: state,
+      map: RunMap(
+        height: mapHeight,
+        segments: controller.visibleSegments,
+        recording: recording,
+      ),
+    );
+    final metrics = _RunMetrics(
       meters: controller.distanceMeters,
+      active: state.active,
     );
-    final map = RunMap(
-      height: window.isExpanded
-          ? (MediaQuery.sizeOf(context).height - 200).clamp(280.0, 620.0)
-          : window.isCompact
-          ? 250
-          : 340,
-      segments: segments,
-      recording: recording,
-    );
-    const place = _PlaceCard();
     final history = _HistoryCard(state: state);
 
-    if (window.isExpanded) {
-      return TwoPane(
-        primaryFlex: 3,
-        secondaryFlex: 2,
-        primary: [header, map, place],
-        secondary: [session, history],
+    if (expanded) {
+      return Align(
+        alignment: Alignment.topCenter,
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 1100),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                flex: 3,
+                child: _Column(
+                  padding: _pad,
+                  children: [const _Header(), hero],
+                ),
+              ),
+              Expanded(
+                flex: 2,
+                child: _Column(
+                  padding: _pad.copyWith(top: 32 + 58),
+                  children: [metrics, history],
+                ),
+              ),
+            ],
+          ),
+        ),
       );
     }
-    return PageBody(children: [header, session, map, place, history]);
+    return Align(
+      alignment: Alignment.topCenter,
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 560),
+        child: _Column(
+          padding: _pad,
+          children: [const _Header(), hero, metrics, history],
+        ),
+      ),
+    );
   }
 }
 
-class _SessionCard extends ConsumerWidget {
-  const _SessionCard({required this.state, required this.meters});
-  final RunningState state;
-  final double meters;
+class _Column extends StatelessWidget {
+  const _Column({required this.padding, required this.children});
+  final EdgeInsets padding;
+  final List<Widget> children;
+  @override
+  Widget build(BuildContext context) => ListView.separated(
+    padding: padding,
+    itemCount: children.length,
+    separatorBuilder: (_, _) => const SizedBox(height: 14),
+    itemBuilder: (_, i) => children[i],
+  );
+}
+
+const _weekdays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+const _months = [
+  'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', //
+  'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
+];
+
+class _Header extends ConsumerWidget {
+  const _Header();
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final c = context.bimbi;
+    final now = ref.watch(clockProvider)();
+    final recording =
+        ref.watch(runControllerProvider.select((s) => s.phase)) ==
+        RunPhase.recording;
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Expanded(
+          child: Semantics(
+            header: true,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  '${_weekdays[now.weekday - 1]} ${now.day} ${_months[now.month - 1]}',
+                  style: context.text.bodyLarge?.copyWith(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w700,
+                    color: c.textMuted,
+                  ),
+                ),
+                Text(
+                  'Running',
+                  key: PageHeader.titleKey,
+                  style: context.text.headlineLarge?.copyWith(
+                    fontSize: 36,
+                    height: 1.08,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+        Container(
+          width: 56,
+          height: 56,
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: c.accentTint,
+          ),
+          child: BimbiBuddy(
+            size: 50,
+            mood: recording ? BuddyMood.excited : BuddyMood.happy,
+            glow: false,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+/// Tinted hero: what the run is doing, the map, and the actions.
+class _SessionCard extends ConsumerWidget {
+  const _SessionCard({required this.state, required this.map});
+  final RunningState state;
+  final Widget map;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final c = context.bimbi;
     final controller = ref.read(runControllerProvider.notifier);
+    final night = Theme.of(context).brightness == Brightness.dark;
+    final fg = night ? c.onNight : c.onAccentTint;
+    final muted = night ? c.onNightMuted : c.textMuted;
     final phase = state.phase;
     final recording = phase == RunPhase.recording;
     final reviewing = phase == RunPhase.review;
@@ -106,45 +222,129 @@ class _SessionCard extends ConsumerWidget {
     final failure = state.issue;
     final badStore = failure?.code == 'run_storage' && state.draft == null;
 
+    Widget pair(Widget first, Widget? second) => second == null
+        ? first
+        : Row(
+            children: [
+              Expanded(child: first),
+              const SizedBox(width: BimbiSpace.sm),
+              Expanded(child: second),
+            ],
+          );
+
+    final Widget actions;
+    if (badStore) {
+      actions = OutlinedButton(
+        onPressed: controller.retryStorage,
+        child: const Text('Retry'),
+      );
+    } else if (reviewing) {
+      actions = Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          pair(
+            FilledButton(
+              onPressed: state.busy || state.draft?.canSave != true
+                  ? null
+                  : controller.save,
+              child: const Text('Save run'),
+            ),
+            OutlinedButton(
+              onPressed: state.busy ? null : controller.returnToPause,
+              child: const Text('Back to run'),
+            ),
+          ),
+          TextButton(
+            onPressed: state.busy
+                ? null
+                : () async {
+                    if (await _confirm(
+                      context,
+                      'Discard this run?',
+                      'Discard',
+                    )) {
+                      await controller.discard();
+                    }
+                  },
+            child: const Text('Discard'),
+          ),
+        ],
+      );
+    } else {
+      actions = pair(
+        FilledButton.icon(
+          onPressed: phase == RunPhase.starting
+              ? null
+              : recording
+              ? controller.pause
+              : controller.start,
+          icon: BimbiIcon(
+            recording ? BimbiIcons.pause : BimbiIcons.play,
+            onAccent: true,
+          ),
+          label: Text(
+            recording
+                ? 'Pause'
+                : phase == RunPhase.paused
+                ? 'Resume'
+                : 'Start',
+          ),
+        ),
+        recording || phase == RunPhase.paused
+            ? OutlinedButton.icon(
+                onPressed: controller.finish,
+                icon: const BimbiIcon(BimbiIcons.stop),
+                label: const Text('Finish'),
+              )
+            : null,
+      );
+    }
+
     return BimbiCard(
+      color: night ? c.night : c.accentTint,
+      borderColor: night ? c.cardBorder : c.accentTint,
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, 18),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Row(
+          Wrap(
+            alignment: WrapAlignment.spaceBetween,
+            crossAxisAlignment: WrapCrossAlignment.center,
+            spacing: BimbiSpace.sm,
+            runSpacing: 6,
             children: [
-              BimbiBuddy(
-                mood: recording ? BuddyMood.excited : BuddyMood.happy,
-                size: 56,
+              Text(
+                title,
+                style: context.text.titleLarge?.copyWith(
+                  fontSize: 22,
+                  color: fg,
+                ),
               ),
-              const SizedBox(width: BimbiSpace.sm),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(title, style: context.text.headlineSmall),
-                    const SizedBox(height: 4),
-                    Semantics(
-                      liveRegion: true,
-                      child: StatusPill(
-                        gpsLabel,
-                        tone: gpsTone,
-                        icon: BimbiIcons.gps,
-                      ),
-                    ),
-                  ],
+              Semantics(
+                liveRegion: true,
+                child: StatusPill(
+                  gpsLabel,
+                  tone: gpsTone,
+                  icon: BimbiIcons.gps,
                 ),
               ),
             ],
           ),
-          const SizedBox(height: BimbiSpace.md),
-          _RunMetrics(meters: meters, active: state.active),
+          const SizedBox(height: 12),
+          map,
           if (state.loading) ...[
             const SizedBox(height: BimbiSpace.md),
             const LinearProgressIndicator(semanticsLabel: 'Loading saved runs'),
           ] else ...[
             if (failure != null) ...[
               const SizedBox(height: BimbiSpace.sm),
-              Semantics(liveRegion: true, child: Text(failure.message)),
+              Semantics(
+                liveRegion: true,
+                child: Text(
+                  failure.message,
+                  style: context.text.bodyMedium?.copyWith(color: fg),
+                ),
+              ),
               if ([
                 'permission_denied',
                 'approximate',
@@ -167,72 +367,11 @@ class _SessionCard extends ConsumerWidget {
                     : state.verified
                     ? 'Your route stays here. Date, distance and active time sync to your account.'
                     : 'This run stays on this device.',
-                style: context.text.bodyMedium,
+                style: context.text.bodyMedium?.copyWith(color: muted),
               ),
             ],
             const SizedBox(height: BimbiSpace.md),
-            Wrap(
-              spacing: BimbiSpace.sm,
-              runSpacing: BimbiSpace.xs,
-              children: [
-                if (badStore)
-                  OutlinedButton(
-                    onPressed: controller.retryStorage,
-                    child: const Text('Retry'),
-                  )
-                else if (reviewing) ...[
-                  FilledButton(
-                    onPressed: state.busy || state.draft?.canSave != true
-                        ? null
-                        : controller.save,
-                    child: const Text('Save run'),
-                  ),
-                  OutlinedButton(
-                    onPressed: state.busy ? null : controller.returnToPause,
-                    child: const Text('Back to run'),
-                  ),
-                  TextButton(
-                    onPressed: state.busy
-                        ? null
-                        : () async {
-                            if (await _confirm(
-                              context,
-                              'Discard this run?',
-                              'Discard',
-                            )) {
-                              await controller.discard();
-                            }
-                          },
-                    child: const Text('Discard'),
-                  ),
-                ] else ...[
-                  FilledButton.icon(
-                    onPressed: phase == RunPhase.starting
-                        ? null
-                        : recording
-                        ? controller.pause
-                        : controller.start,
-                    icon: BimbiIcon(
-                      recording ? BimbiIcons.pause : BimbiIcons.play,
-                      onAccent: true,
-                    ),
-                    label: Text(
-                      recording
-                          ? 'Pause'
-                          : phase == RunPhase.paused
-                          ? 'Resume'
-                          : 'Start',
-                    ),
-                  ),
-                  if (recording || phase == RunPhase.paused)
-                    OutlinedButton.icon(
-                      onPressed: controller.finish,
-                      icon: const BimbiIcon(BimbiIcons.stop),
-                      label: const Text('Finish'),
-                    ),
-                ],
-              ],
-            ),
+            actions,
           ],
         ],
       ),
@@ -259,12 +398,12 @@ class _RunMetrics extends StatelessWidget {
   Widget build(BuildContext context) => LayoutBuilder(
     builder: (context, constraints) {
       final tiles = [
-        StatTile(
+        MetricTile(
           icon: BimbiIcons.steps,
           value: _distance(meters),
           label: 'Distance',
         ),
-        StatTile(
+        MetricTile(
           icon: BimbiIcons.focus,
           value: _duration(active),
           label: 'Active time',
@@ -274,16 +413,12 @@ class _RunMetrics extends StatelessWidget {
               MediaQuery.textScalerOf(context).scale(16) > 24
           ? Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                tiles.first,
-                const SizedBox(height: BimbiSpace.xs),
-                tiles.last,
-              ],
+              children: [tiles.first, const SizedBox(height: 10), tiles.last],
             )
           : Row(
               children: [
                 Expanded(child: tiles.first),
-                const SizedBox(width: BimbiSpace.sm),
+                const SizedBox(width: 10),
                 Expanded(child: tiles.last),
               ],
             );
@@ -297,62 +432,116 @@ class _HistoryCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final labels = switch (state.sync) {
-      RunSync.local => null,
-      RunSync.offline => 'Offline · saved runs sync when connected',
-      RunSync.syncing => 'Syncing run totals…',
-      RunSync.synced => 'Run totals synced',
-      RunSync.unavailable => 'Run sync needs attention',
+    final c = context.bimbi;
+    final label = switch (state.sync) {
+      RunSync.local => 'Saved on this device',
+      RunSync.offline => 'Offline · syncs when connected',
+      RunSync.syncing => 'Syncing…',
+      RunSync.synced => 'Synced',
+      RunSync.unavailable => 'Sync needs attention',
     };
-    return BimbiCard(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Text('Run history', style: context.text.headlineSmall),
-          const SizedBox(height: BimbiSpace.xs),
-          if (labels != null)
-            Semantics(
-              liveRegion: true,
-              child: Text(labels, style: context.text.bodySmall),
-            ),
-          if (state.sync == RunSync.unavailable)
-            Align(
-              alignment: AlignmentDirectional.centerStart,
-              child: TextButton(
-                onPressed: ref.read(runControllerProvider.notifier).retrySync,
-                child: const Text('Retry sync'),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(top: 6, bottom: 10),
+          child: Wrap(
+            alignment: WrapAlignment.spaceBetween,
+            crossAxisAlignment: WrapCrossAlignment.end,
+            spacing: BimbiSpace.sm,
+            children: [
+              Semantics(
+                header: true,
+                child: Text('Run history', style: context.text.headlineSmall),
               ),
-            ),
-          if (state.loading)
-            const Text('Loading saved runs…')
-          else if (state.runs.isEmpty)
-            Text(
-              'Your saved runs will appear here.',
-              style: context.text.bodyMedium,
-            )
-          else
-            for (final run in state.runs)
-              ListTile(
-                contentPadding: EdgeInsets.zero,
-                leading: const BimbiIcon(BimbiIcons.steps),
-                title: Text(_runDate(context, run.summary!.startedAt)),
-                subtitle: Text(
-                  '${_distance(run.summary!.distanceM.toDouble())} · '
-                  '${_duration(Duration(seconds: run.summary!.durationSec))}',
+              Semantics(
+                liveRegion: true,
+                child: Text(
+                  label,
+                  style: context.text.labelMedium?.copyWith(
+                    fontWeight: FontWeight.w700,
+                    color: c.textMuted,
+                  ),
                 ),
-                trailing: const Icon(Icons.chevron_right),
-                onTap: () async {
-                  await ref.read(runControllerProvider.notifier).pause();
-                  if (!context.mounted) return;
-                  await Navigator.of(context).push(
-                    MaterialPageRoute<void>(
-                      builder: (_) => _RunDetail(id: run.id),
-                    ),
-                  );
-                },
               ),
-        ],
-      ),
+            ],
+          ),
+        ),
+        if (state.sync == RunSync.unavailable)
+          Align(
+            alignment: AlignmentDirectional.centerStart,
+            child: TextButton(
+              onPressed: ref.read(runControllerProvider.notifier).retrySync,
+              child: const Text('Retry sync'),
+            ),
+          ),
+        if (state.loading)
+          Text(
+            'Loading saved runs…',
+            style: context.text.bodyMedium?.copyWith(color: c.textMuted),
+          )
+        else if (state.runs.isEmpty)
+          Text(
+            'Your saved runs will appear here.',
+            style: context.text.bodyMedium?.copyWith(color: c.textMuted),
+          )
+        else
+          for (final run in state.runs) ...[
+            BimbiCard(
+              padding: const EdgeInsets.fromLTRB(16, 12, 12, 12),
+              onTap: () async {
+                await ref.read(runControllerProvider.notifier).pause();
+                if (!context.mounted) return;
+                await Navigator.of(context).push(
+                  MaterialPageRoute<void>(
+                    builder: (_) => _RunDetail(id: run.id),
+                  ),
+                );
+              },
+              semanticLabel:
+                  '${_runDate(context, run.summary!.startedAt)}, '
+                  '${_distance(run.summary!.distanceM.toDouble())}, '
+                  '${_duration(Duration(seconds: run.summary!.durationSec))}. Open',
+              child: Row(
+                children: [
+                  Container(
+                    width: 38,
+                    height: 38,
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      color: c.accentTint,
+                      borderRadius: const BorderRadius.all(Radius.circular(14)),
+                    ),
+                    child: const BimbiIcon(BimbiIcons.steps, size: 20),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          _runDate(context, run.summary!.startedAt),
+                          style: context.text.titleMedium?.copyWith(
+                            fontWeight: FontWeight.w800,
+                          ),
+                        ),
+                        Text(
+                          '${_distance(run.summary!.distanceM.toDouble())} · '
+                          '${_duration(Duration(seconds: run.summary!.durationSec))}',
+                          style: context.text.bodyMedium?.copyWith(
+                            color: c.textMuted,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const BimbiIcon(BimbiIcons.chevronRight, size: 20),
+                ],
+              ),
+            ),
+            const SizedBox(height: 10),
+          ],
+      ],
     );
   }
 }
@@ -373,8 +562,19 @@ class _RunDetail extends ConsumerWidget {
     final state = ref.watch(runControllerProvider);
     final run = state.runs.where((entry) => entry.id == id).firstOrNull;
     final summary = run?.summary;
+    final c = context.bimbi;
     return Scaffold(
-      appBar: AppBar(title: const Text('Saved run')),
+      backgroundColor: c.background,
+      appBar: AppBar(
+        backgroundColor: c.background,
+        surfaceTintColor: Colors.transparent,
+        leading: IconButton(
+          tooltip: 'Back to Running',
+          onPressed: () => Navigator.of(context).maybePop(),
+          icon: const BimbiIcon(BimbiIcons.chevronLeft),
+        ),
+        title: Text('Saved run', style: context.text.headlineSmall),
+      ),
       body: summary == null
           ? const Center(child: Text('This run is unavailable.'))
           : SafeArea(
@@ -460,37 +660,6 @@ Future<bool> _confirm(
       ),
     ) ??
     false;
-
-class _PlaceCard extends StatelessWidget {
-  const _PlaceCard();
-  @override
-  Widget build(BuildContext context) => BimbiCard(
-    child: Row(
-      children: [
-        Container(
-          width: 48,
-          height: 48,
-          decoration: BoxDecoration(
-            color: context.bimbi.successTint,
-            borderRadius: BimbiRadius.chipBorder,
-          ),
-          alignment: Alignment.center,
-          child: const BimbiIcon(BimbiIcons.place),
-        ),
-        const SizedBox(width: BimbiSpace.sm),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(parkName, style: context.text.titleMedium),
-              Text('Public park · Mexico City', style: context.text.bodySmall),
-            ],
-          ),
-        ),
-      ],
-    ),
-  );
-}
 
 class RunMap extends ConsumerStatefulWidget {
   const RunMap({

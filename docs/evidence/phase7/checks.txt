@@ -1,0 +1,1125 @@
+Comprobación integrada de la Fase 7 (JDK 21, Node 22 y Flutter 3.47.5)
+Fecha: 22 de noviembre de 2026, Ciudad de México
+Comando: ./scripts/check.sh
+Código de salida: 0
+
+Formatted 108 files (0 changed) in 0.28 seconds.
+Analyzing bimbi...                                              
+No issues found! (ran in 5.3s)
+00:00 +0: loading test/running_widget_test.dart
+00:00 +0: test/running_widget_test.dart: a 360 dp run saves and reopens without map tiles
+00:00 +1: test/running_widget_test.dart: a 360 dp run saves and reopens without map tiles
+00:00 +2: test/running_widget_test.dart: a 360 dp run saves and reopens without map tiles
+00:00 +3: test/running_widget_test.dart: a 360 dp run saves and reopens without map tiles
+00:00 +4: test/running_widget_test.dart: a 360 dp run saves and reopens without map tiles
+00:00 +5: test/running_widget_test.dart: a 360 dp run saves and reopens without map tiles
+00:00 +6: test/running_widget_test.dart: a 360 dp run saves and reopens without map tiles
+00:00 +7: test/running_widget_test.dart: a 360 dp run saves and reopens without map tiles
+00:00 +8: test/running_widget_test.dart: a 360 dp run saves and reopens without map tiles
+00:00 +9: test/running_widget_test.dart: a 360 dp run saves and reopens without map tiles
+00:00 +10: test/running_widget_test.dart: a 360 dp run saves and reopens without map tiles
+00:00 +11: test/running_widget_test.dart: a 360 dp run saves and reopens without map tiles
+00:00 +12: test/running_widget_test.dart: a 360 dp run saves and reopens without map tiles
+00:00 +13: test/running_widget_test.dart: a 360 dp run saves and reopens without map tiles
+00:00 +14: test/running_widget_test.dart: a 360 dp run saves and reopens without map tiles
+00:00 +15: test/running_widget_test.dart: a 360 dp run saves and reopens without map tiles
+00:00 +16: test/running_widget_test.dart: a 360 dp run saves and reopens without map tiles
+00:00 +17: test/running_widget_test.dart: a 360 dp run saves and reopens without map tiles
+00:00 +18: test/running_widget_test.dart: a 360 dp run saves and reopens without map tiles
+00:00 +19: test/running_widget_test.dart: a 360 dp run saves and reopens without map tiles
+00:00 +20: test/running_widget_test.dart: a 360 dp run saves and reopens without map tiles
+00:00 +21: test/running_widget_test.dart: a 360 dp run saves and reopens without map tiles
+00:00 +22: test/running_widget_test.dart: a 360 dp run saves and reopens without map tiles
+00:00 +23: test/running_widget_test.dart: a 360 dp run saves and reopens without map tiles
+00:00 +24: test/running_widget_test.dart: a 360 dp run saves and reopens without map tiles
+00:00 +25: test/running_widget_test.dart: a 360 dp run saves and reopens without map tiles
+00:00 +26: test/running_widget_test.dart: a 360 dp run saves and reopens without map tiles
+00:00 +27: test/running_widget_test.dart: a 360 dp run saves and reopens without map tiles
+00:00 +28: test/running_widget_test.dart: a 360 dp run saves and reopens without map tiles
+00:00 +29: test/running_widget_test.dart: a 360 dp run saves and reopens without map tiles
+00:00 +30: test/running_widget_test.dart: a 360 dp run saves and reopens without map tiles
+00:01 +31: test/running_widget_test.dart: a 360 dp run saves and reopens without map tiles
+00:01 +32: test/unit/profile_test.dart: photo conversion bounds the longest edge and output bytes
+00:01 +33: test/running_widget_test.dart: leaving Running pauses before another tab is shown
+00:01 +34: test/running_widget_test.dart: leaving Running pauses before another tab is shown
+00:01 +35: loading test/unit/local_collection_test.dart
+00:01 +35: test/unit/local_collection_test.dart: offline edits survive a restart and stay pending until confirmed
+00:02 +36: test/unit/local_collection_test.dart: an edit made after sending is not confirmed by the older write
+00:02 +37: test/unit/local_collection_test.dart: guest rows are adopted by the first account, never by another
+00:02 +38: test/unit/local_collection_test.dart: remote snapshot wins unless a newer local edit is pending
+00:02 +39: test/unit/local_collection_test.dart: synced deletes keep a tombstone until the cloud confirms
+00:02 +40: test/unit/collection_sync_test.dart: guest entries upload once a verified account is online
+00:02 +41: test/unit/collection_sync_test.dart: guest entries upload once a verified account is online
+00:02 +42: test/unit/collection_sync_test.dart: guest entries upload once a verified account is online
+00:02 +43: test/unit/collection_sync_test.dart: guest entries upload once a verified account is online
+00:02 +44: test/unit/notifications_test.dart: the Phase 1 test topic is removed once
+00:02 +45: test/unit/notifications_test.dart: the Phase 1 test topic is removed once
+00:02 +46: test/unit/notifications_test.dart: the Phase 1 test topic is removed once
+00:02 +47: test/unit/notifications_test.dart: the Phase 1 test topic is removed once
+00:02 +48: test/unit/notifications_test.dart: the Phase 1 test topic is removed once
+00:02 +49: test/unit/notifications_test.dart: the Phase 1 test topic is removed once
+00:02 +50: test/unit/notifications_test.dart: the Phase 1 test topic is removed once
+00:02 +51: test/unit/notifications_test.dart: the Phase 1 test topic is removed once
+00:02 +52: test/unit/tracking_test.dart: the development motion proof measures movement and unsubscribes
+00:02 +53: test/unit/notifications_test.dart: turning a topic on asks permission and subscribes; off unsubscribes
+00:02 +54: test/unit/notifications_test.dart: a denied permission leaves the topic off
+00:02 +55: test/unit/notifications_test.dart: a second device follows the account choice from the cloud
+00:02 +56: test/unit/notifications_test.dart: foreground messages become a banner; taps open allowlisted screens
+00:02 +57: test/unit/notifications_test.dart: a notification that launched Bimbi opens its screen
+00:02 +58: test/unit/plan_test.dart: only an unexpired server pass counts; expired is Free
+00:02 +59: test/unit/plan_test.dart: server rows parse strictly; free or malformed rows are ignored
+00:02 +60: test/unit/plan_test.dart: Plus colours need a pass and come back when it is renewed
+00:02 +61: test/unit/plan_test.dart: Sunrise needs Premium; Plus is not enough
+00:02 +62: test/unit/plan_test.dart: Plus tone guard a lapsed pass moves alarms to Dawn Chime
+00:02 +63: test/unit/plan_test.dart: Plus tone guard an active pass or a plan still loading changes nothing
+00:02 +64: test/unit/platform_test.dart: schedule/cancel use one native source of truth
+00:02 +65: test/unit/platform_test.dart: permission denial remains explicit and does not report scheduling success
+00:02 +66: test/unit/platform_test.dart: unsupported native bridge is a capability failure
+00:02 +67: test/unit/platform_test.dart: past alarm and rapid repeat rejected before native call
+00:03 +68: test/unit/alarm_draft_test.dart: new alarms require an explicit challenge and start at normal
+00:03 +69: test/unit/alarm_draft_test.dart: editing keeps the native id, sound, volume and difficulty
+00:03 +70: test/plans_widget_test.dart: a verified Plus pass shows its expiry, renew and upgrade
+00:04 +71: test/notifications_widget_test.dart: Tips and Updates switches subscribe from the screen
+00:04 +72: test/notifications_widget_test.dart: Tips and Updates switches subscribe from the screen
+00:04 +73: test/golden/screens_golden_test.dart: tabs at 360dp light
+00:04 +74: test/golden/screens_golden_test.dart: tabs at 360dp light
+00:05 +75: test/golden/screens_golden_test.dart: tabs at 360dp light
+00:05 +76: test/golden/screens_golden_test.dart: tabs at 360dp light
+00:05 +77: test/golden/screens_golden_test.dart: tabs at 360dp light
+00:05 +78: test/golden/screens_golden_test.dart: tabs at 360dp light
+00:05 +79: test/widget_test.dart: five tabs at 360.0dp, text 1.0x, dark
+00:05 +80: test/widget_test.dart: five tabs at 360.0dp, text 1.0x, dark
+00:05 +81: test/review/running_compare_test.dart: running idle
+00:05 +82: test/review/running_compare_test.dart: running idle
+00:05 +83: test/golden/screens_golden_test.dart: tabs at 412dp light
+00:05 +84: test/widget_test.dart: five tabs at 360.0dp, text 1.0x, light
+00:05 +85: test/widget_test.dart: five tabs at 360.0dp, text 1.0x, light
+00:05 +86: test/review/running_compare_test.dart: running recording
+00:05 +87: test/golden/screens_golden_test.dart: tabs at 700dp light
+00:06 +88: test/golden/screens_golden_test.dart: tabs at 700dp light
+00:06 +89: test/golden/screens_golden_test.dart: tabs at 700dp light
+00:06 +90: test/golden/screens_golden_test.dart: tabs at 700dp light
+00:06 +91: test/widget_test.dart: five tabs at 360.0dp, text 1.3x, light
+00:06 +92: test/review/running_compare_test.dart: running tablet landscape
+00:06 +93: test/review/notifications_compare_test.dart: notifications screen
+00:06 +94: test/review/notifications_compare_test.dart: notifications screen
+00:06 +95: test/review/notifications_compare_test.dart: notifications screen
+00:06 +96: test/review/notifications_compare_test.dart: notifications screen
+00:06 +97: test/review/notifications_compare_test.dart: notifications screen
+00:06 +98: test/review/notifications_compare_test.dart: notifications screen
+00:07 +99: test/review/notifications_compare_test.dart: notifications screen
+00:07 +100: test/review/sleep_compare_test.dart: sleep 390x844 day
+00:07 +101: test/review/sleep_compare_test.dart: sleep 390x844 day
+00:07 +102: test/review/sleep_compare_test.dart: sleep 390x844 day
+00:07 +103: test/review/sleep_compare_test.dart: sleep 390x844 day
+00:07 +104: test/review/sleep_compare_test.dart: sleep 390x844 day
+00:07 +105: test/review/shield_compare_test.dart: shield needs access
+00:07 +106: test/review/shield_compare_test.dart: shield needs access
+00:07 +107: test/review/shield_compare_test.dart: shield needs access
+00:07 +108: test/review/shield_compare_test.dart: shield needs access
+00:07 +109: test/review/shield_compare_test.dart: shield needs access
+00:07 +110: test/review/shield_compare_test.dart: shield needs access
+00:07 +111: test/review/shield_compare_test.dart: shield needs access
+00:08 +112: test/review/shield_compare_test.dart: shield needs access
+00:08 +113: test/review/focus_compare_test.dart: focus idle
+00:08 +114: test/review/focus_compare_test.dart: focus idle
+00:08 +115: test/review/focus_compare_test.dart: focus idle
+00:08 +116: test/onboarding_test.dart: onboarding: four steps, name and colour, then the shell
+00:08 +117: test/onboarding_test.dart: onboarding: four steps, name and colour, then the shell
+00:08 +118: test/onboarding_test.dart: onboarding: four steps, name and colour, then the shell
+00:08 +118: test/tz/sleep_dst_test.dart: a fall-back night reports one extra hour in bed
+  Skip: needs TZ=America/New_York
+00:08 +118 ~1: test/onboarding_test.dart: onboarding: four steps, name and colour, then the shell
+00:08 +118 ~1: test/tz/sleep_dst_test.dart: a spring-forward night reports one hour less
+  Skip: needs TZ=America/New_York
+00:08 +118 ~2: test/onboarding_test.dart: onboarding: four steps, name and colour, then the shell
+00:08 +119 ~2: test/onboarding_test.dart: onboarding: four steps, name and colour, then the shell
+00:08 +120 ~2: test/onboarding_test.dart: onboarding: four steps, name and colour, then the shell
+00:08 +121 ~2: test/onboarding_test.dart: onboarding: four steps, name and colour, then the shell
+00:08 +122 ~2: test/onboarding_test.dart: onboarding: four steps, name and colour, then the shell
+00:08 +123 ~2: test/review/shield_compare_test.dart: shield tablet landscape
+00:08 +124 ~2: test/review/shield_compare_test.dart: shield tablet landscape
+00:08 +125 ~2: test/review/focus_compare_test.dart: focus running
+00:08 +126 ~2: test/widget_test.dart: five tabs at 700.0dp, text 1.3x, light
+00:08 +127 ~2: test/onboarding_test.dart: Skip finishes onboarding without requesting permissions
+00:08 +128 ~2: test/review/focus_compare_test.dart: focus running dark
+00:08 +129 ~2: test/widget_test.dart: five tabs at 700.0dp, text 2.0x, dark
+00:09 +130 ~2: test/review/focus_compare_test.dart: focus tablet landscape
+00:09 +131 ~2: test/widget_test.dart: five tabs at 700.0dp, text 2.0x, light
+00:09 +132 ~2: test/widget_test.dart: five tabs at 900.0dp, text 1.0x, dark
+00:09 +133 ~2: test/widget_test.dart: five tabs at 900.0dp, text 1.0x, light
+00:09 +134 ~2: test/widget_test.dart: five tabs at 900.0dp, text 1.3x, dark
+00:09 +135 ~2: test/widget_test.dart: five tabs at 900.0dp, text 1.3x, light
+00:09 +136 ~2: test/widget_test.dart: five tabs at 900.0dp, text 2.0x, dark
+00:09 +137 ~2: test/widget_test.dart: five tabs at 900.0dp, text 2.0x, light
+00:09 +138 ~2: test/widget_test.dart: unconfigured build keeps sign-in disabled, active challenge reachable
+00:10 +139 ~2: test/widget_test.dart: Android Back returns to Alarm before leaving the app
+00:10 +140 ~2: test/widget_test.dart: Focus start fits a short tablet viewport without scrolling
+00:10 +141 ~2: test/widget_test.dart: Focus takes exact minutes and a split into windows
+00:10 +142 ~2: test/widget_test.dart: the Focus shield pauses an app and sets a daily limit
+00:10 +143 ~2: test/widget_test.dart: missing alarm permissions show a direct fix
+00:10 +144 ~2: test/widget_test.dart: creating an alarm requires and persists the selected challenge
+00:10 +145 ~2: test/widget_test.dart: previews, saves and reopens per-alarm sound at 360dp and 2x
+00:11 +146 ~2: All tests passed!
+
+┌─────────────────────────────────────────────────────────┐
+│ A new version of Flutter is available!                  │
+│                                                         │
+│ To update to the latest version, run "flutter upgrade". │
+└─────────────────────────────────────────────────────────┘
+00:00 +0: loading test/tz/sleep_dst_test.dart
+00:00 +0: a fall-back night reports one extra hour in bed
+00:00 +1: a spring-forward night reports one hour less
+00:00 +2: All tests passed!
+
+> bimbi-phase1-payments@0.1.0 test
+> npm run build && node --test test/*.test.cjs
+
+
+> bimbi-phase1-payments@0.1.0 build
+> tsc
+
+✔ only unequivocal password origin makes an account eligible (0.362167ms)
+✔ uses the creation event and preserves unrelated claims on retry (0.383167ms)
+✔ rejects missing and invalid authentication before creating a payment (1.362458ms)
+✔ rejects unverified accounts (0.100834ms)
+✔ rejects client prices, unknown plans and invalid attempt identifiers (0.16375ms)
+✔ retries return the same payment and do not recreate it (0.181833ms)
+✔ same attempt cannot change plans (0.100042ms)
+✔ stale unrecorded attempt cannot recreate a payment after Stripe key expiry (0.078416ms)
+✔ only the owner can verify a test payment (0.104667ms)
+✔ only server-observed success verifies payment; decline/cancel/pending do not (0.169542ms)
+✔ live mode, wrong price and wrong currency cannot verify (0.127875ms)
+✔ unavailable Stripe does not produce a success response (0.132083ms)
+✔ concurrent retries use exactly the same Stripe idempotency inputs (10.225375ms)
+✔ a verified payment grants a 30-day pass and writes a test receipt (0.498167ms)
+✔ verifying the same payment again never adds days (0.076625ms)
+✔ a new payment for the same active plan extends from its expiry (0.048834ms)
+✔ an expired pass restarts from now; an upgrade starts a fresh Premium pass (0.043375ms)
+✔ a lower plan never replaces an active higher one (0.0725ms)
+✔ declined, cancelled and pending payments grant nothing (0.042542ms)
+ℹ tests 19
+ℹ suites 0
+ℹ pass 19
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 300.856208
+
+> emulators
+> firebase emulators:exec --project demo-bimbi --config ../../firebase.json --only auth,database,storage,functions "npm test"
+
+i  emulators: Starting emulators: auth, functions, database, storage
+i  emulators: Detected demo project ID "demo-bimbi", emulated services will use a demo configuration and attempts to access non-emulated services for this project will fail.
+i  database: Database Emulator logging to database-debug.log
+⚠  Unexpected rules runtime error: WARNING: A terminally deprecated method in sun.misc.Unsafe has been called
+WARNING: sun.misc.Unsafe::arrayBaseOffset has been called by com.google.protobuf.UnsafeUtil$MemoryAccessor (file:~/.cache/firebase/emulators/cloud-storage-rules-runtime-v1.1.3.jar)
+WARNING: Please consider reporting this to the maintainers of class com.google.protobuf.UnsafeUtil$MemoryAccessor
+WARNING: sun.misc.Unsafe::arrayBaseOffset will be removed in a future release
+
+i  functions: Watching "payment_demo/server" for Cloud Functions...
+⚠  functions: Your requested "node" version "22" doesn't match your global version "26". Using node@26 from host.
+Serving at port 8078
+
+✔  functions: Loaded functions definitions from source: assignBimbiAuthOrigin, paymentApi.
+✔  functions[us-central1-assignBimbiAuthOrigin]: auth function initialized.
+✔  functions[us-central1-paymentApi]: http function initialized (http://127.0.0.1:5001/demo-bimbi/us-central1/paymentApi).
+i  Running script: npm test
+
+> test
+> node --test *.test.cjs
+
+i  functions: Beginning execution of "us-central1-assignBimbiAuthOrigin"
+i  functions: Finished "us-central1-assignBimbiAuthOrigin" in 64.694417ms
+i  functions: Beginning execution of "us-central1-assignBimbiAuthOrigin"
+i  functions: Finished "us-central1-assignBimbiAuthOrigin" in 2.865417ms
+✔ auth emulator origin is stamped from actual email and federated creation events (786.104833ms)
+✔ the verified owner reads the server-written plan and receipts (325.662584ms)
+[2026-11-23T04:38:17.189Z]  @firebase/database: FIREBASE WARNING: set at /users/alice/entitlements failed: permission_denied 
+[2026-11-23T04:38:17.196Z]  @firebase/database: FIREBASE WARNING: update at /users/alice/entitlements failed: permission_denied 
+[2026-11-23T04:38:17.197Z]  @firebase/database: FIREBASE WARNING: set at /users/alice/entitlements failed: permission_denied 
+[2026-11-23T04:38:17.198Z]  @firebase/database: FIREBASE WARNING: set at /users/alice/payments/pi_fake failed: permission_denied 
+[2026-11-23T04:38:17.210Z]  @firebase/database: FIREBASE WARNING: set at /users/alice/entitlements failed: permission_denied 
+[2026-11-23T04:38:17.211Z]  @firebase/database: FIREBASE WARNING: update at /users/alice/entitlements failed: permission_denied 
+[2026-11-23T04:38:17.212Z]  @firebase/database: FIREBASE WARNING: set at /users/alice/entitlements failed: permission_denied 
+[2026-11-23T04:38:17.213Z]  @firebase/database: FIREBASE WARNING: set at /users/alice/payments/pi_fake failed: permission_denied 
+[2026-11-23T04:38:17.221Z]  @firebase/database: FIREBASE WARNING: set at /users/alice/entitlements failed: permission_denied 
+[2026-11-23T04:38:17.222Z]  @firebase/database: FIREBASE WARNING: update at /users/alice/entitlements failed: permission_denied 
+[2026-11-23T04:38:17.223Z]  @firebase/database: FIREBASE WARNING: set at /users/alice/entitlements failed: permission_denied 
+[2026-11-23T04:38:17.224Z]  @firebase/database: FIREBASE WARNING: set at /users/alice/payments/pi_fake failed: permission_denied 
+[2026-11-23T04:38:17.231Z]  @firebase/database: FIREBASE WARNING: set at /users/alice/entitlements failed: permission_denied 
+[2026-11-23T04:38:17.233Z]  @firebase/database: FIREBASE WARNING: update at /users/alice/entitlements failed: permission_denied 
+[2026-11-23T04:38:17.234Z]  @firebase/database: FIREBASE WARNING: set at /users/alice/entitlements failed: permission_denied 
+[2026-11-23T04:38:17.235Z]  @firebase/database: FIREBASE WARNING: set at /users/alice/payments/pi_fake failed: permission_denied 
+✔ no client can grant itself a plan or a receipt (74.400917ms)
+✔ other, unverified and anonymous accounts cannot read plans or receipts (49.681125ms)
+[2026-11-23T04:38:17.322Z]  @firebase/database: FIREBASE WARNING: set at /users/alice/preferences/notificationTopics failed: permission_denied 
+[2026-11-23T04:38:17.334Z]  @firebase/database: FIREBASE WARNING: set at /users/alice/preferences/notificationTopics failed: permission_denied 
+[2026-11-23T04:38:17.340Z]  @firebase/database: FIREBASE WARNING: set at /users/alice/preferences/notificationTopics failed: permission_denied 
+[2026-11-23T04:38:17.348Z]  @firebase/database: FIREBASE WARNING: set at /users/alice/preferences/themeMode failed: permission_denied 
+[2026-11-23T04:38:17.358Z]  @firebase/database: FIREBASE WARNING: set at /users/alice/preferences/notificationTopics failed: permission_denied 
+[2026-11-23T04:38:17.366Z]  @firebase/database: FIREBASE WARNING: set at /users/alice/preferences/notificationTopics failed: permission_denied 
+[2026-11-23T04:38:17.377Z]  @firebase/database: FIREBASE WARNING: set at /users/alice/preferences/notificationTopics failed: permission_denied 
+✔ notification topic choices are owner-only booleans (92.131959ms)
+✔ verified owner can write/read/delete the strict probe schema (318.848959ms)
+[2026-11-23T04:38:17.180Z]  @firebase/database: FIREBASE WARNING: set at /users/alice/phase1/probe failed: permission_denied 
+[2026-11-23T04:38:17.189Z]  @firebase/database: FIREBASE WARNING: set at /users/alice/phase1/probe failed: permission_denied 
+[2026-11-23T04:38:17.198Z]  @firebase/database: FIREBASE WARNING: set at /users/alice/phase1/probe failed: permission_denied 
+✔ anonymous, unverified and other-user reads/writes are denied (43.977792ms)
+[2026-11-23T04:38:17.221Z]  @firebase/database: FIREBASE WARNING: set at /users/alice/phase1/probe failed: permission_denied 
+[2026-11-23T04:38:17.222Z]  @firebase/database: FIREBASE WARNING: set at /users/alice/phase1/probe failed: permission_denied 
+[2026-11-23T04:38:17.223Z]  @firebase/database: FIREBASE WARNING: set at /users/alice/entitlements failed: permission_denied 
+✔ unknown fields, future timestamps, entitlements and payment records are denied (26.039875ms)
+✔ owner can roundtrip a small PNG and remove it (108.01425ms)
+✔ other-user, anonymous and unverified image access denied (68.502375ms)
+✔ oversized, wrong-type and out-of-scope image uploads denied (32.704125ms)
+✔ two verified clients of one account observe confirmed name changes (59.779958ms)
+[2026-11-23T04:38:17.517Z]  @firebase/database: FIREBASE WARNING: set at /users/alice/profile/displayName failed: permission_denied 
+[2026-11-23T04:38:17.518Z]  @firebase/database: FIREBASE WARNING: set at /users/alice/profile/displayName failed: permission_denied 
+[2026-11-23T04:38:17.519Z]  @firebase/database: FIREBASE WARNING: set at /users/alice/profile/displayName failed: permission_denied 
+[2026-11-23T04:38:17.520Z]  @firebase/database: FIREBASE WARNING: set at /users/alice/profile/displayName failed: permission_denied 
+[2026-11-23T04:38:17.521Z]  @firebase/database: FIREBASE WARNING: set at /users/alice/profile/displayName failed: permission_denied 
+[2026-11-23T04:38:17.525Z]  @firebase/database: FIREBASE WARNING: set at /users/alice/profile/displayName failed: permission_denied 
+[2026-11-23T04:38:17.526Z]  @firebase/database: FIREBASE WARNING: set at /users/alice/profile failed: permission_denied 
+[2026-11-23T04:38:17.527Z]  @firebase/database: FIREBASE WARNING: set at /users/alice/profile/authOrigin failed: permission_denied 
+[2026-11-23T04:38:17.535Z]  @firebase/database: FIREBASE WARNING: set at /users/alice/profile/displayName failed: permission_denied 
+[2026-11-23T04:38:17.547Z]  @firebase/database: FIREBASE WARNING: set at /users/alice/profile/displayName failed: permission_denied 
+[2026-11-23T04:38:17.554Z]  @firebase/database: FIREBASE WARNING: set at /users/alice/profile/displayName failed: permission_denied 
+✔ profile rules deny other accounts, parent access and malformed fields (60.5645ms)
+✔ verified password-origin account can upload, download and remove its avatar (48.120916ms)
+✔ avatar writes require a trusted original password account even after provider linking (99.588042ms)
+✔ verified owner keeps a sleep diary and focus history (24.768459ms)
+[2026-11-23T04:38:17.744Z]  @firebase/database: FIREBASE WARNING: set at /users/alice/sleep/2026-11-21 failed: permission_denied 
+[2026-11-23T04:38:17.746Z]  @firebase/database: FIREBASE WARNING: set at /users/alice/focus/1795370400000 failed: permission_denied 
+[2026-11-23T04:38:17.753Z]  @firebase/database: FIREBASE WARNING: set at /users/alice/sleep/2026-11-21 failed: permission_denied 
+[2026-11-23T04:38:17.754Z]  @firebase/database: FIREBASE WARNING: set at /users/alice/focus/1795370400000 failed: permission_denied 
+[2026-11-23T04:38:17.763Z]  @firebase/database: FIREBASE WARNING: set at /users/alice/sleep/2026-11-21 failed: permission_denied 
+[2026-11-23T04:38:17.765Z]  @firebase/database: FIREBASE WARNING: set at /users/alice/focus/1795370400000 failed: permission_denied 
+[2026-11-23T04:38:17.771Z]  @firebase/database: FIREBASE WARNING: set at /users/alice/sleep/2026-11-21 failed: permission_denied 
+[2026-11-23T04:38:17.773Z]  @firebase/database: FIREBASE WARNING: set at /users/alice/sleep/2026-11-21 failed: permission_denied 
+[2026-11-23T04:38:17.774Z]  @firebase/database: FIREBASE WARNING: set at /users/alice/sleep/2026-11-21 failed: permission_denied 
+[2026-11-23T04:38:17.775Z]  @firebase/database: FIREBASE WARNING: set at /users/alice/sleep/2026-11-21 failed: permission_denied 
+[2026-11-23T04:38:17.776Z]  @firebase/database: FIREBASE WARNING: set at /users/alice/sleep/2026-11-21 failed: permission_denied 
+[2026-11-23T04:38:17.777Z]  @firebase/database: FIREBASE WARNING: set at /users/alice/sleep/2026-11-21 failed: permission_denied 
+[2026-11-23T04:38:17.777Z]  @firebase/database: FIREBASE WARNING: set at /users/alice/sleep/yesterday failed: permission_denied 
+[2026-11-23T04:38:17.778Z]  @firebase/database: FIREBASE WARNING: set at /users/alice/focus/1795370400000 failed: permission_denied 
+[2026-11-23T04:38:17.779Z]  @firebase/database: FIREBASE WARNING: set at /users/alice/focus/1795370400000 failed: permission_denied 
+[2026-11-23T04:38:17.780Z]  @firebase/database: FIREBASE WARNING: set at /users/alice/focus/1795370400000 failed: permission_denied 
+[2026-11-23T04:38:17.781Z]  @firebase/database: FIREBASE WARNING: set at /users/alice/focus/1795370400000 failed: permission_denied 
+[2026-11-23T04:38:17.781Z]  @firebase/database: FIREBASE WARNING: set at /users/alice/focus/1795370400000 failed: permission_denied 
+[2026-11-23T04:38:17.782Z]  @firebase/database: FIREBASE WARNING: set at /users/alice/focus/session-one failed: permission_denied 
+✔ sleep and focus deny other accounts and malformed rows (55.233333ms)
+✔ two clients read the same totals and repeat writes are idempotent (325.6575ms)
+[2026-11-23T04:38:17.189Z]  @firebase/database: FIREBASE WARNING: set at /users/run-owner/runs/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa failed: permission_denied 
+[2026-11-23T04:38:17.191Z]  @firebase/database: FIREBASE WARNING: set at /users/run-owner/runs/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa failed: permission_denied 
+[2026-11-23T04:38:17.201Z]  @firebase/database: FIREBASE WARNING: set at /users/run-owner/runs/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa failed: permission_denied 
+[2026-11-23T04:38:17.202Z]  @firebase/database: FIREBASE WARNING: set at /users/run-owner/runs/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa failed: permission_denied 
+[2026-11-23T04:38:17.213Z]  @firebase/database: FIREBASE WARNING: set at /users/run-owner/runs/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa failed: permission_denied 
+[2026-11-23T04:38:17.214Z]  @firebase/database: FIREBASE WARNING: set at /users/run-owner/runs/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa failed: permission_denied 
+✔ guest, unverified owner and other account cannot read or change saved runs (53.863666ms)
+[2026-11-23T04:38:17.231Z]  @firebase/database: FIREBASE WARNING: set at /users/run-owner/runs/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa failed: permission_denied 
+[2026-11-23T04:38:17.233Z]  @firebase/database: FIREBASE WARNING: set at /users/run-owner/runs/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa failed: permission_denied 
+[2026-11-23T04:38:17.235Z]  @firebase/database: FIREBASE WARNING: set at /users/run-owner/runs/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa failed: permission_denied 
+[2026-11-23T04:38:17.237Z]  @firebase/database: FIREBASE WARNING: set at /users/run-owner/runs/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa failed: permission_denied 
+[2026-11-23T04:38:17.239Z]  @firebase/database: FIREBASE WARNING: set at /users/run-owner/runs/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa failed: permission_denied 
+[2026-11-23T04:38:17.241Z]  @firebase/database: FIREBASE WARNING: set at /users/run-owner/runs/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa failed: permission_denied 
+[2026-11-23T04:38:17.243Z]  @firebase/database: FIREBASE WARNING: set at /users/run-owner/runs/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa failed: permission_denied 
+[2026-11-23T04:38:17.244Z]  @firebase/database: FIREBASE WARNING: set at /users/run-owner/runs/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa failed: permission_denied 
+[2026-11-23T04:38:17.246Z]  @firebase/database: FIREBASE WARNING: set at /users/run-owner/runs/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa failed: permission_denied 
+[2026-11-23T04:38:17.254Z]  @firebase/database: FIREBASE WARNING: set at /users/run-owner/runs/bad-id failed: permission_denied 
+✔ coordinates, unexpected fields and malformed totals are rejected (39.193167ms)
+[2026-11-23T04:38:17.277Z]  @firebase/database: FIREBASE WARNING: set at /users/run-owner/runs/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa failed: permission_denied 
+[2026-11-23T04:38:17.284Z]  @firebase/database: FIREBASE WARNING: set at /users/run-owner/runs/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa failed: permission_denied 
+[2026-11-23T04:38:17.285Z]  @firebase/database: FIREBASE WARNING: set at /users/run-owner/runs/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa failed: permission_denied 
+✔ deletion removes the totals and prevents a stale retry from restoring them (31.199625ms)
+ℹ tests 21
+ℹ suites 0
+ℹ pass 21
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1084.377041
+✔  Script exited successfully (code 0)
+i  emulators: Shutting down emulators.
+i  functions: Stopping Functions Emulator
+i  database: Stopping Database Emulator
+i  auth: Stopping Authentication Emulator
+i  storage: Stopping Storage Emulator
+i  eventarc: Stopping Eventarc Emulator
+i  tasks: Stopping Cloud Tasks Emulator
+i  hub: Stopping emulator hub
+i  logging: Stopping Logging Emulator
+WARNING: A restricted method in java.lang.System has been called
+WARNING: java.lang.System::load has been called by net.rubygrapefruit.platform.internal.NativeLibraryLoader in an unnamed module (file:~/.gradle/wrapper/dists/gradle-9.3.1-all/9ot9r568e8zfvvd4mn8rbu1j0/gradle-9.3.1/lib/native-platform-0.22-milestone-29.jar)
+WARNING: Use --enable-native-access=ALL-UNNAMED to avoid a warning for callers in this module
+WARNING: Restricted methods will be blocked in a future release unless native access is enabled
+
+> Task :gradle:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :gradle:pluginDescriptors UP-TO-DATE
+> Task :gradle:processResources UP-TO-DATE
+
+> Task :gradle:compileKotlin
+w: file://~/develop/flutter/packages/flutter_tools/gradle/src/main/kotlin/Deeplink.kt:13:5 This annotation is currently applied to the value parameter only, but in the future it will also be applied to property.
+- To opt in to applying to both value parameter and property, add '-Xannotation-default-target=param-property' to your compiler arguments.
+- To keep applying to the value parameter only, use the '@param:' annotation target.
+
+See https://youtrack.jetbrains.com/issue/KT-73255 for more details.
+w: file://~/develop/flutter/packages/flutter_tools/gradle/src/main/kotlin/Deeplink.kt:15:5 This annotation is currently applied to the value parameter only, but in the future it will also be applied to property.
+- To opt in to applying to both value parameter and property, add '-Xannotation-default-target=param-property' to your compiler arguments.
+- To keep applying to the value parameter only, use the '@param:' annotation target.
+
+See https://youtrack.jetbrains.com/issue/KT-73255 for more details.
+w: file://~/develop/flutter/packages/flutter_tools/gradle/src/main/kotlin/Deeplink.kt:17:5 This annotation is currently applied to the value parameter only, but in the future it will also be applied to property.
+- To opt in to applying to both value parameter and property, add '-Xannotation-default-target=param-property' to your compiler arguments.
+- To keep applying to the value parameter only, use the '@param:' annotation target.
+
+See https://youtrack.jetbrains.com/issue/KT-73255 for more details.
+w: file://~/develop/flutter/packages/flutter_tools/gradle/src/main/kotlin/Deeplink.kt:19:5 This annotation is currently applied to the value parameter only, but in the future it will also be applied to property.
+- To opt in to applying to both value parameter and property, add '-Xannotation-default-target=param-property' to your compiler arguments.
+- To keep applying to the value parameter only, use the '@param:' annotation target.
+
+See https://youtrack.jetbrains.com/issue/KT-73255 for more details.
+w: file://~/develop/flutter/packages/flutter_tools/gradle/src/main/kotlin/FlutterPlugin.kt:12:8 'interface ApkVariant : Any, BaseVariant, InstallableVariant, AndroidArtifactVariant, InternalBaseVariant' is deprecated. Deprecated in Java.
+w: file://~/develop/flutter/packages/flutter_tools/gradle/src/main/kotlin/FlutterPlugin.kt:664:69 'interface ApkVariant : Any, BaseVariant, InstallableVariant, AndroidArtifactVariant, InternalBaseVariant' is deprecated. Deprecated in Java.
+w: file://~/develop/flutter/packages/flutter_tools/gradle/src/main/kotlin/FlutterPluginUtils.kt:766:29 Condition is always 'true'.
+w: file://~/develop/flutter/packages/flutter_tools/gradle/src/main/kotlin/plugins/PluginHandler.kt:168:70 Unchecked cast of 'NamedDomainObjectContainer<out BuildType>' to 'NamedDomainObjectContainer<BuildType>'.
+w: file://~/develop/flutter/packages/flutter_tools/gradle/src/main/kotlin/plugins/PluginHandler.kt:169:75 Unchecked cast of 'NamedDomainObjectContainer<out BuildType>' to 'NamedDomainObjectContainer<BuildType>'.
+
+> Task :gradle:compileJava NO-SOURCE
+> Task :gradle:compileGroovy NO-SOURCE
+> Task :gradle:classes UP-TO-DATE
+> Task :gradle:jar UP-TO-DATE
+
+> Configure project :app
+WARNING: The option setting 'android.builtInKotlin=false' is deprecated.
+The current default is 'true'.
+It will be removed in version 10.0 of the Android Gradle plugin.
+WARNING: The option setting 'android.newDsl=false' is deprecated.
+The current default is 'true'.
+It will be removed in version 10.0 of the Android Gradle plugin.
+w: ⚠️ Deprecated 'org.jetbrains.kotlin.android' plugin usage
+The 'org.jetbrains.kotlin.android' plugin in project ':app' is no longer required for Kotlin support since AGP 9.0.
+Solution: Remove both `android.builtInKotlin=true` and `android.newDsl=false` from `gradle.properties`, then migrate to built-in Kotlin.
+See https://kotl.in/gradle/agp-built-in-kotlin for more details.
+
+
+> Configure project :firebase_auth
+w: ⚠️ Deprecated 'org.jetbrains.kotlin.android' plugin usage
+The 'org.jetbrains.kotlin.android' plugin in project ':firebase_auth' is no longer required for Kotlin support since AGP 9.0.
+Solution: Remove both `android.builtInKotlin=true` and `android.newDsl=false` from `gradle.properties`, then migrate to built-in Kotlin.
+See https://kotl.in/gradle/agp-built-in-kotlin for more details.
+
+
+> Configure project :firebase_core
+w: ⚠️ Deprecated 'org.jetbrains.kotlin.android' plugin usage
+The 'org.jetbrains.kotlin.android' plugin in project ':firebase_core' is no longer required for Kotlin support since AGP 9.0.
+Solution: Remove both `android.builtInKotlin=true` and `android.newDsl=false` from `gradle.properties`, then migrate to built-in Kotlin.
+See https://kotl.in/gradle/agp-built-in-kotlin for more details.
+
+
+> Configure project :firebase_database
+w: ⚠️ Deprecated 'org.jetbrains.kotlin.android' plugin usage
+The 'org.jetbrains.kotlin.android' plugin in project ':firebase_database' is no longer required for Kotlin support since AGP 9.0.
+Solution: Remove both `android.builtInKotlin=true` and `android.newDsl=false` from `gradle.properties`, then migrate to built-in Kotlin.
+See https://kotl.in/gradle/agp-built-in-kotlin for more details.
+
+
+> Configure project :firebase_messaging
+w: ⚠️ Deprecated 'org.jetbrains.kotlin.android' plugin usage
+The 'org.jetbrains.kotlin.android' plugin in project ':firebase_messaging' is no longer required for Kotlin support since AGP 9.0.
+Solution: Remove both `android.builtInKotlin=true` and `android.newDsl=false` from `gradle.properties`, then migrate to built-in Kotlin.
+See https://kotl.in/gradle/agp-built-in-kotlin for more details.
+
+
+> Configure project :firebase_storage
+w: ⚠️ Deprecated 'org.jetbrains.kotlin.android' plugin usage
+The 'org.jetbrains.kotlin.android' plugin in project ':firebase_storage' is no longer required for Kotlin support since AGP 9.0.
+Solution: Remove both `android.builtInKotlin=true` and `android.newDsl=false` from `gradle.properties`, then migrate to built-in Kotlin.
+See https://kotl.in/gradle/agp-built-in-kotlin for more details.
+
+
+> Configure project :flutter_plugin_android_lifecycle
+w: ⚠️ Deprecated 'org.jetbrains.kotlin.android' plugin usage
+The 'org.jetbrains.kotlin.android' plugin in project ':flutter_plugin_android_lifecycle' is no longer required for Kotlin support since AGP 9.0.
+Solution: Remove both `android.builtInKotlin=true` and `android.newDsl=false` from `gradle.properties`, then migrate to built-in Kotlin.
+See https://kotl.in/gradle/agp-built-in-kotlin for more details.
+
+
+> Configure project :geolocator_android
+w: ⚠️ Deprecated 'org.jetbrains.kotlin.android' plugin usage
+The 'org.jetbrains.kotlin.android' plugin in project ':geolocator_android' is no longer required for Kotlin support since AGP 9.0.
+Solution: Remove both `android.builtInKotlin=true` and `android.newDsl=false` from `gradle.properties`, then migrate to built-in Kotlin.
+See https://kotl.in/gradle/agp-built-in-kotlin for more details.
+
+
+> Configure project :google_maps_flutter_android
+w: ⚠️ Deprecated 'org.jetbrains.kotlin.android' plugin usage
+The 'org.jetbrains.kotlin.android' plugin in project ':google_maps_flutter_android' is no longer required for Kotlin support since AGP 9.0.
+Solution: Remove both `android.builtInKotlin=true` and `android.newDsl=false` from `gradle.properties`, then migrate to built-in Kotlin.
+See https://kotl.in/gradle/agp-built-in-kotlin for more details.
+
+
+> Configure project :google_sign_in_android
+w: ⚠️ Deprecated 'org.jetbrains.kotlin.android' plugin usage
+The 'org.jetbrains.kotlin.android' plugin in project ':google_sign_in_android' is no longer required for Kotlin support since AGP 9.0.
+Solution: Remove both `android.builtInKotlin=true` and `android.newDsl=false` from `gradle.properties`, then migrate to built-in Kotlin.
+See https://kotl.in/gradle/agp-built-in-kotlin for more details.
+
+
+> Configure project :image_picker_android
+w: ⚠️ Deprecated 'org.jetbrains.kotlin.android' plugin usage
+The 'org.jetbrains.kotlin.android' plugin in project ':image_picker_android' is no longer required for Kotlin support since AGP 9.0.
+Solution: Remove both `android.builtInKotlin=true` and `android.newDsl=false` from `gradle.properties`, then migrate to built-in Kotlin.
+See https://kotl.in/gradle/agp-built-in-kotlin for more details.
+
+
+> Configure project :integration_test
+w: ⚠️ Deprecated 'org.jetbrains.kotlin.android' plugin usage
+The 'org.jetbrains.kotlin.android' plugin in project ':integration_test' is no longer required for Kotlin support since AGP 9.0.
+Solution: Remove both `android.builtInKotlin=true` and `android.newDsl=false` from `gradle.properties`, then migrate to built-in Kotlin.
+See https://kotl.in/gradle/agp-built-in-kotlin for more details.
+
+
+> Configure project :jni
+w: ⚠️ Deprecated 'org.jetbrains.kotlin.android' plugin usage
+The 'org.jetbrains.kotlin.android' plugin in project ':jni' is no longer required for Kotlin support since AGP 9.0.
+Solution: Remove both `android.builtInKotlin=true` and `android.newDsl=false` from `gradle.properties`, then migrate to built-in Kotlin.
+See https://kotl.in/gradle/agp-built-in-kotlin for more details.
+
+
+> Configure project :jni_flutter
+w: ⚠️ Deprecated 'org.jetbrains.kotlin.android' plugin usage
+The 'org.jetbrains.kotlin.android' plugin in project ':jni_flutter' is no longer required for Kotlin support since AGP 9.0.
+Solution: Remove both `android.builtInKotlin=true` and `android.newDsl=false` from `gradle.properties`, then migrate to built-in Kotlin.
+See https://kotl.in/gradle/agp-built-in-kotlin for more details.
+
+
+> Configure project :package_info_plus
+w: ⚠️ Deprecated 'org.jetbrains.kotlin.android' plugin usage
+The 'org.jetbrains.kotlin.android' plugin in project ':package_info_plus' is no longer required for Kotlin support since AGP 9.0.
+Solution: Remove both `android.builtInKotlin=true` and `android.newDsl=false` from `gradle.properties`, then migrate to built-in Kotlin.
+See https://kotl.in/gradle/agp-built-in-kotlin for more details.
+
+
+> Configure project :sensors_plus
+w: ⚠️ Deprecated 'org.jetbrains.kotlin.android' plugin usage
+The 'org.jetbrains.kotlin.android' plugin in project ':sensors_plus' is no longer required for Kotlin support since AGP 9.0.
+Solution: Remove both `android.builtInKotlin=true` and `android.newDsl=false` from `gradle.properties`, then migrate to built-in Kotlin.
+See https://kotl.in/gradle/agp-built-in-kotlin for more details.
+
+
+> Configure project :shared_preferences_android
+w: ⚠️ Deprecated 'org.jetbrains.kotlin.android' plugin usage
+The 'org.jetbrains.kotlin.android' plugin in project ':shared_preferences_android' is no longer required for Kotlin support since AGP 9.0.
+Solution: Remove both `android.builtInKotlin=true` and `android.newDsl=false` from `gradle.properties`, then migrate to built-in Kotlin.
+See https://kotl.in/gradle/agp-built-in-kotlin for more details.
+
+
+> Configure project :stripe_android
+w: ⚠️ Deprecated 'org.jetbrains.kotlin.android' plugin usage
+The 'org.jetbrains.kotlin.android' plugin in project ':stripe_android' is no longer required for Kotlin support since AGP 9.0.
+Solution: Remove both `android.builtInKotlin=true` and `android.newDsl=false` from `gradle.properties`, then migrate to built-in Kotlin.
+See https://kotl.in/gradle/agp-built-in-kotlin for more details.
+
+
+> Configure project :url_launcher_android
+w: ⚠️ Deprecated 'org.jetbrains.kotlin.android' plugin usage
+The 'org.jetbrains.kotlin.android' plugin in project ':url_launcher_android' is no longer required for Kotlin support since AGP 9.0.
+Solution: Remove both `android.builtInKotlin=true` and `android.newDsl=false` from `gradle.properties`, then migrate to built-in Kotlin.
+See https://kotl.in/gradle/agp-built-in-kotlin for more details.
+
+WARNING: Your app uses the following plugins that apply Kotlin Gradle Plugin (KGP): firebase_auth, firebase_core, firebase_database, firebase_storage
+Future versions of Flutter will fail to build if your app uses plugins that apply KGP.
+
+Please check the changelogs of these plugins and upgrade to a version that supports Built-in Kotlin.
+If no such version exists, report the issue to the plugin. If necessary, here is a guide on filing
+an issue against a plugin: https://docs.flutter.dev/release/breaking-changes/migrate-to-built-in-kotlin/for-app-developers#report-incompatible-kotlin-gradle-plugin-usage-to-plugin-authors
+
+If you are a plugin author, please migrate your plugin to Built-in Kotlin using this guide: https://docs.flutter.dev/release/breaking-changes/migrate-to-built-in-kotlin/for-plugin-authors
+
+> Task :app:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :app:cleanMergeDebugAssets
+> Task :app:compileFlutterBuildDebug
+> Task :app:generateDebugAssets UP-TO-DATE
+> Task :app:validateCompileSdkVersion
+> Task :app:preBuild
+> Task :app:preDebugBuild
+> Task :firebase_auth:generateDebugAssets UP-TO-DATE
+> Task :firebase_auth:preBuild UP-TO-DATE
+> Task :firebase_auth:preDebugBuild UP-TO-DATE
+> Task :firebase_auth:mergeDebugAssets UP-TO-DATE
+> Task :firebase_core:generateDebugAssets UP-TO-DATE
+> Task :firebase_core:preBuild UP-TO-DATE
+> Task :firebase_core:preDebugBuild UP-TO-DATE
+> Task :firebase_core:mergeDebugAssets UP-TO-DATE
+> Task :firebase_database:generateDebugAssets UP-TO-DATE
+> Task :firebase_database:preBuild UP-TO-DATE
+> Task :firebase_database:preDebugBuild UP-TO-DATE
+> Task :firebase_database:mergeDebugAssets UP-TO-DATE
+> Task :firebase_messaging:generateDebugAssets UP-TO-DATE
+> Task :firebase_messaging:preBuild UP-TO-DATE
+> Task :firebase_messaging:preDebugBuild UP-TO-DATE
+> Task :firebase_messaging:mergeDebugAssets UP-TO-DATE
+> Task :firebase_storage:generateDebugAssets UP-TO-DATE
+> Task :firebase_storage:preBuild UP-TO-DATE
+> Task :firebase_storage:preDebugBuild UP-TO-DATE
+> Task :firebase_storage:mergeDebugAssets UP-TO-DATE
+> Task :flutter_plugin_android_lifecycle:generateDebugAssets UP-TO-DATE
+> Task :flutter_plugin_android_lifecycle:preBuild UP-TO-DATE
+> Task :flutter_plugin_android_lifecycle:preDebugBuild UP-TO-DATE
+> Task :flutter_plugin_android_lifecycle:mergeDebugAssets UP-TO-DATE
+> Task :geolocator_android:generateDebugAssets UP-TO-DATE
+> Task :geolocator_android:preBuild UP-TO-DATE
+> Task :geolocator_android:preDebugBuild UP-TO-DATE
+> Task :geolocator_android:mergeDebugAssets UP-TO-DATE
+> Task :google_maps_flutter_android:generateDebugAssets UP-TO-DATE
+> Task :google_maps_flutter_android:preBuild UP-TO-DATE
+> Task :google_maps_flutter_android:preDebugBuild UP-TO-DATE
+> Task :google_maps_flutter_android:mergeDebugAssets UP-TO-DATE
+> Task :google_sign_in_android:generateDebugAssets UP-TO-DATE
+> Task :google_sign_in_android:preBuild UP-TO-DATE
+> Task :google_sign_in_android:preDebugBuild UP-TO-DATE
+> Task :google_sign_in_android:mergeDebugAssets UP-TO-DATE
+> Task :image_picker_android:generateDebugAssets UP-TO-DATE
+> Task :image_picker_android:preBuild UP-TO-DATE
+> Task :image_picker_android:preDebugBuild UP-TO-DATE
+> Task :image_picker_android:mergeDebugAssets UP-TO-DATE
+> Task :integration_test:generateDebugAssets UP-TO-DATE
+> Task :integration_test:preBuild UP-TO-DATE
+> Task :integration_test:preDebugBuild UP-TO-DATE
+> Task :integration_test:mergeDebugAssets UP-TO-DATE
+> Task :jni:generateDebugAssets UP-TO-DATE
+> Task :jni:preBuild UP-TO-DATE
+> Task :jni:preDebugBuild UP-TO-DATE
+> Task :jni:mergeDebugAssets UP-TO-DATE
+> Task :jni_flutter:generateDebugAssets UP-TO-DATE
+> Task :jni_flutter:preBuild UP-TO-DATE
+> Task :jni_flutter:preDebugBuild UP-TO-DATE
+> Task :jni_flutter:mergeDebugAssets UP-TO-DATE
+> Task :package_info_plus:generateDebugAssets UP-TO-DATE
+> Task :package_info_plus:preBuild UP-TO-DATE
+> Task :package_info_plus:preDebugBuild UP-TO-DATE
+> Task :package_info_plus:mergeDebugAssets UP-TO-DATE
+> Task :sensors_plus:generateDebugAssets UP-TO-DATE
+> Task :sensors_plus:preBuild UP-TO-DATE
+> Task :sensors_plus:preDebugBuild UP-TO-DATE
+> Task :sensors_plus:mergeDebugAssets UP-TO-DATE
+> Task :shared_preferences_android:generateDebugAssets UP-TO-DATE
+> Task :shared_preferences_android:preBuild UP-TO-DATE
+> Task :shared_preferences_android:preDebugBuild UP-TO-DATE
+> Task :shared_preferences_android:mergeDebugAssets UP-TO-DATE
+> Task :stripe_android:generateDebugAssets UP-TO-DATE
+> Task :stripe_android:preBuild UP-TO-DATE
+> Task :stripe_android:preDebugBuild UP-TO-DATE
+> Task :stripe_android:mergeDebugAssets UP-TO-DATE
+> Task :url_launcher_android:generateDebugAssets UP-TO-DATE
+> Task :url_launcher_android:preBuild UP-TO-DATE
+> Task :url_launcher_android:preDebugBuild UP-TO-DATE
+> Task :url_launcher_android:mergeDebugAssets UP-TO-DATE
+> Task :app:mergeDebugAssets
+> Task :app:copyFlutterAssetsDebug
+> Task :app:generateDebugResources UP-TO-DATE
+> Task :app:packageDebugResources UP-TO-DATE
+> Task :firebase_auth:processDebugNavigationResources UP-TO-DATE
+> Task :firebase_core:processDebugNavigationResources UP-TO-DATE
+> Task :firebase_database:processDebugNavigationResources UP-TO-DATE
+> Task :firebase_messaging:processDebugNavigationResources UP-TO-DATE
+> Task :firebase_storage:processDebugNavigationResources UP-TO-DATE
+> Task :flutter_plugin_android_lifecycle:processDebugNavigationResources UP-TO-DATE
+> Task :geolocator_android:processDebugNavigationResources UP-TO-DATE
+> Task :google_maps_flutter_android:processDebugNavigationResources UP-TO-DATE
+> Task :google_sign_in_android:processDebugNavigationResources UP-TO-DATE
+> Task :image_picker_android:processDebugNavigationResources UP-TO-DATE
+> Task :integration_test:processDebugNavigationResources UP-TO-DATE
+> Task :jni:processDebugNavigationResources UP-TO-DATE
+> Task :jni_flutter:processDebugNavigationResources UP-TO-DATE
+> Task :package_info_plus:processDebugNavigationResources UP-TO-DATE
+> Task :sensors_plus:processDebugNavigationResources UP-TO-DATE
+> Task :shared_preferences_android:processDebugNavigationResources UP-TO-DATE
+> Task :stripe_android:processDebugNavigationResources UP-TO-DATE
+> Task :url_launcher_android:processDebugNavigationResources UP-TO-DATE
+> Task :app:processDebugNavigationResources UP-TO-DATE
+> Task :app:parseDebugLocalResources UP-TO-DATE
+> Task :app:generateDebugRFile UP-TO-DATE
+> Task :firebase_auth:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :firebase_auth:generateDebugBuildConfig UP-TO-DATE
+> Task :firebase_auth:generateDebugResources UP-TO-DATE
+> Task :firebase_auth:packageDebugResources UP-TO-DATE
+> Task :firebase_auth:parseDebugLocalResources UP-TO-DATE
+> Task :firebase_auth:generateDebugRFile UP-TO-DATE
+> Task :firebase_core:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :firebase_core:generateDebugBuildConfig UP-TO-DATE
+> Task :firebase_core:generateDebugResources UP-TO-DATE
+> Task :firebase_core:packageDebugResources UP-TO-DATE
+> Task :firebase_core:parseDebugLocalResources UP-TO-DATE
+> Task :firebase_core:generateDebugRFile UP-TO-DATE
+> Task :firebase_core:javaPreCompileDebug UP-TO-DATE
+> Task :firebase_auth:javaPreCompileDebug UP-TO-DATE
+> Task :firebase_database:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :firebase_database:generateDebugBuildConfig UP-TO-DATE
+> Task :firebase_database:generateDebugResources UP-TO-DATE
+> Task :firebase_database:packageDebugResources UP-TO-DATE
+> Task :firebase_database:parseDebugLocalResources UP-TO-DATE
+> Task :firebase_database:generateDebugRFile UP-TO-DATE
+> Task :firebase_database:javaPreCompileDebug UP-TO-DATE
+> Task :firebase_messaging:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :firebase_messaging:generateDebugBuildConfig UP-TO-DATE
+> Task :firebase_messaging:generateDebugResources UP-TO-DATE
+> Task :firebase_messaging:packageDebugResources UP-TO-DATE
+> Task :firebase_messaging:parseDebugLocalResources UP-TO-DATE
+> Task :firebase_messaging:generateDebugRFile UP-TO-DATE
+> Task :firebase_messaging:javaPreCompileDebug UP-TO-DATE
+> Task :firebase_storage:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :firebase_storage:generateDebugBuildConfig UP-TO-DATE
+> Task :firebase_storage:generateDebugResources UP-TO-DATE
+> Task :firebase_storage:packageDebugResources UP-TO-DATE
+> Task :firebase_storage:parseDebugLocalResources UP-TO-DATE
+> Task :firebase_storage:generateDebugRFile UP-TO-DATE
+> Task :firebase_storage:javaPreCompileDebug UP-TO-DATE
+> Task :flutter_plugin_android_lifecycle:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :flutter_plugin_android_lifecycle:generateDebugResources UP-TO-DATE
+> Task :flutter_plugin_android_lifecycle:packageDebugResources UP-TO-DATE
+> Task :flutter_plugin_android_lifecycle:parseDebugLocalResources UP-TO-DATE
+> Task :flutter_plugin_android_lifecycle:generateDebugRFile UP-TO-DATE
+> Task :flutter_plugin_android_lifecycle:compileDebugKotlin NO-SOURCE
+> Task :flutter_plugin_android_lifecycle:javaPreCompileDebug UP-TO-DATE
+> Task :flutter_plugin_android_lifecycle:compileDebugJavaWithJavac
+> Task :flutter_plugin_android_lifecycle:bundleLibCompileToJarDebug UP-TO-DATE
+> Task :geolocator_android:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :geolocator_android:generateDebugResources UP-TO-DATE
+> Task :geolocator_android:packageDebugResources UP-TO-DATE
+> Task :geolocator_android:parseDebugLocalResources UP-TO-DATE
+> Task :geolocator_android:generateDebugRFile UP-TO-DATE
+> Task :geolocator_android:compileDebugKotlin NO-SOURCE
+> Task :geolocator_android:javaPreCompileDebug UP-TO-DATE
+
+> Task :geolocator_android:compileDebugJavaWithJavac
+Java compiler version 24 has deprecated support for compiling with source/target version 8.
+Try one of the following options:
+    1. [Recommended] Use Java toolchain with a lower language version
+    2. Set a higher source/target version
+    3. Use a lower version of the JDK running the build (if you're not using Java toolchain)
+For more details on how to configure these settings, see https://developer.android.com/build/jdks.
+To suppress this warning, set android.javaCompile.suppressSourceTargetDeprecationWarning=true in gradle.properties.
+warning: [options] source value 8 is obsolete and will be removed in a future release
+warning: [options] target value 8 is obsolete and will be removed in a future release
+warning: [options] To suppress warnings about obsolete options, use -Xlint:-options.
+Note: ~/.pub-cache/hosted/pub.dev/geolocator_android-5.2.1/android/src/main/java/com/baseflow/geolocator/location/LocationMapper.java uses or overrides a deprecated API.
+Note: Recompile with -Xlint:deprecation for details.
+3 warnings
+
+> Task :google_maps_flutter_android:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :google_maps_flutter_android:generateDebugResources UP-TO-DATE
+> Task :google_maps_flutter_android:packageDebugResources UP-TO-DATE
+> Task :geolocator_android:bundleLibCompileToJarDebug
+> Task :google_maps_flutter_android:parseDebugLocalResources UP-TO-DATE
+> Task :google_maps_flutter_android:generateDebugRFile UP-TO-DATE
+> Task :google_maps_flutter_android:javaPreCompileDebug UP-TO-DATE
+> Task :google_sign_in_android:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :google_sign_in_android:generateDebugResources UP-TO-DATE
+> Task :google_sign_in_android:packageDebugResources UP-TO-DATE
+> Task :google_sign_in_android:parseDebugLocalResources UP-TO-DATE
+> Task :google_sign_in_android:generateDebugRFile UP-TO-DATE
+> Task :google_sign_in_android:javaPreCompileDebug UP-TO-DATE
+> Task :image_picker_android:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :image_picker_android:generateDebugResources UP-TO-DATE
+> Task :image_picker_android:packageDebugResources UP-TO-DATE
+> Task :image_picker_android:parseDebugLocalResources UP-TO-DATE
+> Task :image_picker_android:generateDebugRFile UP-TO-DATE
+
+> Task :firebase_core:compileDebugKotlin
+w: file://~/.pub-cache/hosted/pub.dev/firebase_core-5.1.0/android/src/main/kotlin/io/flutter/plugins/firebase/core/FlutterFirebaseCorePlugin.kt:40:33 Elvis operator (?:) always returns the left operand of non-nullable type 'String'.
+w: file://~/.pub-cache/hosted/pub.dev/firebase_core-5.1.0/android/src/main/kotlin/io/flutter/plugins/firebase/core/FlutterFirebaseCorePlugin.kt:207:21 'fun setDataCollectionDefaultEnabled(p0: Boolean): Unit' is deprecated. Deprecated in Java.
+
+> Task :firebase_core:compileDebugJavaWithJavac
+> Task :image_picker_android:javaPreCompileDebug UP-TO-DATE
+> Task :integration_test:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :integration_test:generateDebugResources UP-TO-DATE
+> Task :integration_test:packageDebugResources UP-TO-DATE
+> Task :firebase_core:bundleLibCompileToJarDebug
+> Task :integration_test:parseDebugLocalResources UP-TO-DATE
+> Task :firebase_messaging:compileDebugKotlin NO-SOURCE
+> Task :image_picker_android:compileDebugKotlin
+
+> Task :firebase_messaging:compileDebugJavaWithJavac
+Note: Some input files use or override a deprecated API.
+Note: Recompile with -Xlint:deprecation for details.
+
+> Task :firebase_messaging:bundleLibCompileToJarDebug
+> Task :google_sign_in_android:compileDebugKotlin
+> Task :image_picker_android:compileDebugJavaWithJavac
+> Task :google_sign_in_android:compileDebugJavaWithJavac NO-SOURCE
+> Task :google_sign_in_android:bundleLibCompileToJarDebug UP-TO-DATE
+> Task :integration_test:generateDebugRFile UP-TO-DATE
+> Task :integration_test:compileDebugKotlin NO-SOURCE
+> Task :integration_test:javaPreCompileDebug UP-TO-DATE
+> Task :image_picker_android:bundleLibCompileToJarDebug
+> Task :integration_test:compileDebugJavaWithJavac
+> Task :jni:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :jni:generateDebugResources UP-TO-DATE
+> Task :integration_test:bundleLibCompileToJarDebug
+> Task :jni:packageDebugResources UP-TO-DATE
+> Task :jni:parseDebugLocalResources UP-TO-DATE
+> Task :jni:generateDebugRFile UP-TO-DATE
+> Task :jni:compileDebugKotlin NO-SOURCE
+> Task :jni:javaPreCompileDebug UP-TO-DATE
+> Task :jni:compileDebugJavaWithJavac
+> Task :jni:bundleLibCompileToJarDebug UP-TO-DATE
+> Task :jni_flutter:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :jni_flutter:generateDebugResources UP-TO-DATE
+> Task :jni_flutter:packageDebugResources UP-TO-DATE
+> Task :jni_flutter:parseDebugLocalResources UP-TO-DATE
+> Task :jni_flutter:generateDebugRFile UP-TO-DATE
+> Task :jni_flutter:compileDebugKotlin NO-SOURCE
+> Task :jni_flutter:javaPreCompileDebug UP-TO-DATE
+> Task :jni_flutter:compileDebugJavaWithJavac
+> Task :jni_flutter:bundleLibCompileToJarDebug UP-TO-DATE
+> Task :package_info_plus:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :package_info_plus:generateDebugResources UP-TO-DATE
+> Task :package_info_plus:packageDebugResources UP-TO-DATE
+> Task :package_info_plus:parseDebugLocalResources UP-TO-DATE
+> Task :package_info_plus:generateDebugRFile UP-TO-DATE
+> Task :package_info_plus:javaPreCompileDebug UP-TO-DATE
+> Task :sensors_plus:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :sensors_plus:generateDebugResources UP-TO-DATE
+> Task :sensors_plus:packageDebugResources UP-TO-DATE
+> Task :sensors_plus:parseDebugLocalResources UP-TO-DATE
+> Task :sensors_plus:generateDebugRFile UP-TO-DATE
+> Task :sensors_plus:javaPreCompileDebug UP-TO-DATE
+> Task :shared_preferences_android:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :shared_preferences_android:generateDebugResources UP-TO-DATE
+> Task :shared_preferences_android:packageDebugResources UP-TO-DATE
+> Task :shared_preferences_android:parseDebugLocalResources UP-TO-DATE
+> Task :shared_preferences_android:generateDebugRFile UP-TO-DATE
+> Task :shared_preferences_android:javaPreCompileDebug UP-TO-DATE
+> Task :stripe_android:checkKotlinGradlePluginConfigurationErrors SKIPPED
+
+> Task :firebase_database:compileDebugKotlin
+w: file://~/.pub-cache/hosted/pub.dev/firebase_database-13.0.1/android/src/main/kotlin/io/flutter/plugins/firebase/database/ChildEventsProxy.kt:17:1 '@JvmOverloads' annotation has no effect for methods without default arguments.
+w: file://~/.pub-cache/hosted/pub.dev/firebase_database-13.0.1/android/src/main/kotlin/io/flutter/plugins/firebase/database/EventStreamHandler.kt:21:1 '@JvmOverloads' annotation has no effect for methods without default arguments.
+w: file://~/.pub-cache/hosted/pub.dev/firebase_database-13.0.1/android/src/main/kotlin/io/flutter/plugins/firebase/database/EventsProxy.kt:18:1 '@JvmOverloads' annotation has no effect for methods without default arguments.
+w: file://~/.pub-cache/hosted/pub.dev/firebase_database-13.0.1/android/src/main/kotlin/io/flutter/plugins/firebase/database/FirebaseDatabasePlugin.kt:479:20 Unnecessary safe call on a non-null receiver of type 'EventChannel.StreamHandler'.
+w: file://~/.pub-cache/hosted/pub.dev/firebase_database-13.0.1/android/src/main/kotlin/io/flutter/plugins/firebase/database/FirebaseDatabasePlugin.kt:672:73 Unnecessary safe call on a non-null receiver of type 'Any'.
+w: file://~/.pub-cache/hosted/pub.dev/firebase_database-13.0.1/android/src/main/kotlin/io/flutter/plugins/firebase/database/FirebaseDatabasePlugin.kt:732:73 Unnecessary safe call on a non-null receiver of type 'Any'.
+w: file://~/.pub-cache/hosted/pub.dev/firebase_database-13.0.1/android/src/main/kotlin/io/flutter/plugins/firebase/database/FlutterFirebaseDatabaseException.kt:54:34 Elvis operator (?:) always returns the left operand of non-nullable type 'String'.
+w: file://~/.pub-cache/hosted/pub.dev/firebase_database-13.0.1/android/src/main/kotlin/io/flutter/plugins/firebase/database/FlutterFirebaseDatabaseException.kt:84:16 Unnecessary safe call on a non-null receiver of type 'String'.
+w: file://~/.pub-cache/hosted/pub.dev/firebase_database-13.0.1/android/src/main/kotlin/io/flutter/plugins/firebase/database/FlutterFirebaseDatabaseException.kt:88:28 Unnecessary safe call on a non-null receiver of type 'String'.
+w: file://~/.pub-cache/hosted/pub.dev/firebase_database-13.0.1/android/src/main/kotlin/io/flutter/plugins/firebase/database/FlutterFirebaseDatabaseException.kt:90:16 Unnecessary safe call on a non-null receiver of type 'String'.
+w: file://~/.pub-cache/hosted/pub.dev/firebase_database-13.0.1/android/src/main/kotlin/io/flutter/plugins/firebase/database/FlutterFirebaseDatabaseException.kt:91:20 Unnecessary safe call on a non-null receiver of type 'String'.
+w: file://~/.pub-cache/hosted/pub.dev/firebase_database-13.0.1/android/src/main/kotlin/io/flutter/plugins/firebase/database/FlutterFirebaseDatabaseException.kt:99:61 Elvis operator (?:) always returns the left operand of non-nullable type 'String'.
+w: file://~/.pub-cache/hosted/pub.dev/firebase_database-13.0.1/android/src/main/kotlin/io/flutter/plugins/firebase/database/QueryBuilder.kt:14:1 '@JvmOverloads' annotation has no effect for methods without default arguments.
+w: file://~/.pub-cache/hosted/pub.dev/firebase_database-13.0.1/android/src/main/kotlin/io/flutter/plugins/firebase/database/TransactionHandler.kt:22:1 '@JvmOverloads' annotation has no effect for methods without default arguments.
+w: file://~/.pub-cache/hosted/pub.dev/firebase_database-13.0.1/android/src/main/kotlin/io/flutter/plugins/firebase/database/ValueEventsProxy.kt:16:1 '@JvmOverloads' annotation has no effect for methods without default arguments.
+
+> Task :stripe_android:dataBindingMergeDependencyArtifactsDebug UP-TO-DATE
+> Task :firebase_database:compileDebugJavaWithJavac
+> Task :firebase_database:bundleLibCompileToJarDebug UP-TO-DATE
+> Task :stripe_android:generateDebugResources UP-TO-DATE
+> Task :stripe_android:packageDebugResources UP-TO-DATE
+> Task :stripe_android:parseDebugLocalResources UP-TO-DATE
+> Task :stripe_android:dataBindingGenBaseClassesDebug UP-TO-DATE
+> Task :stripe_android:generateDebugBuildConfig UP-TO-DATE
+> Task :stripe_android:generateDebugRFile UP-TO-DATE
+> Task :package_info_plus:compileDebugKotlin
+> Task :sensors_plus:compileDebugKotlin
+
+> Task :firebase_storage:compileDebugKotlin
+w: file://~/.pub-cache/hosted/pub.dev/firebase_storage-14.0.1/android/src/main/kotlin/io/flutter/plugins/firebase/storage/FlutterFirebaseStorageTask.kt:29:33 This class is not recommended for use in Kotlin. Use 'kotlin.Any' instead.
+w: file://~/.pub-cache/hosted/pub.dev/firebase_storage-14.0.1/android/src/main/kotlin/io/flutter/plugins/firebase/storage/FlutterFirebaseStorageTask.kt:30:34 This class is not recommended for use in Kotlin. Use 'kotlin.Any' instead.
+w: file://~/.pub-cache/hosted/pub.dev/firebase_storage-14.0.1/android/src/main/kotlin/io/flutter/plugins/firebase/storage/FlutterFirebaseStorageTask.kt:31:34 This class is not recommended for use in Kotlin. Use 'kotlin.Any' instead.
+
+> Task :google_maps_flutter_android:compileDebugKotlin
+
+> Task :firebase_auth:compileDebugKotlin
+w: file://~/.pub-cache/hosted/pub.dev/firebase_auth-7.0.1/android/src/main/kotlin/io/flutter/plugins/firebase/auth/FlutterFirebaseAuthPlugin.kt:292:28 'fun fetchSignInMethodsForEmail(p0: String): Task<SignInMethodQueryResult!>' is deprecated. Deprecated in Java.
+w: file://~/.pub-cache/hosted/pub.dev/firebase_auth-7.0.1/android/src/main/kotlin/io/flutter/plugins/firebase/auth/FlutterFirebaseAuthPlugin.kt:361:40 Unnecessary non-null assertion (!!) on a non-null receiver of type 'Boolean'.
+w: file://~/.pub-cache/hosted/pub.dev/firebase_auth-7.0.1/android/src/main/kotlin/io/flutter/plugins/firebase/auth/FlutterFirebaseAuthUser.kt:246:73 'fun updateEmail(p0: String): Task<Void!>' is deprecated. Deprecated in Java.
+w: file://~/.pub-cache/hosted/pub.dev/firebase_auth-7.0.1/android/src/main/kotlin/io/flutter/plugins/firebase/auth/PigeonParser.kt:52:46 No cast needed.
+w: file://~/.pub-cache/hosted/pub.dev/firebase_auth-7.0.1/android/src/main/kotlin/io/flutter/plugins/firebase/auth/PigeonParser.kt:120:32 Elvis operator (?:) always returns the left operand of non-nullable type 'String'.
+w: file://~/.pub-cache/hosted/pub.dev/firebase_auth-7.0.1/android/src/main/kotlin/io/flutter/plugins/firebase/auth/PigeonParser.kt:191:15 'fun setDynamicLinkDomain(p0: String): ActionCodeSettings.Builder' is deprecated. Deprecated in Java.
+
+> Task :firebase_auth:compileDebugJavaWithJavac
+> Task :firebase_auth:bundleLibCompileToJarDebug UP-TO-DATE
+> Task :firebase_storage:compileDebugJavaWithJavac
+> Task :firebase_storage:bundleLibCompileToJarDebug UP-TO-DATE
+> Task :shared_preferences_android:compileDebugKotlin
+> Task :google_maps_flutter_android:compileDebugJavaWithJavac
+> Task :package_info_plus:compileDebugJavaWithJavac NO-SOURCE
+> Task :package_info_plus:bundleLibCompileToJarDebug UP-TO-DATE
+> Task :sensors_plus:compileDebugJavaWithJavac NO-SOURCE
+> Task :sensors_plus:bundleLibCompileToJarDebug UP-TO-DATE
+> Task :shared_preferences_android:compileDebugJavaWithJavac NO-SOURCE
+> Task :shared_preferences_android:bundleLibCompileToJarDebug UP-TO-DATE
+> Task :stripe_android:javaPreCompileDebug UP-TO-DATE
+> Task :url_launcher_android:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :url_launcher_android:generateDebugBuildConfig UP-TO-DATE
+> Task :url_launcher_android:generateDebugResources UP-TO-DATE
+> Task :url_launcher_android:packageDebugResources UP-TO-DATE
+> Task :url_launcher_android:parseDebugLocalResources UP-TO-DATE
+> Task :url_launcher_android:generateDebugRFile UP-TO-DATE
+> Task :google_maps_flutter_android:bundleLibCompileToJarDebug
+> Task :url_launcher_android:javaPreCompileDebug UP-TO-DATE
+> Task :app:javaPreCompileDebug UP-TO-DATE
+> Task :firebase_auth:writeDebugAarMetadata UP-TO-DATE
+> Task :firebase_core:writeDebugAarMetadata UP-TO-DATE
+> Task :firebase_database:writeDebugAarMetadata UP-TO-DATE
+> Task :firebase_messaging:writeDebugAarMetadata UP-TO-DATE
+> Task :firebase_storage:writeDebugAarMetadata UP-TO-DATE
+> Task :flutter_plugin_android_lifecycle:writeDebugAarMetadata UP-TO-DATE
+> Task :geolocator_android:writeDebugAarMetadata UP-TO-DATE
+> Task :google_maps_flutter_android:writeDebugAarMetadata UP-TO-DATE
+> Task :google_sign_in_android:writeDebugAarMetadata UP-TO-DATE
+> Task :image_picker_android:writeDebugAarMetadata UP-TO-DATE
+> Task :integration_test:writeDebugAarMetadata UP-TO-DATE
+> Task :jni:writeDebugAarMetadata UP-TO-DATE
+> Task :jni_flutter:writeDebugAarMetadata UP-TO-DATE
+> Task :package_info_plus:writeDebugAarMetadata UP-TO-DATE
+> Task :sensors_plus:writeDebugAarMetadata UP-TO-DATE
+> Task :shared_preferences_android:writeDebugAarMetadata UP-TO-DATE
+> Task :stripe_android:writeDebugAarMetadata UP-TO-DATE
+> Task :url_launcher_android:writeDebugAarMetadata UP-TO-DATE
+> Task :app:checkDebugAarMetadata UP-TO-DATE
+> Task :app:mapDebugSourceSetPaths UP-TO-DATE
+> Task :app:compileDebugNavigationResources UP-TO-DATE
+> Task :app:mergeDebugResources UP-TO-DATE
+> Task :app:createDebugCompatibleScreenManifests UP-TO-DATE
+> Task :app:extractDeepLinksDebug UP-TO-DATE
+> Task :firebase_auth:extractDeepLinksDebug UP-TO-DATE
+> Task :firebase_auth:processDebugManifest UP-TO-DATE
+> Task :firebase_core:extractDeepLinksDebug UP-TO-DATE
+> Task :firebase_core:processDebugManifest UP-TO-DATE
+> Task :firebase_database:extractDeepLinksDebug UP-TO-DATE
+> Task :firebase_database:processDebugManifest UP-TO-DATE
+> Task :firebase_messaging:extractDeepLinksDebug UP-TO-DATE
+> Task :firebase_messaging:processDebugManifest UP-TO-DATE
+> Task :firebase_storage:extractDeepLinksDebug UP-TO-DATE
+> Task :firebase_storage:processDebugManifest UP-TO-DATE
+> Task :flutter_plugin_android_lifecycle:extractDeepLinksDebug UP-TO-DATE
+> Task :flutter_plugin_android_lifecycle:processDebugManifest UP-TO-DATE
+> Task :geolocator_android:extractDeepLinksDebug UP-TO-DATE
+> Task :geolocator_android:processDebugManifest UP-TO-DATE
+> Task :google_maps_flutter_android:extractDeepLinksDebug UP-TO-DATE
+> Task :google_maps_flutter_android:processDebugManifest UP-TO-DATE
+> Task :google_sign_in_android:extractDeepLinksDebug UP-TO-DATE
+> Task :google_sign_in_android:processDebugManifest UP-TO-DATE
+> Task :image_picker_android:extractDeepLinksDebug UP-TO-DATE
+> Task :image_picker_android:processDebugManifest UP-TO-DATE
+> Task :integration_test:extractDeepLinksDebug UP-TO-DATE
+> Task :integration_test:processDebugManifest UP-TO-DATE
+> Task :jni:extractDeepLinksDebug UP-TO-DATE
+> Task :jni:processDebugManifest UP-TO-DATE
+> Task :jni_flutter:extractDeepLinksDebug UP-TO-DATE
+> Task :jni_flutter:processDebugManifest UP-TO-DATE
+> Task :package_info_plus:extractDeepLinksDebug UP-TO-DATE
+> Task :package_info_plus:processDebugManifest UP-TO-DATE
+> Task :sensors_plus:extractDeepLinksDebug UP-TO-DATE
+> Task :sensors_plus:processDebugManifest UP-TO-DATE
+> Task :shared_preferences_android:extractDeepLinksDebug UP-TO-DATE
+> Task :shared_preferences_android:processDebugManifest UP-TO-DATE
+> Task :stripe_android:extractDeepLinksDebug UP-TO-DATE
+> Task :stripe_android:processDebugManifest UP-TO-DATE
+> Task :url_launcher_android:extractDeepLinksDebug UP-TO-DATE
+> Task :url_launcher_android:processDebugManifest UP-TO-DATE
+> Task :app:processDebugMainManifest UP-TO-DATE
+> Task :app:outputDebugAppLinkSettings UP-TO-DATE
+> Task :app:processDebugManifest UP-TO-DATE
+> Task :app:processDebugManifestForPackage UP-TO-DATE
+> Task :firebase_auth:mapDebugSourceSetPaths UP-TO-DATE
+> Task :firebase_auth:compileDebugLibraryResources UP-TO-DATE
+> Task :firebase_core:mapDebugSourceSetPaths UP-TO-DATE
+> Task :firebase_core:compileDebugLibraryResources UP-TO-DATE
+> Task :firebase_database:mapDebugSourceSetPaths UP-TO-DATE
+> Task :firebase_database:compileDebugLibraryResources UP-TO-DATE
+> Task :firebase_messaging:mapDebugSourceSetPaths UP-TO-DATE
+> Task :firebase_messaging:compileDebugLibraryResources UP-TO-DATE
+> Task :firebase_storage:mapDebugSourceSetPaths UP-TO-DATE
+> Task :firebase_storage:compileDebugLibraryResources UP-TO-DATE
+> Task :flutter_plugin_android_lifecycle:mapDebugSourceSetPaths UP-TO-DATE
+> Task :flutter_plugin_android_lifecycle:compileDebugLibraryResources UP-TO-DATE
+> Task :geolocator_android:mapDebugSourceSetPaths UP-TO-DATE
+> Task :geolocator_android:compileDebugLibraryResources UP-TO-DATE
+> Task :google_maps_flutter_android:mapDebugSourceSetPaths UP-TO-DATE
+> Task :google_maps_flutter_android:compileDebugLibraryResources UP-TO-DATE
+> Task :google_sign_in_android:mapDebugSourceSetPaths UP-TO-DATE
+> Task :google_sign_in_android:compileDebugLibraryResources UP-TO-DATE
+> Task :image_picker_android:mapDebugSourceSetPaths UP-TO-DATE
+> Task :image_picker_android:compileDebugLibraryResources UP-TO-DATE
+> Task :integration_test:mapDebugSourceSetPaths UP-TO-DATE
+> Task :integration_test:compileDebugLibraryResources UP-TO-DATE
+> Task :jni:mapDebugSourceSetPaths UP-TO-DATE
+> Task :jni:compileDebugLibraryResources UP-TO-DATE
+> Task :jni_flutter:mapDebugSourceSetPaths UP-TO-DATE
+> Task :jni_flutter:compileDebugLibraryResources UP-TO-DATE
+> Task :package_info_plus:mapDebugSourceSetPaths UP-TO-DATE
+> Task :package_info_plus:compileDebugLibraryResources UP-TO-DATE
+> Task :sensors_plus:mapDebugSourceSetPaths UP-TO-DATE
+> Task :sensors_plus:compileDebugLibraryResources UP-TO-DATE
+> Task :shared_preferences_android:mapDebugSourceSetPaths UP-TO-DATE
+> Task :shared_preferences_android:compileDebugLibraryResources UP-TO-DATE
+> Task :stripe_android:mapDebugSourceSetPaths UP-TO-DATE
+> Task :stripe_android:compileDebugLibraryResources UP-TO-DATE
+> Task :url_launcher_android:mapDebugSourceSetPaths UP-TO-DATE
+> Task :url_launcher_android:compileDebugLibraryResources UP-TO-DATE
+> Task :app:processDebugResources UP-TO-DATE
+> Task :app:preDebugUnitTestBuild
+> Task :app:javaPreCompileDebugUnitTest UP-TO-DATE
+> Task :firebase_auth:bundleLibRuntimeToJarDebug UP-TO-DATE
+> Task :firebase_auth:processDebugJavaRes UP-TO-DATE
+> Task :firebase_core:processDebugJavaRes UP-TO-DATE
+> Task :firebase_database:bundleLibRuntimeToJarDebug UP-TO-DATE
+> Task :firebase_core:bundleLibRuntimeToJarDebug
+> Task :firebase_database:processDebugJavaRes UP-TO-DATE
+> Task :firebase_messaging:bundleLibRuntimeToJarDebug
+> Task :firebase_messaging:processDebugJavaRes NO-SOURCE
+> Task :firebase_storage:bundleLibRuntimeToJarDebug UP-TO-DATE
+> Task :firebase_storage:processDebugJavaRes UP-TO-DATE
+> Task :flutter_plugin_android_lifecycle:bundleLibRuntimeToJarDebug UP-TO-DATE
+> Task :flutter_plugin_android_lifecycle:processDebugJavaRes NO-SOURCE
+> Task :geolocator_android:processDebugJavaRes NO-SOURCE
+> Task :geolocator_android:bundleLibRuntimeToJarDebug
+> Task :google_maps_flutter_android:processDebugJavaRes UP-TO-DATE
+> Task :google_sign_in_android:bundleLibRuntimeToJarDebug UP-TO-DATE
+> Task :google_sign_in_android:processDebugJavaRes UP-TO-DATE
+> Task :image_picker_android:processDebugJavaRes UP-TO-DATE
+> Task :integration_test:processDebugJavaRes NO-SOURCE
+> Task :integration_test:bundleLibRuntimeToJarDebug
+> Task :jni:bundleLibRuntimeToJarDebug UP-TO-DATE
+> Task :image_picker_android:bundleLibRuntimeToJarDebug
+> Task :jni:processDebugJavaRes NO-SOURCE
+> Task :jni_flutter:bundleLibRuntimeToJarDebug UP-TO-DATE
+> Task :jni_flutter:processDebugJavaRes NO-SOURCE
+> Task :package_info_plus:bundleLibRuntimeToJarDebug UP-TO-DATE
+> Task :package_info_plus:processDebugJavaRes UP-TO-DATE
+> Task :sensors_plus:bundleLibRuntimeToJarDebug UP-TO-DATE
+> Task :sensors_plus:processDebugJavaRes UP-TO-DATE
+> Task :shared_preferences_android:bundleLibRuntimeToJarDebug UP-TO-DATE
+> Task :google_maps_flutter_android:bundleLibRuntimeToJarDebug
+> Task :shared_preferences_android:processDebugJavaRes UP-TO-DATE
+> Task :url_launcher_android:compileDebugKotlin
+> Task :url_launcher_android:compileDebugJavaWithJavac
+> Task :url_launcher_android:bundleLibCompileToJarDebug UP-TO-DATE
+> Task :url_launcher_android:bundleLibRuntimeToJarDebug UP-TO-DATE
+> Task :url_launcher_android:processDebugJavaRes UP-TO-DATE
+
+> Task :stripe_android:compileDebugKotlin
+w: file://~/.pub-cache/hosted/pub.dev/stripe_android-15.0.0/android/src/main/kotlin/com/flutter/stripe/StripeAddToWalletPlatformView.kt:23:5 'lateinit' is unnecessary: definitely initialized in constructors.
+w: file://~/.pub-cache/hosted/pub.dev/stripe_android-15.0.0/android/src/main/kotlin/com/flutter/stripe/StripeAddToWalletPlatformViewFactory.kt:21:35 Unchecked cast of 'Any?' to 'Map<String?, Any?>?'.
+w: file://~/.pub-cache/hosted/pub.dev/stripe_android-15.0.0/android/src/main/kotlin/com/flutter/stripe/StripeAddressSheetPlatformViewFactory.kt:20:35 Unchecked cast of 'Any?' to 'Map<String?, Any?>?'.
+w: file://~/.pub-cache/hosted/pub.dev/stripe_android-15.0.0/android/src/main/kotlin/com/flutter/stripe/StripeAubecsDebitPlatformView.kt:23:5 'lateinit' is unnecessary: definitely initialized in constructors.
+w: file://~/.pub-cache/hosted/pub.dev/stripe_android-15.0.0/android/src/main/kotlin/com/flutter/stripe/StripeAubecsDebitPlatformViewFactory.kt:21:35 Unchecked cast of 'Any?' to 'Map<String?, Any?>?'.
+w: file://~/.pub-cache/hosted/pub.dev/stripe_android-15.0.0/android/src/main/kotlin/com/flutter/stripe/StripeSdkCardFormPlatformView.kt:47:67 Unchecked cast of 'Any?' to 'Map<String, Any>'.
+w: file://~/.pub-cache/hosted/pub.dev/stripe_android-15.0.0/android/src/main/kotlin/com/flutter/stripe/StripeSdkCardFormPlatformView.kt:83:21 'fun toggleSoftInput(p0: Int, p1: Int): Unit' is deprecated. Deprecated in Java.
+w: file://~/.pub-cache/hosted/pub.dev/stripe_android-15.0.0/android/src/main/kotlin/com/flutter/stripe/StripeSdkCardFormPlatformView.kt:83:56 'static field SHOW_FORCED: Int' is deprecated. Deprecated in Java.
+w: file://~/.pub-cache/hosted/pub.dev/stripe_android-15.0.0/android/src/main/kotlin/com/flutter/stripe/StripeSdkCardFormPlatformViewFactory.kt:20:35 Unchecked cast of 'Any?' to 'Map<String?, Any?>?'.
+w: file://~/.pub-cache/hosted/pub.dev/stripe_android-15.0.0/android/src/main/kotlin/com/flutter/stripe/StripeSdkCardPlatformView.kt:54:67 Unchecked cast of 'Any?' to 'Map<String, Any>'.
+w: file://~/.pub-cache/hosted/pub.dev/stripe_android-15.0.0/android/src/main/kotlin/com/flutter/stripe/StripeSdkCardPlatformView.kt:97:21 'fun toggleSoftInput(p0: Int, p1: Int): Unit' is deprecated. Deprecated in Java.
+w: file://~/.pub-cache/hosted/pub.dev/stripe_android-15.0.0/android/src/main/kotlin/com/flutter/stripe/StripeSdkCardPlatformView.kt:98:40 'static field SHOW_FORCED: Int' is deprecated. Deprecated in Java.
+w: file://~/.pub-cache/hosted/pub.dev/stripe_android-15.0.0/android/src/main/kotlin/com/flutter/stripe/StripeSdkCardPlatformViewFactory.kt:22:35 Unchecked cast of 'Any?' to 'Map<String?, Any?>?'.
+w: file://~/.pub-cache/hosted/pub.dev/stripe_android-15.0.0/android/src/main/kotlin/com/flutter/stripe/StripeSdkEmbeddedPaymentElementPlatformViewFactory.kt:23:35 Unchecked cast of 'Any?' to 'Map<String?, Any?>?'.
+w: file://~/.pub-cache/hosted/pub.dev/stripe_android-15.0.0/android/src/main/kotlin/com/flutter/stripe/StripeSdkGooglePayButtonPlatformViewFactory.kt:20:35 Unchecked cast of 'Any?' to 'Map<String?, Any?>?'.
+w: file://~/.pub-cache/hosted/pub.dev/stripe_android-15.0.0/android/src/main/kotlin/com/flutter/stripe/StripeSdkModuleExtensions.kt:52:43 Unchecked cast of 'Map<*, *>' to 'Map<String?, Any?>'.
+w: file://~/.pub-cache/hosted/pub.dev/stripe_android-15.0.0/android/src/main/kotlin/com/flutter/stripe/StripeSdkModuleExtensions.kt:55:51 Unchecked cast of 'Map<*, *>' to 'Map<String?, Any?>'.
+w: file://~/.pub-cache/hosted/pub.dev/stripe_android-15.0.0/android/src/main/kotlin/com/flutter/stripe/StripeSdkModuleExtensions.kt:86:34 No cast needed.
+w: file://~/.pub-cache/hosted/pub.dev/stripe_android-15.0.0/android/src/main/kotlin/com/reactnativestripesdk/GooglePayRequestLauncher.kt:76:30 No cast needed.
+w: file://~/.pub-cache/hosted/pub.dev/stripe_android-15.0.0/android/src/main/kotlin/com/reactnativestripesdk/PaymentSheetManager.kt:507:36 Unnecessary safe call on a non-null receiver of type 'FragmentActivity'.
+w: file://~/.pub-cache/hosted/pub.dev/stripe_android-15.0.0/android/src/main/kotlin/com/reactnativestripesdk/PaymentSheetManager.kt:524:7 Unnecessary safe call on a non-null receiver of type 'FragmentActivity'.
+w: file://~/.pub-cache/hosted/pub.dev/stripe_android-15.0.0/android/src/main/kotlin/com/reactnativestripesdk/PaymentSheetManager.kt:603:11 Elvis operator (?:) always returns the left operand of non-nullable type 'StripeSdkModule'.
+w: file://~/.pub-cache/hosted/pub.dev/stripe_android-15.0.0/android/src/main/kotlin/com/reactnativestripesdk/PaymentSheetManager.kt:673:7 Condition is always 'true'.
+w: file://~/.pub-cache/hosted/pub.dev/stripe_android-15.0.0/android/src/main/kotlin/com/reactnativestripesdk/PaymentSheetManager.kt:682:9 Condition is always 'true'.
+w: file://~/.pub-cache/hosted/pub.dev/stripe_android-15.0.0/android/src/main/kotlin/com/reactnativestripesdk/StripeSdkModule.kt:1874:22 Unnecessary safe call on a non-null receiver of type 'ResponseBody'.
+w: file://~/.pub-cache/hosted/pub.dev/stripe_android-15.0.0/android/src/main/kotlin/com/reactnativestripesdk/StripeSdkModule.kt:2070:46 No cast needed.
+w: file://~/.pub-cache/hosted/pub.dev/stripe_android-15.0.0/android/src/main/kotlin/com/reactnativestripesdk/StripeSdkModule.kt:2164:44 Unnecessary safe call on a non-null receiver of type 'FragmentActivity'.
+w: file://~/.pub-cache/hosted/pub.dev/stripe_android-15.0.0/android/src/main/kotlin/com/reactnativestripesdk/StripeSdkModule.kt:2167:44 Unnecessary safe call on a non-null receiver of type 'FragmentActivity'.
+w: file://~/.pub-cache/hosted/pub.dev/stripe_android-15.0.0/android/src/main/kotlin/com/reactnativestripesdk/StripeSdkModule.kt:2175:48 Unnecessary safe call on a non-null receiver of type 'FragmentActivity'.
+w: file://~/.pub-cache/hosted/pub.dev/stripe_android-15.0.0/android/src/main/kotlin/com/reactnativestripesdk/addresssheet/AddressLauncherFragment.kt:69:23 'constructor(appearance: PaymentSheet.Appearance = ..., address: AddressDetails? = ..., allowedCountries: Set<String> = ..., buttonTitle: String? = ..., additionalFields: AddressLauncher.AdditionalFieldsConfiguration? = ..., title: String? = ..., googlePlacesApiKey: String? = ..., autocompleteCountries: Set<String> = ...): AddressLauncher.Configuration' is deprecated. Google Places API key is no longer required. This constructor will be removed in a future release.
+w: file://~/.pub-cache/hosted/pub.dev/stripe_android-15.0.0/android/src/main/kotlin/com/reactnativestripesdk/addresssheet/AddressLauncherFragment.kt:80:30 No cast needed.
+w: file://~/.pub-cache/hosted/pub.dev/stripe_android-15.0.0/android/src/main/kotlin/com/reactnativestripesdk/addresssheet/AddressLauncherManager.kt:34:21 'constructor(appearance: PaymentSheet.Appearance = ..., address: AddressDetails? = ..., allowedCountries: Set<String> = ..., buttonTitle: String? = ..., additionalFields: AddressLauncher.AdditionalFieldsConfiguration? = ..., title: String? = ..., googlePlacesApiKey: String? = ..., autocompleteCountries: Set<String> = ...): AddressLauncher.Configuration' is deprecated. Google Places API key is no longer required. This constructor will be removed in a future release.
+w: file://~/.pub-cache/hosted/pub.dev/stripe_android-15.0.0/android/src/main/kotlin/com/reactnativestripesdk/customersheet/CustomerSheetManager.kt:243:34 Unnecessary safe call on a non-null receiver of type 'FragmentActivity'.
+w: file://~/.pub-cache/hosted/pub.dev/stripe_android-15.0.0/android/src/main/kotlin/com/reactnativestripesdk/customersheet/CustomerSheetManager.kt:260:7 Unnecessary safe call on a non-null receiver of type 'FragmentActivity'.
+w: file://~/.pub-cache/hosted/pub.dev/stripe_android-15.0.0/android/src/main/kotlin/com/reactnativestripesdk/customersheet/ReactNativeCustomerAdapter.kt:33:24 Unnecessary safe call on a non-null receiver of type 'StripeSdkModule'.
+w: file://~/.pub-cache/hosted/pub.dev/stripe_android-15.0.0/android/src/main/kotlin/com/reactnativestripesdk/customersheet/ReactNativeCustomerAdapter.kt:47:24 Unnecessary safe call on a non-null receiver of type 'StripeSdkModule'.
+w: file://~/.pub-cache/hosted/pub.dev/stripe_android-15.0.0/android/src/main/kotlin/com/reactnativestripesdk/customersheet/ReactNativeCustomerAdapter.kt:61:24 Unnecessary safe call on a non-null receiver of type 'StripeSdkModule'.
+w: file://~/.pub-cache/hosted/pub.dev/stripe_android-15.0.0/android/src/main/kotlin/com/reactnativestripesdk/customersheet/ReactNativeCustomerAdapter.kt:77:24 Unnecessary safe call on a non-null receiver of type 'StripeSdkModule'.
+w: file://~/.pub-cache/hosted/pub.dev/stripe_android-15.0.0/android/src/main/kotlin/com/reactnativestripesdk/customersheet/ReactNativeCustomerAdapter.kt:90:24 Unnecessary safe call on a non-null receiver of type 'StripeSdkModule'.
+w: file://~/.pub-cache/hosted/pub.dev/stripe_android-15.0.0/android/src/main/kotlin/com/reactnativestripesdk/customersheet/ReactNativeCustomerAdapter.kt:109:24 Unnecessary safe call on a non-null receiver of type 'StripeSdkModule'.
+w: file://~/.pub-cache/hosted/pub.dev/stripe_android-15.0.0/android/src/main/kotlin/com/reactnativestripesdk/customersheet/ReactNativeCustomerSessionProvider.kt:29:22 Unnecessary safe call on a non-null receiver of type 'StripeSdkModule'.
+w: file://~/.pub-cache/hosted/pub.dev/stripe_android-15.0.0/android/src/main/kotlin/com/reactnativestripesdk/customersheet/ReactNativeCustomerSessionProvider.kt:44:53 Unnecessary safe call on a non-null receiver of type 'StripeSdkModule'.
+w: file://~/.pub-cache/hosted/pub.dev/stripe_android-15.0.0/android/src/main/kotlin/com/reactnativestripesdk/pushprovisioning/PushProvisioningProxy.kt:52:30 Unnecessary safe call on a non-null receiver of type 'FragmentActivity'.
+w: file://~/.pub-cache/hosted/pub.dev/stripe_android-15.0.0/android/src/main/kotlin/com/reactnativestripesdk/utils/Extensions.kt:72:17 This extension is shadowed by a member: 'fun isEmpty(): Boolean' defined in 'com.facebook.react.bridge.ReadableMap'.
+w: file://~/.pub-cache/hosted/pub.dev/stripe_android-15.0.0/android/src/main/kotlin/com/reactnativestripesdk/utils/StripeUIManager.kt:56:30 No cast needed.
+
+> Task :stripe_android:compileDebugJavaWithJavac
+Note: Some input files use or override a deprecated API.
+Note: Recompile with -Xlint:deprecation for details.
+
+> Task :stripe_android:processDebugJavaRes UP-TO-DATE
+> Task :stripe_android:bundleLibRuntimeToJarDebug
+> Task :stripe_android:bundleLibCompileToJarDebug
+
+> Task :app:compileDebugKotlin
+w: file://android/app/src/main/kotlin/com/bimbi/app/ShieldOverlay.kt:59:29 'fun announceForAccessibility(p0: CharSequence!): Unit' is deprecated. Deprecated in Java.
+
+> Task :app:compileDebugJavaWithJavac
+> Task :app:bundleDebugClassesToRuntimeJar UP-TO-DATE
+> Task :app:bundleDebugClassesToCompileJar UP-TO-DATE
+> Task :app:compileDebugUnitTestKotlin UP-TO-DATE
+> Task :app:compileDebugUnitTestJavaWithJavac NO-SOURCE
+> Task :app:processDebugJavaRes UP-TO-DATE
+> Task :app:processDebugUnitTestJavaRes UP-TO-DATE
+> Task :app:testDebugUnitTest UP-TO-DATE
+
+[Incubating] Problems report is available at: file://build/reports/problems/problems-report.html
+
+Deprecated Gradle features were used in this build, making it incompatible with Gradle 10.
+
+You can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins.
+
+For more on this, please refer to https://docs.gradle.org/9.3.1/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation.
+
+BUILD SUCCESSFUL in 13s
+334 actionable tasks: 48 executed, 286 up-to-date
+Running Gradle task 'assembleDebug'...                          
+WARNING: Your app uses the following plugins that apply Kotlin Gradle Plugin (KGP): firebase_auth, firebase_core, firebase_database, firebase_storage
+Future versions of Flutter will fail to build if your app uses plugins that apply KGP.
+
+Please check the changelogs of these plugins and upgrade to a version that supports Built-in Kotlin.
+If no such version exists, report the issue to the plugin. If necessary, here is a guide on filing
+an issue against a plugin: https://docs.flutter.dev/release/breaking-changes/migrate-to-built-in-kotlin/for-app-developers#report-incompatible-kotlin-gradle-plugin-usage-to-plugin-authors
+
+If you are a plugin author, please migrate your plugin to Built-in Kotlin using this guide: https://docs.flutter.dev/release/breaking-changes/migrate-to-built-in-kotlin/for-plugin-authors
+warning: [options] source value 8 is obsolete and will be removed in a future release
+warning: [options] target value 8 is obsolete and will be removed in a future release
+warning: [options] To suppress warnings about obsolete options, use -Xlint:-options.
+Note: ~/.pub-cache/hosted/pub.dev/geolocator_android-5.2.1/android/src/main/java/com/baseflow/geolocator/location/LocationMapper.java uses or overrides a deprecated API.
+Note: Recompile with -Xlint:deprecation for details.
+3 warnings
+Note: Some input files use or override a deprecated API.
+Note: Recompile with -Xlint:deprecation for details.
+Note: Some input files use or override a deprecated API.
+Note: Recompile with -Xlint:deprecation for details.
+Running Gradle task 'assembleDebug'...                             15.1s
+✓ Built build/app/outputs/flutter-apk/app-debug.apk
+
+Publicación en el proyecto de desarrollo bimbi-26ae2 (autorizada por el propietario)
+Comando: ./scripts/firebase.sh deploy --only database,functions:bimbi-phase1:paymentApi --project bimbi-26ae2 --non-interactive
+✔  database: rules for database bimbi-26ae2-default-rtdb released successfully
+✔  functions[bimbi-phase1:paymentApi(us-central1)] Successful update operation.
+✔  Deploy complete!
+
+Límites HTTP de paymentApi en vivo (sin cuenta)
+GET /verifyPaymentIntent → 405
+POST /createPaymentIntent sin token → 401
+POST /verifyPaymentIntent con token inválido → 401
+
+Diagnóstico FCM en la Galaxy Tab A9 (adb logcat, app com.bimbi.app, antes de la corrección del banner)
+11-22 22:10:10.078 D FLTFireMsgReceiver: broadcast received for message
+11-22 22:14:21.742 D FLTFireMsgReceiver: broadcast received for message
+Pantalla en primer plano en ambos casos: Notifications (ruta encima del shell).
+
+APK de entrega
+Comando: flutter build apk --debug --no-pub --dart-define-from-file=config/dev.json
+apksigner verify build/review/bimbi-phase7-debug.apk → verificado
+SHA-256 37cc040424cbb51cd7be3554a5b013dbf5fe07aae2c4ed5d1028ba0390b5e95a  build/review/bimbi-phase7-debug.apk
+Instalada en la Galaxy Tab A9 (adb install -r → Success)

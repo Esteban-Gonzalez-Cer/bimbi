@@ -423,6 +423,13 @@ internal class AlarmEngine(context: Context) {
             alarms.lockscreenVisibility = Notification.VISIBILITY_PUBLIC
             manager.createNotificationChannel(alarms)
             manager.createNotificationChannel(NotificationChannel("bimbi_messages", "Bimbi messages", NotificationManager.IMPORTANCE_DEFAULT))
+            // One channel per console topic, so each can also be muted in Android settings.
+            manager.createNotificationChannel(NotificationChannel("bimbi_tips", "Tips", NotificationManager.IMPORTANCE_DEFAULT).apply {
+                description = "Short sleep and focus ideas from Bimbi's team."
+            })
+            manager.createNotificationChannel(NotificationChannel("bimbi_updates", "Updates", NotificationManager.IMPORTANCE_DEFAULT).apply {
+                description = "New Bimbi features and important news."
+            })
         }
     }
 }

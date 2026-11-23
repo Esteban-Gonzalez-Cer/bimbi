@@ -16,6 +16,10 @@ import '../../ui/focus/view_models/focus_session.dart';
 import '../../ui/focus/view_models/focus_shield.dart';
 import '../../ui/focus/widgets/focus_screen.dart';
 import '../../ui/home/widgets/home_screen.dart';
+import '../../ui/notifications/view_models/notifications.dart';
+import '../../ui/notifications/widgets/notifications_screen.dart';
+import '../../ui/plans/view_models/plan_perks.dart';
+import '../../ui/plans/widgets/plans_screen.dart';
 import '../../ui/sleep/view_models/sleep_diary.dart';
 import '../../ui/sleep/widgets/sleep_screen.dart';
 import '../design_system/design_system.dart';
@@ -95,8 +99,23 @@ class _AdaptiveShellState extends ConsumerState<AdaptiveShell> {
     ref.watch(sleepSyncProvider.select((status) => status.phase));
     ref.watch(focusSyncProvider.select((status) => status.phase));
     ref.watch(focusShieldLinkProvider);
+    // A lapsed pass moves alarms off Plus tones once the plan has loaded.
+    ref.watch(plusToneGuardProvider);
     final selected = ref.watch(destinationProvider);
-    final message = ref.watch(messagingProvider);
+    // FCM listeners attach here; BimbiApp shows the banner over every route.
+    ref.watch(inboxProvider.select((_) => null));
+    ref.watch(topicsProvider.select((_) => null)); // migration and cloud sync
+    ref.listen(pendingScreenProvider, (_, next) {
+      if (next == null) return;
+      ref.read(pendingScreenProvider.notifier).clear();
+      Navigator.of(context).push(
+        MaterialPageRoute<void>(
+          builder: (_) => next == NotificationTarget.plans
+              ? const PlansScreen()
+              : const NotificationsScreen(),
+        ),
+      );
+    });
     ref.listen(destinationProvider, (previous, next) {
       if (next == AppDestination.profile.index) {
         unawaited(ref.read(cloudProfileProvider.notifier).refreshPhoto());
@@ -134,35 +153,14 @@ class _AdaptiveShellState extends ConsumerState<AdaptiveShell> {
               AppDestination.profile => const ProfilePage(),
             },
           );
-          final body = Column(
-            children: [
-              if (message.startsWith('Foreground') ||
-                  message.startsWith('Notification opened'))
-                Padding(
-                  padding: EdgeInsets.fromLTRB(
-                    window.gutter,
-                    BimbiSpace.sm,
-                    window.gutter,
-                    0,
-                  ),
-                  child: InlineBanner(
-                    title: 'Bimbi',
-                    message: message,
-                    liveRegion: true,
-                  ),
-                ),
-              Expanded(
-                child: reduceMotion
-                    ? page
-                    : AnimatedSwitcher(
-                        duration: BimbiMotion.standard,
-                        switchInCurve: Curves.easeOut,
-                        switchOutCurve: Curves.easeIn,
-                        child: page,
-                      ),
-              ),
-            ],
-          );
+          final body = reduceMotion
+              ? page
+              : AnimatedSwitcher(
+                  duration: BimbiMotion.standard,
+                  switchInCurve: Curves.easeOut,
+                  switchOutCurve: Curves.easeIn,
+                  child: page,
+                );
           return WindowScope(
             windowClass: window,
             child: Scaffold(

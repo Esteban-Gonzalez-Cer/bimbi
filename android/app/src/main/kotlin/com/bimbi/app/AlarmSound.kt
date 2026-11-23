@@ -1,11 +1,14 @@
 package com.bimbi.app
 
-internal enum class AlarmTone(val wire: String, val title: String) {
+/** `plus` tones are offered by Flutter only with a verified Plus or Premium pass. */
+internal enum class AlarmTone(val wire: String, val title: String, val plus: Boolean = false) {
     SYSTEM("system", "Android default"),
     DAWN_CHIME("dawn_chime", "Dawn Chime"),
     SOFT_BELLS("soft_bells", "Soft Bells"),
     MORNING_PULSE("morning_pulse", "Morning Pulse"),
-    BRIGHT_SIGNAL("bright_signal", "Bright Signal");
+    BRIGHT_SIGNAL("bright_signal", "Bright Signal"),
+    SPARKLE_RISE("sparkle_rise", "Sparkle Rise", plus = true),
+    LULLABY_GLOW("lullaby_glow", "Lullaby Glow", plus = true);
 
     companion object {
         fun parse(value: String?) = entries.firstOrNull { it.wire == value } ?: SYSTEM

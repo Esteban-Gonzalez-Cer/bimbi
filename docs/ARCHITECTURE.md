@@ -31,3 +31,11 @@ Sleep entries store bedtime and wake as instants plus the wake UTC offset, so da
 ## Focus shield and chimes
 
 See ADR-009. Flutter tells Android until when chosen apps are paused (`focusShield` with the session end and window ends) whenever the session starts, pauses, resumes or ends. `GuardStore` keeps chosen apps, daily limits and that end time in app-private storage. `FocusGuardService` runs only while rules need it, polls Usage Access events once a second with the screen on and shows `ShieldOverlay` over a chosen app. `FocusChime` registers a short sound at each window end and at the session end with `AlarmManager` (exact when allowed), cancels them on pause or end, and restores them after reboot. App usage never leaves the device.
+
+## Plans and entitlements
+
+See ADR-005. `paymentApi` creates and verifies Stripe test PaymentIntents and, on a verified success, writes `users/{uid}/entitlements` and a receipt under `users/{uid}/payments/{paymentIntentId}` in an Admin transaction (30-day passes, idempotent per PaymentIntent). Flutter streams both read-only (`lib/data/repositories/entitlement_repository.dart`); `planTierProvider` is the only source for perks and returns Free once a pass expires. Plus and Premium perks are cosmetic (buddy colours, alarm tones, the Sunrise theme, a badge). `plusToneGuardProvider` moves alarms off Plus tones after a pass lapses, only once the entitlement has loaded. The Plans screen is `lib/ui/plans/widgets/plans_screen.dart`.
+
+## Notifications
+
+See ADR-010. `MessagingService` wraps Firebase Messaging. `InboxController` attaches handlers at start-up: foreground messages become a banner, opened or launching notifications open an allowlisted screen (`pendingScreenProvider` pushes Plans or Notifications). `TopicController` keeps the Tips and Updates choice locally and, for verified accounts, at `users/{uid}/preferences/notificationTopics`, and subscribes the device to `bimbi_tips` / `bimbi_updates`. Android creates a channel per topic next to `bimbi_messages`.

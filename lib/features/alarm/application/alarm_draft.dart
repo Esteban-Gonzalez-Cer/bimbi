@@ -14,7 +14,13 @@ enum WakeDifficulty {
   final String label;
 }
 
-typedef AlarmAudioOption = ({String id, String title, bool available});
+/// `plus`: a tone that needs a verified Plus or Premium pass.
+typedef AlarmAudioOption = ({
+  String id,
+  String title,
+  bool available,
+  bool plus,
+});
 
 List<AlarmAudioOption> _audioOptions(
   Object? payload,
@@ -24,7 +30,12 @@ List<AlarmAudioOption> _audioOptions(
     if (payload is List)
       for (final option in payload)
         if (option case {'id': final String id, 'title': final String title})
-          (id: id, title: title, available: option['available'] != false),
+          (
+            id: id,
+            title: title,
+            available: option['available'] != false,
+            plus: option['plus'] == true,
+          ),
   ];
   return options.isEmpty ? [fallback] : options;
 }
@@ -34,13 +45,14 @@ final alarmTonesProvider = Provider<List<AlarmAudioOption>>(
     id: 'system',
     title: 'Android default',
     available: true,
+    plus: false,
   )),
 );
 
 final alarmIntensitiesProvider = Provider<List<AlarmAudioOption>>(
   (ref) => _audioOptions(
     ref.watch(capabilitiesProvider).value?['alarmIntensities'],
-    (id: 'normal', title: 'Normal', available: true),
+    (id: 'normal', title: 'Normal', available: true, plus: false),
   ),
 );
 

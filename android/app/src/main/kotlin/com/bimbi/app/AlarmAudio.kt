@@ -88,6 +88,8 @@ internal object AlarmAudio {
         AlarmTone.SOFT_BELLS -> R.raw.alarm_soft_bells
         AlarmTone.MORNING_PULSE -> R.raw.alarm_morning_pulse
         AlarmTone.BRIGHT_SIGNAL -> R.raw.alarm_bright_signal
+        AlarmTone.SPARKLE_RISE -> R.raw.alarm_sparkle_rise
+        AlarmTone.LULLABY_GLOW -> R.raw.alarm_lullaby_glow
         AlarmTone.SYSTEM -> error("System alarm has no bundled sound")
     }
 }

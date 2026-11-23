@@ -67,7 +67,7 @@ class MainActivity : FlutterFragmentActivity() {
                         val meta = packageManager.getApplicationInfo(packageName, PackageManager.GET_META_DATA).metaData
                         result.success(mapOf("exactAlarm" to alarms.exactAllowed(), "notifications" to alarms.notificationsAllowed(),
                             "fullScreen" to alarms.fullScreenAllowed(), "alarms" to alarms.view(), "active" to (alarms.active() != null),
-                            "alarmTones" to AlarmTone.entries.map { mapOf("id" to it.wire, "title" to it.title) },
+                            "alarmTones" to AlarmTone.entries.map { mapOf("id" to it.wire, "title" to it.title, "plus" to it.plus) },
                             "alarmIntensities" to AlarmIntensity.entries.map { intensity ->
                                 mapOf(
                                     "id" to intensity.wire, "title" to intensity.title,

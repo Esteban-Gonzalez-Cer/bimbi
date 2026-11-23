@@ -38,6 +38,20 @@ abstract final class BimbiPalette {
   static const coralBright = Color(0xFFFF8577);
   static const honey = Color(0xFFE8B400); // reserved for Phase 9 rewards
 
+  // Sunrise (Premium theme): the original Brand Buddy palette.
+  static const cream = Color(0xFFFFF5EA);
+  static const tangerine = Color(0xFFF99A41);
+  static const peachTint = Color(0xFFFFE3C4);
+  static const ember = Color(0xFFA84A08);
+  static const brandInk = Color(0xFF2A221E);
+  static const brandMuted = Color(0xFF6B5A4E);
+  static const brandLine = Color(0xFFF7EADB);
+  static const brandInput = Color(0xFFEEDCC8);
+  static const brandNight = Color(0xFF231E45);
+  static const brandNightRaised = Color(0xFF302A5C);
+  static const brandNightHigh = Color(0xFF4A4380);
+  static const brandNightMuted = Color(0xFFCFC8E6);
+
   // Buddy face.
   static const blush = Color(0xFFF2A09B);
   static const freckle = Color(0xFFD9706B);
@@ -52,11 +66,16 @@ enum BuddyColorPreset {
   lilac('Lilac', Color(0xFFB39DFF)),
   mint('Mint', Color(0xFF6FD3A8)),
   sky('Sky', Color(0xFF6CB8F0)),
-  coral('Coral', Color(0xFFFF8577));
+  coral('Coral', Color(0xFFFF8577)),
+  // Plus colours: offered with a verified Plus or Premium pass.
+  rose('Rose', Color(0xFFFF9EC7), plus: true),
+  peach('Peach', Color(0xFFFFB38A), plus: true),
+  violet('Violet', Color(0xFF8E7CFF), plus: true);
 
-  const BuddyColorPreset(this.label, this.color);
+  const BuddyColorPreset(this.label, this.color, {this.plus = false});
   final String label;
   final Color color;
+  final bool plus;
 }
 
 /// 4 / 8 based spacing scale: 4 8 12 16 24 32 48.

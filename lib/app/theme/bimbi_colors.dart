@@ -107,6 +107,57 @@ class BimbiColors extends ThemeExtension<BimbiColors> {
     shadows: BimbiShadows.none,
   );
 
+  /// Premium Sunrise theme, light: cream surfaces, tangerine accent with Ink
+  /// text, Ember links.
+  static const sunriseLight = BimbiColors(
+    background: BimbiPalette.cream,
+    card: BimbiPalette.white,
+    cardBorder: BimbiPalette.brandLine,
+    inputBorder: BimbiPalette.brandInput,
+    text: BimbiPalette.brandInk,
+    textMuted: BimbiPalette.brandMuted,
+    link: BimbiPalette.ember,
+    accentTint: BimbiPalette.peachTint,
+    onAccentTint: BimbiPalette.brandInk,
+    success: BimbiPalette.mint,
+    successTint: BimbiPalette.mintTint,
+    danger: BimbiPalette.coral,
+    dangerTint: BimbiPalette.coralTint,
+    night: BimbiPalette.brandNight,
+    onNight: BimbiPalette.cream,
+    onNightMuted: BimbiPalette.brandNightMuted,
+    navActive: BimbiPalette.ember,
+    navInactive: BimbiPalette.brandMuted,
+    focusRing: BimbiPalette.brandInk,
+    reward: BimbiPalette.honey,
+    shadows: BimbiShadows.soft,
+  );
+
+  /// Premium Sunrise theme, dark: brand Night with a tangerine accent.
+  static const sunriseDark = BimbiColors(
+    background: BimbiPalette.brandNight,
+    card: BimbiPalette.brandNightRaised,
+    cardBorder: BimbiPalette.brandNightHigh,
+    inputBorder: BimbiPalette.brandNightHigh,
+    text: BimbiPalette.cream,
+    textMuted: BimbiPalette.brandNightMuted,
+    link: BimbiPalette.tangerine,
+    accentTint: BimbiPalette.brandNightHigh,
+    onAccentTint: BimbiPalette.cream,
+    success: BimbiPalette.mintBright,
+    successTint: Color(0xFF1F3B3A),
+    danger: BimbiPalette.coralBright,
+    dangerTint: Color(0xFF4A2337),
+    night: BimbiPalette.brandNight,
+    onNight: BimbiPalette.cream,
+    onNightMuted: BimbiPalette.brandNightMuted,
+    navActive: BimbiPalette.tangerine,
+    navInactive: BimbiPalette.brandNightMuted,
+    focusRing: BimbiPalette.tangerine,
+    reward: BimbiPalette.honey,
+    shadows: BimbiShadows.none,
+  );
+
   @override
   BimbiColors copyWith({Color? background}) => BimbiColors(
     background: background ?? this.background,

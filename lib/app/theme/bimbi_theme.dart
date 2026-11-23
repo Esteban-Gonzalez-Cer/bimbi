@@ -5,8 +5,62 @@ import 'bimbi_tokens.dart';
 
 /// Builds the shared light and dark lavender themes.
 abstract final class BimbiTheme {
-  static ThemeData light() => _build(Brightness.light);
-  static ThemeData dark() => _build(Brightness.dark);
+  /// [sunrise] switches to the Premium Sunrise theme (original Brand Buddy
+  /// tangerine, always with Ink text on the accent).
+  static ThemeData light({bool sunrise = false}) =>
+      _build(Brightness.light, sunrise: sunrise);
+  static ThemeData dark({bool sunrise = false}) =>
+      _build(Brightness.dark, sunrise: sunrise);
+
+  static final _sunriseLight = _lightScheme.copyWith(
+    primary: BimbiPalette.tangerine,
+    onPrimary: BimbiPalette.brandInk,
+    primaryContainer: BimbiPalette.peachTint,
+    onPrimaryContainer: BimbiPalette.brandInk,
+    secondary: BimbiPalette.brandNight,
+    onSecondary: BimbiPalette.cream,
+    secondaryContainer: BimbiPalette.peachTint,
+    onSecondaryContainer: BimbiPalette.brandInk,
+    surface: BimbiPalette.cream,
+    onSurface: BimbiPalette.brandInk,
+    onSurfaceVariant: BimbiPalette.brandMuted,
+    surfaceContainerLowest: BimbiPalette.white,
+    surfaceContainerLow: BimbiPalette.white,
+    surfaceContainer: BimbiPalette.cream,
+    surfaceContainerHigh: BimbiPalette.brandLine,
+    surfaceContainerHighest: BimbiPalette.brandInput,
+    outline: BimbiPalette.brandMuted,
+    outlineVariant: BimbiPalette.brandInput,
+    inverseSurface: BimbiPalette.brandInk,
+    onInverseSurface: BimbiPalette.cream,
+    inversePrimary: BimbiPalette.tangerine,
+    shadow: BimbiPalette.brandInk,
+    scrim: BimbiPalette.brandInk,
+  );
+
+  static final _sunriseDark = _darkScheme.copyWith(
+    primary: BimbiPalette.tangerine,
+    onPrimary: BimbiPalette.brandInk,
+    primaryContainer: BimbiPalette.brandNightHigh,
+    onPrimaryContainer: BimbiPalette.cream,
+    secondary: BimbiPalette.brandNightMuted,
+    onSecondary: BimbiPalette.brandNight,
+    secondaryContainer: BimbiPalette.brandNightHigh,
+    onSecondaryContainer: BimbiPalette.cream,
+    surface: BimbiPalette.brandNight,
+    onSurface: BimbiPalette.cream,
+    onSurfaceVariant: BimbiPalette.brandNightMuted,
+    surfaceContainerLowest: BimbiPalette.brandNight,
+    surfaceContainerLow: BimbiPalette.brandNightRaised,
+    surfaceContainer: BimbiPalette.brandNightRaised,
+    surfaceContainerHigh: BimbiPalette.brandNightHigh,
+    surfaceContainerHighest: BimbiPalette.brandNightHigh,
+    outline: BimbiPalette.brandNightMuted,
+    outlineVariant: BimbiPalette.brandNightHigh,
+    inverseSurface: BimbiPalette.cream,
+    onInverseSurface: BimbiPalette.brandNight,
+    inversePrimary: BimbiPalette.ember,
+  );
 
   static const _lightScheme = ColorScheme(
     brightness: Brightness.light,
@@ -126,10 +180,14 @@ abstract final class BimbiTheme {
     );
   }
 
-  static ThemeData _build(Brightness brightness) {
+  static ThemeData _build(Brightness brightness, {bool sunrise = false}) {
     final isLight = brightness == Brightness.light;
-    final scheme = isLight ? _lightScheme : _darkScheme;
-    final c = isLight ? BimbiColors.light : BimbiColors.dark;
+    final scheme = sunrise
+        ? (isLight ? _sunriseLight : _sunriseDark)
+        : (isLight ? _lightScheme : _darkScheme);
+    final c = sunrise
+        ? (isLight ? BimbiColors.sunriseLight : BimbiColors.sunriseDark)
+        : (isLight ? BimbiColors.light : BimbiColors.dark);
     final text = textTheme(c.text, c.textMuted);
     const pill = StadiumBorder();
     final buttonText = text.labelLarge!;

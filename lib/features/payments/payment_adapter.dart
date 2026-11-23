@@ -11,7 +11,13 @@ import '../../core/config.dart';
 import '../../core/platform.dart';
 
 abstract interface class PaymentAdapter {
+  /// Opens Stripe's PaymentSheet for a test pass and asks the server to verify
+  /// it. Returns a short status message; access changes only on the server.
   Future<String> checkout(String plan);
+
+  /// Re-checks unfinished test payments with the server, e.g. one completed
+  /// just before the app closed. Returns a short status message.
+  Future<String> restore();
 }
 
 class StripeTestPayments implements PaymentAdapter {
@@ -46,9 +52,20 @@ class StripeTestPayments implements PaymentAdapter {
         )
         .timeout(const Duration(seconds: 25));
     if (response.statusCode != 200) {
-      throw const CapabilityFailure(
-        'backend',
-        'The payment server rejected the request. No paid access was granted.',
+      String? code;
+      try {
+        final body = jsonDecode(response.body);
+        if (body is Map && body['error'] is String) {
+          code = body['error'] as String;
+        }
+      } on FormatException {
+        code = null;
+      }
+      throw CapabilityFailure(
+        code ?? 'backend',
+        code == 'higher_plan_active'
+            ? 'Premium is already active, and it includes everything in Plus.'
+            : 'The payment server rejected the request. No paid access was granted.',
       );
     }
     return jsonDecode(response.body) as Map<String, dynamic>;
@@ -101,9 +118,52 @@ class StripeTestPayments implements PaymentAdapter {
     });
     if (verified['verified'] == true) {
       await _attempts.remove(attempt);
-      return 'Test payment verified by the server. Production access remains unchanged.';
+      return '${plan == 'premium' ? 'Premium' : 'Plus'} is active for 30 days. '
+          'Test payment verified by the server.';
     }
     return 'Payment is not verified. No paid access granted.';
+  }
+
+  @override
+  Future<String> restore() async {
+    final uid = FirebaseAuth.instance.currentUser?.uid ?? '';
+    if (uid.isEmpty) {
+      throw const CapabilityFailure('auth', 'Sign in to restore purchases.');
+    }
+    var restored = 0;
+    for (final plan in const ['plus', 'premium']) {
+      final attempt = 'payment_attempt:$uid:$plan';
+      final key = await _attempts.getString(attempt);
+      if (key == null) continue;
+      try {
+        // The same request id returns the same PaymentIntent; nothing is charged.
+        final intent = await _post('createPaymentIntent', {
+          'plan': plan,
+          'requestId': key,
+        });
+        if (intent['status'] != 'succeeded') continue;
+        final verified = await _post('verifyPaymentIntent', {
+          'paymentIntentId': intent['id'] as String,
+        });
+        if (verified['verified'] == true) {
+          restored++;
+          await _attempts.remove(attempt);
+        }
+      } on CapabilityFailure catch (e) {
+        if (const {
+          'higher_plan_active',
+          'attempt_expired',
+          'attempt_conflict',
+        }.contains(e.code)) {
+          await _attempts.remove(attempt);
+        } else {
+          rethrow;
+        }
+      }
+    }
+    return restored == 0
+        ? 'Your plan is up to date.'
+        : 'Restored a verified test payment.';
   }
 }
 

@@ -6,6 +6,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../app/design_system/design_system.dart';
 import '../../../core/operation.dart';
 import '../../../core/platform.dart';
+import '../../../data/repositories/entitlement_repository.dart';
+import '../../../domain/models/plan.dart';
 import '../application/alarm_draft.dart';
 
 /// Full-screen editor route used on compact and medium windows.
@@ -173,8 +175,18 @@ class _AlarmEditorState extends ConsumerState<AlarmEditor> {
       for (final option in options)
         DropdownMenuItem(
           value: option.id,
-          enabled: option.available,
-          child: Text(option.title),
+          // Plus tones need a verified Plus or Premium pass (server-written).
+          enabled:
+              option.available &&
+              (!option.plus ||
+                  ref.read(planTierProvider).includes(PlanTier.plus)),
+          child: Text(
+            option.plus && !ref.read(planTierProvider).includes(PlanTier.plus)
+                ? '${option.title} · Plus'
+                : option.plus
+                ? '${option.title} ✦'
+                : option.title,
+          ),
         ),
     ],
     onChanged: (value) {
@@ -188,6 +200,9 @@ class _AlarmEditorState extends ConsumerState<AlarmEditor> {
   Widget build(BuildContext context) {
     final draft = ref.watch(alarmEditorProvider);
     if (draft == null) return const SizedBox.shrink();
+    ref.watch(
+      planTierProvider,
+    ); // Plus tones unlock as soon as a pass is verified.
     final busy = ref.watch(operationProvider).busy;
     final tones = ref.watch(alarmTonesProvider);
     final intensities = ref.watch(alarmIntensitiesProvider);
