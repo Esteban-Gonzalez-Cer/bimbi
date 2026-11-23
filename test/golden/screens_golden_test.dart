@@ -13,10 +13,17 @@ import 'package:flutter_test/flutter_test.dart';
 import '../helpers/pump.dart';
 
 Future<void> _settleImages(WidgetTester tester) async {
-  // Bundled images decode asynchronously.
-  await tester.runAsync(
-    () => Future<void>.delayed(const Duration(milliseconds: 50)),
-  );
+  await tester.pumpAndSettle();
+  // Wait for each visible bundled asset to decode before taking the snapshot.
+  await tester.runAsync(() async {
+    final images = find.byType(Image).evaluate().toList();
+    await Future.wait(
+      images.map((element) {
+        final image = element.widget as Image;
+        return precacheImage(image.image, element);
+      }),
+    );
+  });
   await tester.pumpAndSettle();
 }
 

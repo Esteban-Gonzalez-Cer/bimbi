@@ -12,6 +12,28 @@
           },
           "$other": {".validate": false}
         },
+        "runs": {
+          ".read": "auth != null && auth.uid === $uid && auth.token.email_verified === true",
+          "$id": {
+            ".write": "auth != null && auth.uid === $uid && auth.token.email_verified === true && $id.matches(/^[a-f0-9]{32}$/) && newData.exists() && (newData.child('deleted').val() === true || !data.exists() || (!data.child('deleted').exists() && newData.child('startedAt').val() === data.child('startedAt').val() && newData.child('distanceM').val() === data.child('distanceM').val() && newData.child('durationSec').val() === data.child('durationSec').val()))",
+            ".validate": "newData.child('deleted').val() === true ? !newData.child('startedAt').exists() && !newData.child('distanceM').exists() && !newData.child('durationSec').exists() : newData.hasChildren(['startedAt', 'distanceM', 'durationSec']) && !newData.child('deleted').exists()",
+            "startedAt": {
+              ".validate": "newData.isNumber() && newData.val() % 1 === 0 && newData.val() >= 1577836800000 && newData.val() <= now + 300000"
+            },
+            "distanceM": {
+              ".validate": "newData.isNumber() && newData.val() % 1 === 0 && newData.val() >= 0 && newData.val() <= 15 * (newData.parent().child('durationSec').val() + 1)"
+            },
+            "durationSec": {
+              ".validate": "newData.isNumber() && newData.val() % 1 === 0 && newData.val() > 0 && newData.val() <= 31536000"
+            },
+            "deleted": {
+              ".validate": "newData.isBoolean() && newData.val() === true"
+            },
+            "$other": {
+              ".validate": false
+            }
+          }
+        },
         "phase1": {
           "probe": {
             ".read": "auth != null && auth.uid === $uid && auth.token.email_verified === true",

@@ -10,6 +10,7 @@ import '../../features/focus/presentation/focus_page.dart';
 import '../../features/profile/application/cloud_profile.dart';
 import '../../features/notifications/messaging.dart';
 import '../../features/profile/presentation/profile_page.dart';
+import '../../features/running/application/run_controller.dart';
 import '../../features/running/presentation/running_page.dart';
 import '../../features/running/tracking.dart';
 import '../../features/sleep/presentation/sleep_page.dart';
@@ -44,6 +45,13 @@ class _AdaptiveShellState extends ConsumerState<AdaptiveShell> {
   void initState() {
     super.initState();
     _lifecycle = AppLifecycleListener(
+      onInactive: () {
+        // Android can report lost window focus before its hide/pause event.
+        // Leave the initial permission request active while Android owns it.
+        if (ref.read(runControllerProvider).phase == RunPhase.recording) {
+          unawaited(ref.read(runControllerProvider.notifier).pause());
+        }
+      },
       onPause: () => unawaited(ref.read(trackingProvider.notifier).stop()),
       onHide: () => unawaited(ref.read(trackingProvider.notifier).stop()),
       onResume: () {

@@ -2,11 +2,13 @@ import 'package:bimbi/app/bimbi_app.dart';
 import 'package:bimbi/app/preferences.dart';
 import 'package:bimbi/core/clock.dart';
 import 'package:bimbi/core/platform.dart';
+import 'package:bimbi/features/running/data/run_store.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'fake_platform.dart';
+import 'memory_run_disk.dart';
 
 /// Fixed morning so greetings, moods and the sleep week are deterministic.
 final testNow = DateTime(2026, 11, 21, 8, 30);
@@ -47,6 +49,7 @@ Future<FakePlatform> pumpBimbi(
         platformProvider.overrideWithValue(fake),
         clockProvider.overrideWithValue(() => now ?? testNow),
         onboardingProvider.overrideWith(() => _Onboarded(onboarded)),
+        runStoreProvider.overrideWithValue(RunStore(MemoryRunDisk())),
         ...overrides.cast(),
       ],
       child: const BimbiApp(),
