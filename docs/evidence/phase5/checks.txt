@@ -381,3 +381,9 @@ Copia: build/review/bimbi-phase5-debug.apk
 Verifies
 Verified using v2 scheme (APK Signature Scheme v2): true
 SHA-256 77b80f1b104376d17a8bd5a6ae4a8a2d36c25241825f8a4e09bc36298c391b37
+
+Publicación de reglas de Realtime Database (autorizada por el propietario)
+Comando: ./scripts/firebase.sh deploy --only database --project bimbi-26ae2 --non-interactive
+✔  database: rules syntax for database bimbi-26ae2-default-rtdb is valid
+✔  database: rules for database bimbi-26ae2-default-rtdb released successfully
+✔  Deploy complete!
